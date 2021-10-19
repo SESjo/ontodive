@@ -1,0 +1,141 @@
+---
+title: "Data Exploration"
+author: "Joffrey JOUMAA"
+date: "`r format(Sys.Date(), format = '%d %B %Y')`"
+output:
+  bookdown::html_document2:
+    css: cosmo_custom.css
+    number_sections: yes
+    code_folding: hide
+    df_print: default
+    fig_caption: yes
+    code_download: yes
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+---
+
+```{r setup, include=FALSE}
+# global option relative to rmarkdown
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.align = 'center',
+                      message = FALSE)
+
+# library
+library(data.table)
+library(ggplot2)
+library(kableExtra)
+
+# define my own table format: https://github.com/haozhu233/kableExtra/issues/374
+sable <- function(x, escape = T, ...) {
+  knitr::kable(x, escape = escape, ...) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "responsive"),
+      full_width = F
+    )
+}
+
+# theme ggplot
+# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
+theme_jjo <- function(base_size = 12) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # the whole figure
+      #plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # figure area
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # axes
+      #axis.title = element_text(size = rel(0.85), face = "bold"),
+      #axis.text = element_text(size = rel(0.70), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
+      # legend
+      # legend.title = element_text(size = rel(0.85), face = "bold"),
+      # legend.text = element_text(size = rel(0.70), face = "bold"),
+      # legend.key = element_rect(fill = "transparent", colour = NA),
+      # legend.key.size = unit(1.5, "lines"),
+      # legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les étiquettes dans le cas d'un facetting
+       strip.background = element_rect(fill = "#888888", color = "#888888"),
+       strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5,0,5,0))
+    )
+}
+```
+
+This document aims at exploring two datasets, one in 2016 on 6 individuals and another one in 2018 on 4 individuals. For that purpose, we need first to load the `weanlingNES` package to load data.
+
+```{r}
+# load library
+library(weanlingNES)
+
+# load data
+data("data_nes", package = "weanlingNES")
+```
+
+# 2016-individuals 
+
+```{r}
+# combine all individuals
+data_2016 = rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
+```
+ 
+## Summary
+
+```{r}
+# raw_data
+data_2016[, .(
+  nb_days_recorded = uniqueN(as.Date(date)),
+  max_depth = max(maxpress_dbars),
+  sst_mean = mean(sst2_c),
+  sst_sd = sd(sst2_c)
+), by =.id] %>%
+  sable(caption="Summary diving information relative to each 2016 individual")
+```
+
+Well, it seems that `sst` is a bit odd. Let's have a look at its distribution.
+
+
+```{r, fig.cap="Distribution of raw `sst2` for the four individuals in 2016"}
+ggplot(data_2016, aes(x = sst2_c, fill = .id)) +
+  geom_histogram(show.legend = FALSE) +
+  facet_wrap(.id ~ .) +
+  theme_jjo()
+```
+
+Let's remove any data with a `sst2_c` > 500.
+
+```{r, fig.cap="Distribution of filtered `sst2` for the four individuals in 2016"}
+data_2016_filter = data_2016[sst2_c < 500, ]
+ggplot(data_2016_filter, aes(x = sst2_c, fill = .id)) +
+  geom_histogram(show.legend = FALSE) +
+  facet_wrap(.id ~ .) +
+  theme_jjo()
+```
+
+Well,that seems to be much better! In the process of filtering out odd values, we removed `r data_2016[,.N] - data_2016_filter[,.N]` rows this way:
+
+```{r}
+# nbrow removed
+data_2016[sst2_c>500,.(nb_row_removed = .N),by=.id] %>%
+  sable(caption = "# of rows removed by indivduals")
+```
+```{r}
+# ggplot(data_2016[,.(.SD, is_out=fifelse(sst2_c>500,T,F))], 
+#        aes(x = maxpress_dbars, y=date, col=is_out)) +
+#   geom_path(show.legend = FALSE) +
+#   facet_wrap(.id ~ .) +
+#   theme_jjo()
+```
+
+## Some plots
+
+```{r}
+
+```
+
+```{r}
+# plot depth records
+# ggplot(data_2016, aes(x=date,y=))
+```
+
