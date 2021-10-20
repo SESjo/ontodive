@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data/
+inst/extdata/
+inst/doc
+
+# intermediate files
+inst/rmd/data_exploration_files
+inst/rmd/cerulean.min.css
+inst/rmd/fonts
