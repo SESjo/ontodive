@@ -8543,3 +8543,8 @@ a.list-group-item-danger.active:focus {
 .popover {
   color: #333333
 }
+
+.leaflet {
+    margin: auto;
+}
+
