@@ -6,7 +6,7 @@ output:
   bookdown::html_document2:
     css: cosmo_custom.css
     number_sections: yes
-    code_folding: hide
+    code_folding: show
     df_print: default
     fig_caption: yes
     code_download: yes
@@ -26,6 +26,8 @@ knitr::opts_chunk$set(echo = TRUE,
 library(data.table)
 library(ggplot2)
 library(kableExtra)
+library(leaflet) 
+library(gtsummary) #https://cran.r-project.org/web/packages/gtsummary/vignettes/tbl_summary.html
 
 # define my own table format: https://github.com/haozhu233/kableExtra/issues/374
 sable <- function(x, escape = T, ...) {
@@ -73,11 +75,27 @@ library(weanlingNES)
 data("data_nes", package = "weanlingNES")
 ```
 
+
 # 2016-individuals 
 
+Let's have a look at the data:
+
 ```{r}
+# list structure
+str(data_nes$year_2016, max.level = 1, give.attr = F, no.list = T)
+```
+
+For convenience, we aggregate all 6 individuals into one dataset.
+
+```{r, results="asis"}
 # combine all individuals
 data_2016 = rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
+
+# title
+cat("<table>",paste0("<caption>", "(#tab:myDThtmltools)", "Sample of 100 random rows from `data_2016`", "</caption>"),"</table>", sep ="\n")
+
+# display
+DT::datatable(data_2016[sample.int(.N,100),],options=list(scrollX=T))
 ```
  
 ## Summary
@@ -120,13 +138,40 @@ Well,that seems to be much better! In the process of filtering out odd values, w
 data_2016[sst2_c>500,.(nb_row_removed = .N),by=.id] %>%
   sable(caption = "# of rows removed by indivduals")
 ```
-```{r}
-# ggplot(data_2016[,.(.SD, is_out=fifelse(sst2_c>500,T,F))], 
-#        aes(x = maxpress_dbars, y=date, col=is_out)) +
-#   geom_path(show.legend = FALSE) +
-#   facet_wrap(.id ~ .) +
-#   theme_jjo()
+```{r, fig.cap="Where and when the `sst2` outliers occured", fig.width=9}
+ggplot(data_2016,
+       aes(y = -maxpress_dbars, x=date, col=.id)) +
+  geom_path(show.legend = FALSE) +
+  geom_point(data = data_2016[sst2_c>500,], col="black") +
+  facet_wrap(.id ~ .) +
+  theme_jjo()
 ```
+Well this latter plot highlights several points:
+
+* most of the outliers occur while animals spend the whole day at the surface (or on the ground), probably resting, so essentially at the beginning and the end of each track
+* we can already see that `ind_3449` seems to have return ashore twice during his track
+
+Let's see if we can double check that using some maps.
+
+```{r, fig.cap="It is supposed to be the track of `ind_3449`...!", fig.width=8}
+# interactive map
+leaflet() %>%
+  addTiles() %>%
+  addPolylines(lat = data_2016[.id == "ind_3449", latitude_degs],
+               lng = data_2016[.id == "ind_3449", longitude_degs],
+               weight = 2)
+```
+
+... these coordinates seem weird !
+
+```{r}
+# summary of the coordinates by individuals
+data_2016[, .(.id, longitude_degs, latitude_degs)] %>%
+  tbl_summary(by = .id) %>%
+  modify_caption("Summary of `longitude_degree` and `latitude_degree`")
+```
+
+There is definitely something wrong with these coordinates (five of them would have crossed the equator...), but the representation of the track can also be improved!
 
 ## Some plots
 
