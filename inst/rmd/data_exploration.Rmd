@@ -78,21 +78,30 @@ data("data_nes", package = "weanlingNES")
 
 # 2016-individuals 
 
-Let's have a look at the data:
+Let's have a look at what's inside `data_nes$data_2016`:
 
 ```{r}
 # list structure
 str(data_nes$year_2016, max.level = 1, give.attr = F, no.list = T)
 ```
 
-For convenience, we aggregate all 6 individuals into one dataset.
+> A list of `r length(data_nes$data_2016)` `data.frames`, one for each seal
 
-```{r, results="asis"}
+For convenience, we aggregate all `r length(data_nes$data_2016)` individuals into one dataset.
+
+```{r, eval=FALSE}
+# combine all individuals
+data_2016 = rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
+
+# display
+DT::datatable(data_2016[sample.int(.N,100),],options=list(scrollX=T))
+```
+```{r, echo=FALSE, results='asis'}
 # combine all individuals
 data_2016 = rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
 
 # title
-cat("<table>",paste0("<caption>", "(#tab:myDThtmltools)", "Sample of 100 random rows from `data_2016`", "</caption>"),"</table>", sep ="\n")
+cat("<table style='width: 50%'>",paste0("<caption>", "(#tab:myDThtmltools)", "Sample of 100 random rows from `data_2016`", "</caption>"),"</table>", sep ="\n")
 
 # display
 DT::datatable(data_2016[sample.int(.N,100),],options=list(scrollX=T))
@@ -108,7 +117,8 @@ data_2016[, .(
   sst_mean = mean(sst2_c),
   sst_sd = sd(sst2_c)
 ), by =.id] %>%
-  sable(caption="Summary diving information relative to each 2016 individual")
+  sable(caption="Summary diving information relative to each 2016 individual", 
+        digits=2)
 ```
 
 Well, it seems that `sst` is a bit odd. Let's have a look at its distribution.
@@ -140,11 +150,14 @@ data_2016[sst2_c>500,.(nb_row_removed = .N),by=.id] %>%
 ```
 ```{r, fig.cap="Where and when the `sst2` outliers occured", fig.width=9}
 ggplot(data_2016,
-       aes(y = -maxpress_dbars, x=date, col=.id)) +
+       aes(y = -maxpress_dbars, x=as.Date(date), col=.id)) +
   geom_path(show.legend = FALSE) +
   geom_point(data = data_2016[sst2_c>500,], col="black") +
+  scale_x_date(date_labels = "%m/%Y") +
+  labs(y="Pressure (dbar)", x="Date") +
   facet_wrap(.id ~ .) +
-  theme_jjo()
+  theme_jjo() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 ```
 Well this latter plot highlights several points:
 
@@ -153,13 +166,20 @@ Well this latter plot highlights several points:
 
 Let's see if we can double check that using some maps.
 
-```{r, fig.cap="It is supposed to be the track of `ind_3449`...!", fig.width=8}
+```{r, fig.cap="It is supposed to be the track of `ind_3449`... (red dots are the location of removed rows)", fig.width=8}
 # interactive map
 leaflet() %>%
+  setView(lng = -122, lat = 38, zoom = 2) %>%
   addTiles() %>%
   addPolylines(lat = data_2016[.id == "ind_3449", latitude_degs],
                lng = data_2016[.id == "ind_3449", longitude_degs],
-               weight = 2)
+               weight = 2) %>%
+  addCircleMarkers(lat = data_2016[.id == "ind_3449" & sst2_c>500, latitude_degs],
+                   lng = data_2016[.id == "ind_3449" & sst2_c>500, longitude_degs],
+                   radius = 3,
+                   stroke=FALSE,
+                   color="red",
+                   fillOpacity=1)
 ```
 
 ... these coordinates seem weird !
@@ -171,16 +191,122 @@ data_2016[, .(.id, longitude_degs, latitude_degs)] %>%
   modify_caption("Summary of `longitude_degree` and `latitude_degree`")
 ```
 
-There is definitely something wrong with these coordinates (five of them would have crossed the equator...), but the representation of the track can also be improved!
+```{r, fig.width=9, fig.cap="Distribution of coordinates per seal"}
+# distribution coordinates
+ggplot(
+  data = melt(data_2016[, .(Longitude = longitude_degs, 
+                            Latitude = latitude_degs, 
+                            .id)], id.vars =
+                ".id", value.name = "Coordinate"),
+  aes(x = Coordinate, fill = .id)
+) +
+  geom_histogram(show.legend = F) +
+  facet_grid(variable ~ .id) +
+  theme_jjo()
+```
 
-## Some plots
+There is definitely something wrong with these coordinates (five of the seals would have crossed the equator...), but the representation of the track can also be improved! Here are the some points to explore:
+
+* For `longitude` a part of the data seems to have the wrong sign, resulting in these distribution that appear to be cut off
+* For `latitude`, well this is ensure but maybe the same problem occur
+
+Let's try to play on coordinates' sign to see if we can display something that makes more sense.
+
+```{r, fig.cap="An attempt to display the `ind_3449`'s track", fig.width=8}
+# interactive map
+leaflet() %>%
+  setView(lng = -122, lat = 50, zoom = 3) %>%
+  addTiles() %>%
+  addPolylines(lat = data_2016[.id == "ind_3449", abs(latitude_degs)],
+               lng = data_2016[.id == "ind_3449", -abs(longitude_degs)],
+               weight = 2)
+```
+
+> I'll better ask Roxanne!
+
+
+# 2018-individuals
+
+Let’s have a look at what’s inside `data_nes$data_2018`:
 
 ```{r}
+# list structure
+str(data_nes$year_2018, max.level = 1, give.attr = F, no.list = T)
+```
+
+> A list of `r length(data_nes$data_2018)` `data.frames`, one for each seal
+
+For convenience, we aggregate all `r length(data_nes$data_2018)` individuals into one dataset.
+
+```{r, eval=FALSE}
+# combine all individuals
+data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
+
+# display
+DT::datatable(data_2018[sample.int(.N,100),],options=list(scrollX=T))
+```
+```{r, echo=FALSE, results='asis'}
+# combine all individuals
+data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
+
+# title
+cat("<table style='width: 50%'>",paste0("<caption>", "(#tab:myDThtmltools)", "Sample of 100 random rows from `data_2018`", "</caption>"),"</table>", sep ="\n")
+
+# display
+
+DT::datatable(data_2018[sample.int(.N,100),],options=list(scrollX=T))
+```
+ 
+## Summary
+
+```{r}
+# raw_data
+data_2018[, .(
+  nb_days_recorded = uniqueN(as.Date(date)),
+  nb_dives = .N,
+  maxdepth_mean = mean(maxdepth),
+  dduration_mean = mean(dduration),
+  botttime_mean = mean(botttime),
+  pdi_mean = mean(pdi, na.rm=T)
+), by =.id] %>%
+  sable(caption="Summary diving information relative to each 2018 individual", 
+        digits=2)
+```
+> Very nice dataset :)
+
+## Some explanatory plots
+
+```{r, fig.cap="Check for missing values"}
+dataPlot = melt(as.data.table(is.na(data_2018)))
+
+ggplot(dataPlot, aes(x = Var2, y = Var1, fill = value))+
+  geom_tile()+
+  labs(x = "Attributes", y = "Rows")+
+  scale_fill_manual(values = c("white", "black"), 
+                    labels = c("Real", "Missing")) +
+  theme(legend.position = "top", 
+        axis.text.x = element_text(angle = 45, hjust = 1), 
+        legend.key = element_rect(colour = "black"))
 
 ```
 
-```{r}
-# plot depth records
-# ggplot(data_2016, aes(x=date,y=))
+
+```{r, fig.cap="Evolution of all parameters accross time", cache=TRUE, fig.width=9}
+# plot raw data
+ggplot(data = melt(data_2018[, -c("divenumber",
+                                  "year",
+                                  "month",
+                                  "day",
+                                  "hour",
+                                  "min",
+                                  "sec",
+                                  "juldate",
+                                  "divetype")], id.vars = c(".id", "date")),
+       aes(x = as.Date(date), y = value, col = .id)) +
+  geom_point(show.legend = FALSE, alpha = 1 / 10) +
+  facet_grid(variable ~ .id, scales = "free") +
+  scale_x_date(date_labels = "%m/%Y") +
+  theme_jjo() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
