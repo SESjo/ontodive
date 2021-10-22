@@ -20,7 +20,8 @@ output:
 # global option relative to rmarkdown
 knitr::opts_chunk$set(echo = TRUE,
                       fig.align = 'center',
-                      message = FALSE)
+                      message = FALSE,
+                      warning=FALSE)
 
 # library
 library(data.table)
@@ -28,6 +29,7 @@ library(ggplot2)
 library(kableExtra)
 library(leaflet) 
 library(gtsummary) #https://cran.r-project.org/web/packages/gtsummary/vignettes/tbl_summary.html
+library(ggcorrplot)
 
 # define my own table format: https://github.com/haozhu233/kableExtra/issues/374
 sable <- function(x, escape = T, ...) {
@@ -274,39 +276,129 @@ data_2018[, .(
 ```
 > Very nice dataset :)
 
-## Some explanatory plots
+## Some explanatory plots {.tabset}
 
-```{r, fig.cap="Check for missing values"}
-dataPlot = melt(as.data.table(is.na(data_2018)))
+```{r fig.cap="Check for missing values", fig.width=9}
+# build dataset to check for missing values
+dataPlot = melt(data_2018[, .(.id, is.na(.SD)), .SDcol = -c(".id",
+                                                            "divenumber",
+                                                            "year",
+                                                            "month",
+                                                            "day",
+                                                            "hour",
+                                                            "min",
+                                                            "sec",
+                                                            "juldate",
+                                                            "divetype",
+                                                            "date")])
+# add the id of rows
+dataPlot[, id_row := c(1:.N), by = c("variable",".id")]
 
-ggplot(dataPlot, aes(x = Var2, y = Var1, fill = value))+
-  geom_tile()+
-  labs(x = "Attributes", y = "Rows")+
-  scale_fill_manual(values = c("white", "black"), 
+# plot
+ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
+  geom_tile() +
+  labs(x = "Attributes", y = "Rows") +
+  scale_fill_manual(values = c("white", "black"),
                     labels = c("Real", "Missing")) +
-  theme(legend.position = "top", 
-        axis.text.x = element_text(angle = 45, hjust = 1), 
-        legend.key = element_rect(colour = "black"))
-
-```
-
-
-```{r, fig.cap="Evolution of all parameters accross time", cache=TRUE, fig.width=9}
-# plot raw data
-ggplot(data = melt(data_2018[, -c("divenumber",
-                                  "year",
-                                  "month",
-                                  "day",
-                                  "hour",
-                                  "min",
-                                  "sec",
-                                  "juldate",
-                                  "divetype")], id.vars = c(".id", "date")),
-       aes(x = as.Date(date), y = value, col = .id)) +
-  geom_point(show.legend = FALSE, alpha = 1 / 10) +
-  facet_grid(variable ~ .id, scales = "free") +
-  scale_x_date(date_labels = "%m/%Y") +
+  facet_wrap(.id ~ ., scales = "free_y") +
   theme_jjo() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(
+    legend.position = "top",
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.key = element_rect(colour = "black")
+  )
 ```
+
+So far so good, only few variables seems to have missing values:
+
+```{r}
+# table with percent
+table_inter = data_2018[, lapply(.SD, function(x) {
+  round(length(x[is.na(x)]) * 100 / length(x), 1)
+}), .SDcol = -c(
+  ".id",
+  "divenumber",
+  "year",
+  "month",
+  "day",
+  "hour",
+  "min",
+  "sec",
+  "juldate",
+  "divetype",
+  "date"
+)]
+
+# find which are different from 0
+cond_inter = sapply(table_inter,function(x){x==0})
+
+# display the percentages that are over 0
+table_inter[,which(cond_inter) := NULL] %>%
+  sable(caption="Percentage of missing values per columns having missing values!")%>% 
+ scroll_box(width = "100%")
+```
+
+Let's have a look at all the data.
+
+```{r, results='asis', fig.width=9}
+names_display = names(data_2018[, -c(
+  ".id",
+  "date",
+  "divenumber",
+  "year",
+  "month",
+  "day",
+  "hour",
+  "min",
+  "sec",
+  "juldate",
+  "divetype"
+)])
+for (i in names_display) {
+  cat('###', i, '{-} \n')
+  print(
+    ggplot(
+      data = melt(data_2018[, .(.id, date, get(i))], id.vars = c(".id", "date")),
+      aes(x = as.Date(date), y = value, col = .id)
+    ) +
+      geom_point(show.legend = FALSE, alpha = 1 / 10) +
+      facet_wrap(. ~ .id, scales = "free") +
+      scale_x_date(date_labels = "%m/%Y") +
+      labs(x="Date", y=i)+
+      theme_jjo() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  )
+  cat(' \n \n')
+}
+```
+
+Can we find nice correlation
+
+```{r, fig.cap="Correlation matrix", fig.width=9}
+# compute correlation
+corr_2018 = round(cor(data_2018[, names_display, with = F], 
+                      use = "pairwise.complete.obs"), 1)
+
+# replace NA value by 0
+corr_2018[is.na(corr_2018)] = 0
+
+# compute p_values
+corr_p_2018 = cor_pmat(data_2018[, names_display, with = F])
+
+# replace NA value by 0
+corr_p_2018[is.na(corr_p_2018)] = 1
+
+# display
+ggcorrplot(
+  corr_2018,
+  p.mat = corr_p_2018,
+  hc.order = TRUE,
+  method = "circle",
+  type = "lower",
+  ggtheme = theme_jjo(),
+  insig = "blank",
+  colors =  c("#00AFBB", "#E7B800", "#FC4E07")
+)
+```
+
 
