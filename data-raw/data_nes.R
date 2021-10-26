@@ -11,24 +11,19 @@ setDTthreads(parallel::detectCores())
 
 # path to dataraw
 path_raw <- system.file("extdata",
-  package = "weanlingNES"
-)
+                        package = "weanlingNES")
 
 # list of files for 2016-individuals
-list_2016 <- list.files(
-  path = path_raw,
-  pattern = "^LAT290.*csv$",
-  full.names = TRUE
-)
+list_2016 <- list.files(path = path_raw,
+                        pattern = "^LAT290.*csv$",
+                        full.names = TRUE)
 
 # extract name of individuals
 name_2016 <-
-  paste0("ind_", sapply(str_split(sapply(
-    str_split(list_2016, "/"),
-    function(x) {
-      tail(x, 1)
-    }
-  ), "_"), "[[", 2))
+  paste0("ind_", sapply(str_split(sapply(str_split(list_2016, "/"),
+                                         function(x) {
+                                           tail(x, 1)
+                                         }), "_"), "[[", 2))
 
 # import 2016 files
 data_2016 <- lapply(list_2016, fread)
@@ -41,7 +36,7 @@ col_2016 <- Reduce(intersect, lapply(data_2016, colnames))
 
 # keep only those common columns names
 data_2016 <- lapply(data_2016, function(x) {
-  x[, ..col_2016, ]
+  x[, ..col_2016,]
 })
 
 # test if columns name are all the same across data sets
@@ -57,20 +52,16 @@ data_2016 <- lapply(data_2016, function(x) {
 })
 
 # list of files for 2018-individuals
-list_2018 <- list.files(
-  path = path_raw,
-  pattern = "^2018.*csv$",
-  full.names = TRUE
-)
+list_2018 <- list.files(path = path_raw,
+                        pattern = "^2018.*csv$",
+                        full.names = TRUE)
 
 # extract name of individuals
 name_2018 <-
-  paste0("ind_", sapply(str_split(sapply(
-    str_split(list_2018, "/"),
-    function(x) {
-      tail(x, 1)
-    }
-  ), "_"), "[[", 1))
+  paste0("ind_", sapply(str_split(sapply(str_split(list_2018, "/"),
+                                         function(x) {
+                                           tail(x, 1)
+                                         }), "_"), "[[", 1))
 
 # import 2018 files
 data_2018 <- lapply(list_2018, fread)
@@ -80,7 +71,7 @@ col_2018 <- Reduce(intersect, lapply(data_2018, colnames))
 
 # keep only those common columns names
 data_2018 <- lapply(data_2018, function(x) {
-  x[, ..col_2018, ]
+  x[, ..col_2018,]
 })
 
 # test if columns name are all the same across data sets
@@ -94,16 +85,28 @@ data_2018 <- lapply(data_2018, function(x) {
   # time
   x[, date := as.POSIXct(paste(year, month, day, hour, min, sec),
                          format = "%Y %m %d %H %M %S")]
+  # convert divetype
+  x[,divetype:=as.character(divetype)]
+  x[divetype == "0", divetype := "0: transit"
+  ][divetype == "1", divetype := "1: foraging"
+  ][divetype == "2", divetype := "2: drift"
+  ][divetype == "3", divetype := "3: benthic"]
+
+  # number of days since departure
+  x[, day_departure := ceiling(difftime(date,
+                                        first(date),
+                                        units = "days"))]
+
 })
 
 # add names
 names(data_2018) <- name_2018
 
+
+
 # merge data sets
-data_nes <- list(
-  "year_2016" = data_2016,
-  "year_2018" = data_2018
-)
+data_nes <- list("year_2016" = data_2016,
+                 "year_2018" = data_2018)
 
 # export
 usethis::use_data(data_nes, overwrite = TRUE)
