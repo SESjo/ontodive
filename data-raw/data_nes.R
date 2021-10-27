@@ -93,9 +93,9 @@ data_2018 <- lapply(data_2018, function(x) {
   ][divetype == "3", divetype := "3: benthic"]
 
   # number of days since departure
-  x[, day_departure := ceiling(difftime(date,
+  x[, day_departure := as.numeric(ceiling(difftime(date,
                                         first(date),
-                                        units = "days"))]
+                                        units = "days")))]
 
 })
 
