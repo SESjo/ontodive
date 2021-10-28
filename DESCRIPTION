@@ -18,8 +18,19 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Imports: 
+    bookdown,
+    corrplot,
     data.table,
     ggcorrplot,
+    ggnewscale,
+    ggplot2,
+    gtsummary,
+    kableExtra,
+    leaflet,
     stringr
 Depends: 
     R (>= 2.10)
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr, rmarkdown
