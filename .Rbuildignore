@@ -3,4 +3,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
-^data_exploration_cache$
+^.*\_cache$
+^vignettes$
