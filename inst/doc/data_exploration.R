@@ -1,4 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 devtools::check(build_args=c("--no-build-vignettes"))
@@ -55,25 +55,25 @@ theme_jjo <- function(base_size = 12) {
     )
 }
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # load library
 library(weanlingNES)
 
 # load data
 data("data_nes", package = "weanlingNES")
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # list structure
 str(data_nes$year_2016, max.level = 1, give.attr = F, no.list = T)
 
-## ---- eval=FALSE---------------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  # combine all individuals
 #  data_2016 = rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
 #  
 #  # display
 #  DT::datatable(data_2016[sample.int(.N,100),],options=list(scrollX=T))
 
-## ---- echo=FALSE, results='asis'-----------------------------------------------
+## ---- echo=FALSE, results='asis'----------------------------------------------
 # combine all individuals
 data_2016 = rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
 
@@ -83,7 +83,7 @@ cat("<table style='width: 50%'>",paste0("<caption>", "(#tab:myDThtmltools)", "Sa
 # display
 DT::datatable(data_2016[sample.int(.N,100),],options=list(scrollX=T))
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # raw_data
 data_2016[, .(
   nb_days_recorded = uniqueN(as.Date(date)),
@@ -107,12 +107,12 @@ ggplot(data_2016_filter, aes(x = sst2_c, fill = .id)) +
   facet_wrap(.id ~ .) +
   theme_jjo()
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # nbrow removed
 data_2016[sst2_c>500,.(nb_row_removed = .N),by=.id] %>%
   sable(caption = "# of rows removed by 2016-individuals")
 
-## ---- fig.cap="Where and when the `sst2` outliers occured", fig.width=9--------
+## ---- fig.cap="Where and when the `sst2` outliers occured", fig.width=9-------
 # max depth
 ggplot(data_2016,
        aes(y = -maxpress_dbars, x=as.Date(date), col=.id)) +
@@ -139,13 +139,13 @@ leaflet() %>%
                    color="red",
                    fillOpacity=1)
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # summary of the coordinates by individuals
 data_2016[, .(.id, longitude_degs, latitude_degs)] %>%
   tbl_summary(by = .id) %>%
   modify_caption("Summary of `longitude_degree` and `latitude_degree`")
 
-## ---- fig.width=9, fig.cap="Distribution of coordinates per seal"--------------
+## ---- fig.width=9, fig.cap="Distribution of coordinates per seal"-------------
 # distribution coordinates
 ggplot(
   data = melt(data_2016[, .(Longitude = longitude_degs, 
@@ -158,7 +158,7 @@ ggplot(
   facet_grid(variable ~ .id) +
   theme_jjo()
 
-## ---- fig.cap="An attempt to display the `ind_3449`'s track", fig.width=8------
+## ---- fig.cap="An attempt to display the `ind_3449`'s track", fig.width=8-----
 # interactive map
 leaflet() %>%
   setView(lng = -122, lat = 50, zoom = 3) %>%
@@ -190,18 +190,18 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
     legend.key = element_rect(colour = "black")
   )
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # list structure
 str(data_nes$year_2018, max.level = 1, give.attr = F, no.list = T)
 
-## ---- eval=FALSE---------------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  # combine all individuals
 #  data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
 #  
 #  # display
 #  DT::datatable(data_2018[sample.int(.N,100),],options=list(scrollX=T))
 
-## ---- echo=FALSE, results='asis'-----------------------------------------------
+## ---- echo=FALSE, results='asis'----------------------------------------------
 # combine all individuals
 data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
 
@@ -212,7 +212,7 @@ cat("<table style='width: 50%'>",paste0("<caption>", "(#tab:myDThtmltools)", "Sa
 
 DT::datatable(data_2018[sample.int(.N,100),],options=list(scrollX=T))
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # raw_data
 data_2018[, .(
   nb_days_recorded = uniqueN(as.Date(date)),
@@ -225,7 +225,7 @@ data_2018[, .(
   sable(caption="Summary diving information relative to each 2018 individual", 
         digits=2)
 
-## ----fig.cap="Check for missing value in 2018-individuals", fig.width=9--------
+## ----fig.cap="Check for missing value in 2018-individuals", fig.width=9-------
 # build dataset to check for missing values
 dataPlot = melt(data_2018[, .(.id, is.na(.SD)), .SDcol = -c(".id",
                                                             "divenumber",
@@ -255,7 +255,7 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
     legend.key = element_rect(colour = "black")
   )
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # table with percent
 table_inter = data_2018[, lapply(.SD, function(x) {
   round(length(x[is.na(x)]) * 100 / length(x), 1)
@@ -302,7 +302,7 @@ ggplot(data_2018[dduration<3000,][][,state:="After"],
   labs(x="# of dives", y="Dive duration (s)")+
   theme_jjo()
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # filter data
 data_2018_filter = data_2018[dduration < 3000, ]
 
@@ -310,7 +310,7 @@ data_2018_filter = data_2018[dduration < 3000, ]
 data_2018[dduration>= 3000,.(nb_row_removed = .N),by=.id] %>%
   sable(caption = "# of rows removed by 2018-individuals")
 
-## ---- results='asis', cache=TRUE-----------------------------------------------
+## ---- results='asis', cache=TRUE----------------------------------------------
 names_display = names(data_2018_filter[, -c(
   ".id",
   "date",
@@ -408,7 +408,7 @@ for (i in names_display) {
   cat(' \n \n')
 }
 
-## ---- results='asis', cache=TRUE-----------------------------------------------
+## ---- results='asis', cache=TRUE----------------------------------------------
 for (i in names_display) {
   cat('####', i, '{-} \n')
   if (i == "maxdepth") {
@@ -515,7 +515,7 @@ ggcorrplot(
   colors =  c("#00AFBB", "#E7B800", "#FC4E07")
 )
 
-## ------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # flatten correlation matrix
 cor_result_2018 = flat_cor_mat(corr_2018, corr_p_2018)
 
@@ -523,7 +523,7 @@ cor_result_2018 = flat_cor_mat(corr_2018, corr_p_2018)
 cor_result_2018[cor>=.7,][order(-abs(cor))] %>%
   sable(caption="Pairwise correlation above 0.75 and associated p-values")
 
-## ---- fig.cap="Proportion dive types"------------------------------------------
+## ---- fig.cap="Proportion dive types"-----------------------------------------
 # dataset to plot proportional area plot
 data_2018_filter[, sum_id := .N, by = .(.id, day_departure)][, sum_id_days := .N, by = .(.id, day_departure, divetype)][, prop := sum_id_days /
                                                                                                                           sum_id]
@@ -541,7 +541,7 @@ ggplot(dataPlot, aes(
   theme(legend.position="bottom") +
   labs(x="# of days since departure", y="Proportion of dives", fill = "Dive types")
 
-## ---- fig.cap="Dive duration vs. Maximum Depth colored 2018-individuals"-------
+## ---- fig.cap="Dive duration vs. Maximum Depth colored 2018-individuals"------
 # plot
 ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = .id)) +
   geom_point(size = .5, alpha = .1, show.legend = FALSE) +
@@ -549,7 +549,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = .id)) +
   labs(x="Maximum depth (m)", y="Dive duration (s)")+
   theme_jjo()
 
-## ---- fig.cap="Dive duration vs. Maximum Depth colored by Dive Type"-----------
+## ---- fig.cap="Dive duration vs. Maximum Depth colored by Dive Type"----------
 # plot
 ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = divetype)) +
   geom_point(size = .5, alpha = .1) +
@@ -569,7 +569,7 @@ ggplot(data = data_2018_filter[,prop_track := (day_departure*100)/max(day_depart
   theme_jjo() +
   theme(legend.position="bottom")
 
-## ---- fig.cap="Drift rate vs. Bottom time", fig.height=7-----------------------
+## ---- fig.cap="Drift rate vs. Bottom time", fig.height=7----------------------
 # plot
 ggplot(data_2018_filter[,.(driftrate=median(driftrate,na.rm=T),
                            botttime=median(botttime,na.rm=T),
@@ -584,7 +584,7 @@ ggplot(data_2018_filter[,.(driftrate=median(driftrate,na.rm=T),
   labs(x = "Daily median Bottom time (s)", y = "Daily median drift rate (m.s-1)")+
   theme_jjo()
 
-## ---- fig.cap="Drift rate vs. Maximum depth", fig.height=7---------------------
+## ---- fig.cap="Drift rate vs. Maximum depth", fig.height=7--------------------
 # plot
 ggplot(data_2018_filter[,.(driftrate=median(driftrate,na.rm=T),
                            botttime=median(botttime,na.rm=T),
@@ -598,7 +598,7 @@ ggplot(data_2018_filter[,.(driftrate=median(driftrate,na.rm=T),
   labs(x = "Daily median Maximum depth (m)", y = "Daily median drift rate (m.s-1)")+
   theme_jjo()
 
-## ---- fig.cap="Drift rate vs. Dive duration", fig.height=7---------------------
+## ---- fig.cap="Drift rate vs. Dive duration", fig.height=7--------------------
 # plot
 ggplot(data_2018_filter[,.(driftrate=median(driftrate,na.rm=T),
                            botttime=median(botttime,na.rm=T),
