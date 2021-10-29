@@ -23,3 +23,7 @@ Imports:
     ggcorrplot,
     ggplot2
 Depends: R (>= 2.10)
+Suggests:
+    knitr
+VignetteBuilder:
+    knitr
