@@ -24,6 +24,8 @@ Imports:
     ggplot2
 Depends: R (>= 2.10)
 Suggests:
-    knitr
+    knitr,
+    rmarkdown
 VignetteBuilder:
-    knitr
+    knitr,
+    rmarkdown
