@@ -19,9 +19,12 @@ LazyData: true
 RoxygenNote: 7.1.2
 Imports: 
     stringr,
+    TwGeos,
     data.table,
     ggcorrplot,
     ggplot2
+Remotes: 
+    SLisovski/TwGeos
 Depends: R (>= 2.10)
 Suggests:
     knitr,
