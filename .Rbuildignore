@@ -4,4 +4,6 @@
 ^\.Rproj\.user$
 ^data-raw$
 ^.*\_cache$
-^vignettes$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
