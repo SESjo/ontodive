@@ -3,6 +3,7 @@
 export(build_github_vignette)
 export(flat_cor_mat)
 export(format_col)
+export(matlab_to_posix)
 importFrom(data.table,data.table)
 importFrom(ggcorrplot,cor_pmat)
 importFrom(stringr,str_replace_all)
