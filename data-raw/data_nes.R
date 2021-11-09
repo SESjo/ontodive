@@ -48,7 +48,9 @@ data_2016 <- lapply(data_2016, function(x) {
   # colnames
   setnames(x, col_2016, col_2016_reformat)
   # time
-  x[, date := as.POSIXct(paste(date, time), format = "%m/%d/%Y %H:%M:%S")]
+  x[, date := as.POSIXct(paste(date, time),
+                         format = "%m/%d/%Y %H:%M:%S",
+                         tz = "GMT")]
 })
 
 # list of files for 2018-individuals
@@ -84,7 +86,8 @@ data_2018 <- lapply(data_2018, function(x) {
   setnames(x, col_2018, col_2018_reformat)
   # time
   x[, date := as.POSIXct(paste(year, month, day, hour, min, sec),
-                         format = "%Y %m %d %H %M %S")]
+                         format = "%Y %m %d %H %M %S",
+                         tz = "GMT")]
   # convert divetype
   x[,divetype:=as.character(divetype)]
   x[divetype == "0", divetype := "0: transit"
