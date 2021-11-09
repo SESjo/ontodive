@@ -19,6 +19,16 @@ library(weanlingNES)
 ```
 
 ```{r}
-plot(c(1:10),c(1:10))
+library(fpc)
+set.seed(665544)
+n <- 600
+x <- cbind(runif(10, 0, 10)+rnorm(n, sd=0.2), runif(10, 0, 10)+rnorm(n,
+  sd=0.2))
+par(bg="grey40")
+ds <- dbscan(x, eps=0.2,MinPts = 10,
+            method = "raw")
+# run with showplot=1 to see how dbscan works.
+ds
+plot(ds, x)
 ```
 
