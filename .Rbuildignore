@@ -7,4 +7,5 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^inst\rmd$
+inst\rmd
+^inst/rmd$
