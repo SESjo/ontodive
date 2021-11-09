@@ -1,6 +1,6 @@
 #' Flatten correlation matrix
 #'
-#' Flatten correlation matrix into a 2D dataframe based on \code{\link{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}}
+#' Flatten correlation matrix into a 2D dataframe based on \code{\link[www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation]{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}}
 #'
 #' @param cormat A correlation matrix
 #' @param pmat A p-value matrix
