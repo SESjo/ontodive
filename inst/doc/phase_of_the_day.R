@@ -1,4 +1,4 @@
-## ----setup, include=FALSE-------------------------------------------------------------------------------------------------------------
+## ----setup, include=FALSE-------------------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -15,6 +15,7 @@ library(data.table)
 library(ggplot2)
 library(TwGeos)
 library(fpc)
+library(lubridate)
 
 # theme ggplot
 # based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
@@ -42,7 +43,7 @@ theme_jjo <- function(base_size = 12) {
     )
 }
 
-## -------------------------------------------------------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------
 # load library
 library(weanlingNES)
 
@@ -52,20 +53,23 @@ data("data_nes", package = "weanlingNES")
 # combine all individuals
 data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-indivuals' trip", fig.height=6----------------------------------
+# remove phase column for the purpose of this document
+data_2018[, phase := NULL]
+
+## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6----
 # let's first average `lightatsurf` by individuals, day since departure and hour
 dataPlot = data_2018[,.(lightatsurf = median(lightatsurf)), 
-                     by=.(.id,day_departure,hour)]
+                     by=.(.id,day_departure,date = as.Date(date),hour)]
 
 # display the result
 ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
   geom_tile() + 
   facet_grid(.id ~ .)+
   theme_jjo() +
-  labs(x = "# of days since departure", y = "Hour", fill = "Light level at surface") +
+  labs(x = "# of days since departure", y = "Hour", fill = "Light level at the surface") +
   theme(legend.position = c("bottom"))
 
-## ---- fig.cap="Distribution of `lightatsurf` with a threshold at 110."----------------------------------------------------------------
+## ---- fig.cap="Distribution of `lightatsurf` with a threshold at 110."----------------------------
 # display the result
 ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   geom_histogram(show.legend = FALSE) + 
@@ -73,7 +77,7 @@ ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   facet_wrap(.id ~ .)+
   theme_jjo()
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-indivuals' trip, with twilight detection point", fig.height=6----
+## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points", fig.height=6----
 # identification of sunset, sunrise pairs
 res_twi = data_2018[!is.na(lightatsurf),
                     findTwilights(.(Date = date, Light = lightatsurf), 
@@ -95,13 +99,13 @@ ggplot() +
   theme_jjo() +
   labs(x = "# of days since departure", 
        y = "Hour", 
-       fill = "Light level at surface", 
+       fill = "Light level at the surface", 
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## -------------------------------------------------------------------------------------------------------------------------------------
-# calculate the period of time between a sunrise and a sunset (two rows)
-res_twi[, period_time := c(0,as.numeric(diff(Twilight))), 
+## -------------------------------------------------------------------------------------------------
+# calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)
+res_twi[, period_time := c(0,as.numeric(diff(Twilight,units="hours"), units="mins")), 
         by= .(.id, as.Date(Twilight))]
 
 # keep only the longer period of time and the row just before
@@ -109,11 +113,11 @@ res_twi_inter = res_twi[c(
   # index of row with the longer period of time 
   res_twi[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1,
   # index of the row previous the one with the longer period of time  
-    res_twi[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1-1)
+  res_twi[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1-1)
   # reorder by date
   ][order(Twilight)]
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-indivuals' trip, with twilight detection point corrected", fig.height=6----
+## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6----
 # display the result
 ggplot() +
   geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -122,11 +126,11 @@ ggplot() +
   theme_jjo() +
   labs(x = "# of days since departure", 
        y = "Hour", 
-       fill = "Light level at surface", 
+       fill = "Light level at the surface", 
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ---- fig.cap="Visualization of light level at the surface for the first 100 days of `ind_2018074`, with twilight detection point corrected"----
+## ----zoom_2010074, fig.cap="Visualization of light level at the surface for the first 100 days of `ind_2018074`, with twilight detection points corrected"----
 # display the result
 ggplot() +
   geom_tile(data = dataPlot[.id == "ind_2018074" & day_departure < 100,], aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -134,11 +138,44 @@ ggplot() +
   theme_jjo() +
   labs(x = "# of days since departure", 
        y = "Hour", 
-       fill = "Light level at surface", 
+       fill = "Light level at the surface", 
        col = "Sunrise") +
   theme(legend.position = c("top"))
 
-## -------------------------------------------------------------------------------------------------------------------------------------
+## ---- fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"----
+# display
+ggplot(res_twi_inter, aes(x=period_time, fill=.id)) + 
+  geom_histogram() + 
+  facet_grid(.id~.) + 
+  theme_jjo()
+
+## -------------------------------------------------------------------------------------------------
+# remove outlier (but keep the 0)
+res_twi_out = res_twi[period_time==0 | period_time %between% c(300,900)]
+
+# keep only the longer period of time and the row just before
+res_twi_out_inter = res_twi_out[c(
+  # index of row with the longer period of time 
+  res_twi_out[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1,
+  # index of the row previous the one with the longer period of time  
+  res_twi_out[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1-1)
+  # reorder by date
+  ][order(Twilight)]
+
+## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6----
+# display the result
+ggplot() +
+  geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
+  geom_point(data = res_twi_out_inter, aes(x = day_departure, y = hour, col = Rise)) +
+  facet_grid(.id ~ .)+
+  theme_jjo() +
+  labs(x = "# of days since departure", 
+       y = "Hour", 
+       fill = "Light level at the surface", 
+       col = "Sunrise") +
+  theme(legend.position = c("bottom"))
+
+## -------------------------------------------------------------------------------------------------
 # # let's first split our dataset by individual
 # split_inter = split(data_2018, data_2018$.id)
 # 
@@ -218,4 +255,54 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
+
+## ---- fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6----
+# display the result
+ggplot() +
+  geom_tile(data = dataPlot[!is.na(lightatsurf),
+                            ][,cluster:=res_dbscan$cluster
+                              ][,cluster:=fifelse(cluster==1,1,2)], 
+            aes(x = day_departure, y = hour, fill = factor(cluster))) + 
+  theme_jjo() +
+  facet_grid(.id ~ .)+
+  labs(x = "# of days since departure", 
+       y = "Hour", 
+       fill = "cluster", 
+       col = "Sunrise") +
+  theme(legend.position = c("bottom"))
+
+## -------------------------------------------------------------------------------------------------
+# referential creation
+ref_phase_day = dataPlot[!is.na(lightatsurf),
+         ][, cluster := res_dbscan$cluster
+           ][, cluster := fifelse(cluster == 1, "night", "day")][]
+
+# reshape
+ref_phase_day = melt(ref_phase_day, 
+                     id.vars = c(".id","date","hour"), 
+                     measure.vars = "cluster", 
+                     value.name = "phase")
+
+# set date format
+ref_phase_day[, `:=` (date = date + hours(hour),
+                      hour = NULL,
+                      variable = NULL)]
+
+# rolling join
+data_2018 = ref_phase_day[data_2018, roll=T, on = .(.id, date)]
+
+## ----eval=FALSE-----------------------------------------------------------------------------------
+#  # identification of transition
+#  ref_phase_day[,transition := c(1,abs(diff(as.numeric(as.factor(phase)))))]
+#  
+#  # keep only the first date and the last date (i.e transition) by date and individual
+#  ref_phase_day = ref_phase_day[transition==1, .SD[c(1,.N)], by=.(.id,date)]
+#  
+#  # convert date to take into account hour
+#  ref_phase_day[, date:=date+hours(hour)]
+#  
+#  # add sunset
+#  test = rbind(ref_phase_day[,.SD,.SDcols = -c("transition")][, date:= date+minutes(30)],
+#               ref_phase_day[,.SD,.SDcols = -c("transition")][phase=="night",][, date := date - minutes(30)][,phase:="sunset"],
+#               ref_phase_day[,.SD,.SDcols = -c("transition")][phase=="day",][, date := date - minutes(30)][,phase:="sunrise"])
 
