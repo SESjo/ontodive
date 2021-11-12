@@ -5,6 +5,7 @@
 # import library
 library(data.table)
 library(stringr)
+library(lubridate)
 
 # set the maximum number of threads
 setDTthreads(parallel::detectCores())
@@ -36,7 +37,7 @@ col_2016 <- Reduce(intersect, lapply(data_2016, colnames))
 
 # keep only those common columns names
 data_2016 <- lapply(data_2016, function(x) {
-  x[, ..col_2016,]
+  x[, ..col_2016, ]
 })
 
 # test if columns name are all the same across data sets
@@ -73,7 +74,7 @@ col_2018 <- Reduce(intersect, lapply(data_2018, colnames))
 
 # keep only those common columns names
 data_2018 <- lapply(data_2018, function(x) {
-  x[, ..col_2018,]
+  x[, ..col_2018, ]
 })
 
 # test if columns name are all the same across data sets
@@ -89,23 +90,29 @@ data_2018 <- lapply(data_2018, function(x) {
                          format = "%Y %m %d %H %M %S",
                          tz = "GMT")]
   # convert divetype
-  x[,divetype:=as.character(divetype)]
+  x[, divetype := as.character(divetype)]
   x[divetype == "0", divetype := "0: transit"
-  ][divetype == "1", divetype := "1: foraging"
-  ][divetype == "2", divetype := "2: drift"
-  ][divetype == "3", divetype := "3: benthic"]
+    ][divetype == "1", divetype := "1: foraging"
+      ][divetype == "2", divetype := "2: drift"
+        ][divetype == "3", divetype := "3: benthic"]
 
   # number of days since departure
   x[, day_departure := as.numeric(ceiling(difftime(date,
-                                        first(date),
-                                        units = "days")))]
-
+                                                   # to make sure xxxx-xx-xx 00:00:00 is the same day as xxxx-xx-xx 00:00:01
+                                                   first(
+                                                     as.Date(date) - seconds(1)
+                                                   ),
+                                                   units = "days")))]
 })
 
 # add names
 names(data_2018) <- name_2018
 
-
+# add phase
+data_2018 <-
+  split(calc_phase_day(rbindlist(
+    data_2018, use.name = TRUE, idcol = TRUE
+  )), by = ".id")
 
 # merge data sets
 data_nes <- list("year_2016" = data_2016,
