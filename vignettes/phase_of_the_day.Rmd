@@ -17,7 +17,7 @@ output:
       collapsed: yes
       smooth_scroll: no
 vignette: >
-  %\VignetteIndexEntry{Data Exploration}
+  %\VignetteIndexEntry{Detect phases of the day}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -39,6 +39,7 @@ library(data.table)
 library(ggplot2)
 library(TwGeos)
 library(fpc)
+library(lubridate)
 
 # theme ggplot
 # based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
@@ -67,9 +68,9 @@ theme_jjo <- function(base_size = 12) {
 }
 ```
 
-The idea is to be able to find something similar to what was done for the individual `2004023`, that is to say find the different phase of the day : day, night, sunrise, sunset. For that we'll try the function previously used in `2004023` and try to apply the same function to 2018-individual. Then we'll try other methods. Our goal is to be able to plot this kind of figure:
+We'll like to find something similar to what was done for the individual `2004023`, that is to say find the different phase of the day: day and night, by identifying the sunrise and the sunset. For that we'll try the function previously used in `2004023` and apply it to 2018 individuals. Then we'll try other methods and decide which method fit the most our needs. Our ultimate goal is to be able to plot this kind of figure:
 
-![test](./img/2004023_DaylengthWithSunriseSunset.png)
+![](./img/2004023_DaylengthWithSunriseSunset.png)
 
 # Display the data of 2018-individuals
 
@@ -84,21 +85,28 @@ data("data_nes", package = "weanlingNES")
 
 # combine all individuals
 data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
+
+# remove phase column for the purpose of this document
+data_2018[, phase := NULL]
 ```
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-indivuals' trip", fig.height=6}
+To visualize the data, we summarize each point on the plot as the median of the light level during one hour of one day.
+
+```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6}
 # let's first average `lightatsurf` by individuals, day since departure and hour
 dataPlot = data_2018[,.(lightatsurf = median(lightatsurf)), 
-                     by=.(.id,day_departure,hour)]
+                     by=.(.id,day_departure,date = as.Date(date),hour)]
 
 # display the result
 ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
   geom_tile() + 
   facet_grid(.id ~ .)+
   theme_jjo() +
-  labs(x = "# of days since departure", y = "Hour", fill = "Light level at surface") +
+  labs(x = "# of days since departure", y = "Hour", fill = "Light level at the surface") +
   theme(legend.position = c("bottom"))
 ```
+> Why is there so much data with missing value during day time?
+
 Well, the good news is that we can clearly see the same pattern we saw in `2004023`. Let's look at the distribution
 
 ```{r, fig.cap="Distribution of `lightatsurf` with a threshold at 110."}
@@ -109,14 +117,14 @@ ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   facet_wrap(.id ~ .)+
   theme_jjo()
 ```
-The distributions show a bimodal distribution, we highlighted the 110-threshold, since it is this threshold that has been used for the individual `2004023`. In our cases, 110 seems to be a good value.
+There is a bimodal distribution for each individual that seems to be quite well separated by a threshold at `110`, which correspond to the threshold that has been used for the individual `2004023`. In 2018 individuals, 110 seems also to be an appropriate value.
 
 
-# Let's give a try to the `findTwilights` function
+# Let's give a try to the `findTwilights` function {.tabset}
 
-Let's first reshape data to be used with `findTwilights` function.
+Let's first reshape our data to complied with the `findTwilights` function.
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-indivuals' trip, with twilight detection point", fig.height=6}
+```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points", fig.height=6}
 # identification of sunset, sunrise pairs
 res_twi = data_2018[!is.na(lightatsurf),
                     findTwilights(.(Date = date, Light = lightatsurf), 
@@ -138,16 +146,16 @@ ggplot() +
   theme_jjo() +
   labs(x = "# of days since departure", 
        y = "Hour", 
-       fill = "Light level at surface", 
+       fill = "Light level at the surface", 
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 ```
 
-Not bad actually! But there are many outliers that need to be addressed. Let try to keep only the couple `Rise` (`TRUE`, `FALSE`) that have the longer period of time of the day.
+Not bad actually! But there are many outliers that need to be addressed. Let's try to only keep the pair `Rise` (`TRUE`, `FALSE`) that has the longer period of time of the day.
 
 ```{r}
-# calculate the period of time between a sunrise and a sunset (two rows)
-res_twi[, period_time := c(0,as.numeric(diff(Twilight))), 
+# calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)
+res_twi[, period_time := c(0,as.numeric(diff(Twilight,units="hours"), units="mins")), 
         by= .(.id, as.Date(Twilight))]
 
 # keep only the longer period of time and the row just before
@@ -155,12 +163,12 @@ res_twi_inter = res_twi[c(
   # index of row with the longer period of time 
   res_twi[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1,
   # index of the row previous the one with the longer period of time  
-    res_twi[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1-1)
+  res_twi[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1-1)
   # reorder by date
   ][order(Twilight)]
 ```
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-indivuals' trip, with twilight detection point corrected", fig.height=6}
+```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6}
 # display the result
 ggplot() +
   geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -169,14 +177,14 @@ ggplot() +
   theme_jjo() +
   labs(x = "# of days since departure", 
        y = "Hour", 
-       fill = "Light level at surface", 
+       fill = "Light level at the surface", 
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 ```
 
-That's definitely better, but there are few remaining outliers (especially for the individual `ind_2018074`). Let's zoom in the first days since departure for this individual.
+That's definitely better, but there are few remaining outliers (especially for the individual `ind_2018074`). Let's zoom in the first days since departure for this individual, to see what's going on.
 
-```{r, fig.cap="Visualization of light level at the surface for the first 100 days of `ind_2018074`, with twilight detection point corrected"}
+```{r zoom_2010074, fig.cap="Visualization of light level at the surface for the first 100 days of `ind_2018074`, with twilight detection points corrected"}
 # display the result
 ggplot() +
   geom_tile(data = dataPlot[.id == "ind_2018074" & day_departure < 100,], aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -184,12 +192,55 @@ ggplot() +
   theme_jjo() +
   labs(x = "# of days since departure", 
        y = "Hour", 
-       fill = "Light level at surface", 
+       fill = "Light level at the surface", 
        col = "Sunrise") +
   theme(legend.position = c("top"))
 ```
+As we can see, some low light levels are encountered in the middle of daytime that mislead the `findTwilight` function in finding the sunrise or the sunset. Two ways could be explored to deal with these outliers.
 
-As we can see, some low light level are encountered in the middle of daytime that mislead the `findTwilight` function. 
+## Add condition on the distribution of `period_time`
+
+Since some of the outliers observed Figure \@ref(fig:zoom_2010074) are during daytime, it means that `period_time` should be longer than usual for these days. Considering this, we could impose condition on this variable to make sure it is neither too long either too short.
+
+```{r, fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"}
+# display
+ggplot(res_twi_inter, aes(x=period_time, fill=.id)) + 
+  geom_histogram() + 
+  facet_grid(.id~.) + 
+  theme_jjo()
+```
+Considering this graph, let's try to keep rows where `period_time==0` or `300<period_time<900`
+
+```{r}
+# remove outlier (but keep the 0)
+res_twi_out = res_twi[period_time==0 | period_time %between% c(300,900)]
+
+# keep only the longer period of time and the row just before
+res_twi_out_inter = res_twi_out[c(
+  # index of row with the longer period of time 
+  res_twi_out[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1,
+  # index of the row previous the one with the longer period of time  
+  res_twi_out[, .I[period_time==max(period_time)], by=.(.id, as.Date(Twilight))]$V1-1)
+  # reorder by date
+  ][order(Twilight)]
+```
+
+```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6}
+# display the result
+ggplot() +
+  geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
+  geom_point(data = res_twi_out_inter, aes(x = day_departure, y = hour, col = Rise)) +
+  facet_grid(.id ~ .)+
+  theme_jjo() +
+  labs(x = "# of days since departure", 
+       y = "Hour", 
+       fill = "Light level at the surface", 
+       col = "Sunrise") +
+  theme(legend.position = c("bottom"))
+```
+> This does not work! If several sunset and sunrise are identified within a day, the current algorithm will only calculates `period_time` between two successive rows, whereas we should test every possible combination.
+
+## Smooth light level signal
 
 Since those points are due to outliers during the day, we could try to smooth the light level signal and run the `findTwilight` function on it.
 
@@ -214,8 +265,7 @@ Since those points are due to outliers during the day, we could try to smooth th
 # data_2018 = rbindlist(split_inter)
 ```
 
-> So far, I have not been successful using this method cause it seems to be quiet tricky to smooth a signal with a lot of missing values.
-
+> So far, I have not been successful using this method cause it seems quite tricky to smooth a signal with a lot of missing values.
 
 
 # Let's try a clustering method
@@ -301,8 +351,71 @@ ggplot() +
 
 ```
 
-Here, the algorithm find several clusters, but it is the cluster `1` that has our attention. It seems better defined than the previous figure \@ref{fig:dbscan_first_test}, but there are still few rows (for `ind_2018074`) that have been mislabelled.
+Here, the algorithm find several clusters, but it is the cluster `1` that has our attention. It seems better defined than the previous figure \@ref(fig:dbscan_first_test), but there are still few rows (for `ind_2018074`) that have been mislabelled.
+
+```{r, fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6}
+# display the result
+ggplot() +
+  geom_tile(data = dataPlot[!is.na(lightatsurf),
+                            ][,cluster:=res_dbscan$cluster
+                              ][,cluster:=fifelse(cluster==1,1,2)], 
+            aes(x = day_departure, y = hour, fill = factor(cluster))) + 
+  theme_jjo() +
+  facet_grid(.id ~ .)+
+  labs(x = "# of days since departure", 
+       y = "Hour", 
+       fill = "cluster", 
+       col = "Sunrise") +
+  theme(legend.position = c("bottom"))
+```
 
 # Conclusion
 
-For now we will used the result from the `DBSCAN` algorithm, since results seem to be better!is
+For now we will used the result from the `DBSCAN` algorithm, since results seem to be better! 
+
+```{r}
+# referential creation
+ref_phase_day = dataPlot[!is.na(lightatsurf),
+         ][, cluster := res_dbscan$cluster
+           ][, cluster := fifelse(cluster == 1, "night", "day")][]
+
+# reshape
+ref_phase_day = melt(ref_phase_day, 
+                     id.vars = c(".id","date","hour"), 
+                     measure.vars = "cluster", 
+                     value.name = "phase")
+
+# set date format
+ref_phase_day[, `:=` (date = date + hours(hour),
+                      hour = NULL,
+                      variable = NULL)]
+
+# rolling join
+data_2018 = ref_phase_day[data_2018, roll=T, on = .(.id, date)]
+```
+
+
+# WIP
+
+We could also try to define two other phases of the day:
+
+* sunset: plus or minus 30 min from the transition night to day
+* sunrise: plus or minus 30 min from the transition day to night
+
+```{r eval=FALSE}
+# identification of transition
+ref_phase_day[,transition := c(1,abs(diff(as.numeric(as.factor(phase)))))]
+
+# keep only the first date and the last date (i.e transition) by date and individual
+ref_phase_day = ref_phase_day[transition==1, .SD[c(1,.N)], by=.(.id,date)]
+
+# convert date to take into account hour
+ref_phase_day[, date:=date+hours(hour)]
+
+# add sunset
+test = rbind(ref_phase_day[,.SD,.SDcols = -c("transition")][, date:= date+minutes(30)],
+             ref_phase_day[,.SD,.SDcols = -c("transition")][phase=="night",][, date := date - minutes(30)][,phase:="sunset"],
+             ref_phase_day[,.SD,.SDcols = -c("transition")][phase=="day",][, date := date - minutes(30)][,phase:="sunrise"])
+```
+
+> Problem, when there are no day times found during several days, there all marked as night!
