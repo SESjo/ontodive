@@ -8554,3 +8554,6 @@ a.list-group-item-danger.active:focus {
     margin: auto;
 }
 
+.leaflet-control-layers-overlays {
+  text-align: left;
+}
