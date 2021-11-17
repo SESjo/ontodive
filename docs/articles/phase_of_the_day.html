@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">weanlingNES</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -75,13 +71,13 @@
 
       
 
-      </header><script src="phase_of_the_day_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Detect phases of the day</h1>
-                        <h4 class="author">Joffrey JOUMAA</h4>
+                        <h4 data-toc-skip class="author">Joffrey JOUMAA</h4>
             
-            <h4 class="date">11 novembre 2021</h4>
+            <h4 data-toc-skip class="date">13 novembre 2021</h4>
       
       
       <div class="hidden name"><code>phase_of_the_day.Rmd</code></div>
@@ -91,17 +87,17 @@
     
     
 <p>We’ll like to find something similar to what was done for the individual <code>2004023</code>, that is to say find the different phase of the day: day and night, by identifying the sunrise and the sunset. For that we’ll try the function previously used in <code>2004023</code> and apply it to 2018 individuals. Then we’ll try other methods and decide which method fit the most our needs. Our ultimate goal is to be able to plot this kind of figure:</p>
-<p><img src="../../../JOFFREY_Weanling%20Diving/weanlingNES/vignettes/img/2004023_DaylengthWithSunriseSunset.png"></p>
-<div id="display-the-data-of-2018-individuals" class="section level1">
-<h1 class="hasAnchor">
-<a href="#display-the-data-of-2018-individuals" class="anchor"></a>Display the data of 2018-individuals</h1>
+<p><img src="../../../JOFFREY_Weanling%20Diving/weanlingNES/articles/img/2004023_DaylengthWithSunriseSunset.png"></p>
+<div class="section level1">
+<h1 id="display-the-data-of-2018-individuals">Display the data of 2018-individuals<a class="anchor" aria-label="anchor" href="#display-the-data-of-2018-individuals"></a>
+</h1>
 <p>Let’s first load our package and our data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load library</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">weanlingNES</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">weanlingNES</span><span class="op">)</span>
 
 <span class="co"># load data</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"data_nes"</span>, package <span class="op">=</span> <span class="st">"weanlingNES"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"data_nes"</span>, package <span class="op">=</span> <span class="st">"weanlingNES"</span><span class="op">)</span>
 
 <span class="co"># combine all individuals</span>
 <span class="va">data_2018</span> <span class="op">=</span> <span class="fu">rbindlist</span><span class="op">(</span><span class="va">data_nes</span><span class="op">$</span><span class="va">year_2018</span>, use.name <span class="op">=</span> <span class="cn">TRUE</span>, idcol <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -111,8 +107,8 @@
 <p>To visualize the data, we summarize each point on the plot as the median of the light level during one hour of one day.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># let's first average `lightatsurf` by individuals, day since departure and hour</span>
-<span class="va">dataPlot</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>lightatsurf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span>, 
-                     by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>,<span class="va">day_departure</span>,date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,<span class="va">hour</span><span class="op">)</span><span class="op">]</span>
+<span class="va">dataPlot</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>lightatsurf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span>, 
+                     by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>,<span class="va">day_departure</span>,date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,<span class="va">hour</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -120,7 +116,7 @@
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, y <span class="op">=</span> <span class="st">"Hour"</span>, fill <span class="op">=</span> <span class="st">"Light level at the surface"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-2-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip
@@ -144,20 +140,20 @@ Distribution of <code>lightatsurf</code> with a threshold at 110.
 </div>
 <p>There is a bimodal distribution for each individual that seems to be quite well separated by a threshold at <code>110</code>, which correspond to the threshold that has been used for the individual <code>2004023</code>. In 2018 individuals, 110 seems also to be an appropriate value.</p>
 </div>
-<div id="lets-give-a-try-to-the-findtwilights-function" class="section level1 tabset">
-<h1 class="hasAnchor">
-<a href="#lets-give-a-try-to-the-findtwilights-function" class="anchor"></a>Let’s give a try to the <code>findTwilights</code> function</h1>
+<div class="section level1 tabset">
+<h1 class="tabset" id="lets-give-a-try-to-the-findtwilights-function">Let’s give a try to the <code>findTwilights</code> function<a class="anchor" aria-label="anchor" href="#lets-give-a-try-to-the-findtwilights-function"></a>
+</h1>
 <p>Let’s first reshape our data to complied with the <code>findTwilights</code> function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># identification of sunset, sunrise pairs</span>
-<span class="va">res_twi</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
+<span class="va">res_twi</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                     <span class="fu">findTwilights</span><span class="op">(</span><span class="fu">.</span><span class="op">(</span>Date <span class="op">=</span> <span class="va">date</span>, Light <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span>, 
                                   threshold <span class="op">=</span> <span class="fl">110</span>, include<span class="op">=</span><span class="va">date</span><span class="op">)</span>, by<span class="op">=</span><span class="va">.id</span><span class="op">]</span>
 
 <span class="co"># add `day_departure` to res_twi using a rolling join </span>
 <span class="co"># https://www.r-bloggers.com/2016/06/understanding-data-table-rolling-joins/</span>
 <span class="va">res_twi</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, Twilight <span class="op">=</span> <span class="va">date</span>, <span class="va">day_departure</span><span class="op">)</span>
-                    <span class="op">]</span><span class="op">[</span><span class="va">res_twi</span>, roll<span class="op">=</span><span class="cn">T</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">".id"</span>,<span class="st">"Twilight"</span><span class="op">)</span><span class="op">]</span>
+                    <span class="op">]</span><span class="op">[</span><span class="va">res_twi</span>, roll<span class="op">=</span><span class="cn">T</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".id"</span>,<span class="st">"Twilight"</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># hour column</span>
 <span class="va">res_twi</span><span class="op">[</span>, <span class="va">hour</span> <span class="op">:=</span> <span class="fu">hour</span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span>
@@ -172,7 +168,7 @@ Distribution of <code>lightatsurf</code> with a threshold at 110.
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-4-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip, with twilight detection points
@@ -181,17 +177,17 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 <p>Not bad actually! But there are many outliers that need to be addressed. Let’s try to only keep the pair <code>Rise</code> (<code>TRUE</code>, <code>FALSE</code>) that has the longer period of time of the day.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)</span>
-<span class="va">res_twi</span><span class="op">[</span>, <span class="va">period_time</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="va">Twilight</span>,units<span class="op">=</span><span class="st">"hours"</span><span class="op">)</span>, units<span class="op">=</span><span class="st">"mins"</span><span class="op">)</span><span class="op">)</span>, 
-        by<span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="va">res_twi</span><span class="op">[</span>, <span class="va">period_time</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">Twilight</span>,units<span class="op">=</span><span class="st">"hours"</span><span class="op">)</span>, units<span class="op">=</span><span class="st">"mins"</span><span class="op">)</span><span class="op">)</span>, 
+        by<span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># keep only the longer period of time and the row just before</span>
-<span class="va">res_twi_inter</span> <span class="op">=</span> <span class="va">res_twi</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
+<span class="va">res_twi_inter</span> <span class="op">=</span> <span class="va">res_twi</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
   <span class="co"># index of row with the longer period of time </span>
-  <span class="va">res_twi</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span>,
+  <span class="va">res_twi</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span>,
   <span class="co"># index of the row previous the one with the longer period of time  </span>
-  <span class="va">res_twi</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>
+  <span class="va">res_twi</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>
   <span class="co"># reorder by date</span>
-  <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+  <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -203,7 +199,7 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-6-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip, with twilight detection points corrected
@@ -220,16 +216,15 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"top"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"top"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/zoom_2010074-1.png" alt="Visualization of light level at the surface for the first 100 days of `ind_2018074`, with twilight detection points corrected" width="100%"><p class="caption">
 Visualization of light level at the surface for the first 100 days of <code>ind_2018074</code>, with twilight detection points corrected
 </p>
 </div>
 <p>As we can see, some low light levels are encountered in the middle of daytime that mislead the <code>findTwilight</code> function in finding the sunrise or the sunset. Two ways could be explored to deal with these outliers.</p>
-<div id="add-condition-on-the-distribution-of-period_time" class="section level2">
-<h2 class="hasAnchor">
-<a href="#add-condition-on-the-distribution-of-period_time" class="anchor"></a>Add condition on the distribution of <code>period_time</code>
+<div class="section level2">
+<h2 id="add-condition-on-the-distribution-of-period_time">Add condition on the distribution of <code>period_time</code><a class="anchor" aria-label="anchor" href="#add-condition-on-the-distribution-of-period_time"></a>
 </h2>
 <p>Since some of the outliers observed Figure @ref(fig:zoom_2010074) are during daytime, it means that <code>period_time</code> should be longer than usual for these days. Considering this, we could impose condition on this variable to make sure it is neither too long either too short.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -246,16 +241,16 @@ Distributions of the time difference between two rows identified as sunrise and 
 <p>Considering this graph, let’s try to keep rows where <code>period_time==0</code> or <code>300&lt;period_time&lt;900</code></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove outlier (but keep the 0)</span>
-<span class="va">res_twi_out</span> <span class="op">=</span> <span class="va">res_twi</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fl">0</span> <span class="op">|</span> <span class="va">period_time</span> <span class="op">%between%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">300</span>,<span class="fl">900</span><span class="op">)</span><span class="op">]</span>
+<span class="va">res_twi_out</span> <span class="op">=</span> <span class="va">res_twi</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fl">0</span> <span class="op">|</span> <span class="va">period_time</span> <span class="op">%between%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">300</span>,<span class="fl">900</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># keep only the longer period of time and the row just before</span>
-<span class="va">res_twi_out_inter</span> <span class="op">=</span> <span class="va">res_twi_out</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
+<span class="va">res_twi_out_inter</span> <span class="op">=</span> <span class="va">res_twi_out</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>
   <span class="co"># index of row with the longer period of time </span>
-  <span class="va">res_twi_out</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span>,
+  <span class="va">res_twi_out</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span>,
   <span class="co"># index of the row previous the one with the longer period of time  </span>
-  <span class="va">res_twi_out</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>
+  <span class="va">res_twi_out</span><span class="op">[</span>, <span class="va">.I</span><span class="op">[</span><span class="va">period_time</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">period_time</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">$</span><span class="va">V1</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>
   <span class="co"># reorder by date</span>
-  <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+  <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -267,7 +262,7 @@ Distributions of the time difference between two rows identified as sunrise and 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-9-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip, with twilight detection points corrected
@@ -277,9 +272,9 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 <p>This does not work! If several sunset and sunrise are identified within a day, the current algorithm will only calculates <code>period_time</code> between two successive rows, whereas we should test every possible combination.</p>
 </blockquote>
 </div>
-<div id="smooth-light-level-signal" class="section level2">
-<h2 class="hasAnchor">
-<a href="#smooth-light-level-signal" class="anchor"></a>Smooth light level signal</h2>
+<div class="section level2">
+<h2 id="smooth-light-level-signal">Smooth light level signal<a class="anchor" aria-label="anchor" href="#smooth-light-level-signal"></a>
+</h2>
 <p>Since those points are due to outliers during the day, we could try to smooth the light level signal and run the <code>findTwilight</code> function on it.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># # let's first split our dataset by individual</span>
@@ -305,33 +300,33 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 </blockquote>
 </div>
 </div>
-<div id="lets-try-a-clustering-method" class="section level1">
-<h1 class="hasAnchor">
-<a href="#lets-try-a-clustering-method" class="anchor"></a>Let’s try a clustering method</h1>
+<div class="section level1">
+<h1 id="lets-try-a-clustering-method">Let’s try a clustering method<a class="anchor" aria-label="anchor" href="#lets-try-a-clustering-method"></a>
+</h1>
 <p>Since we can visually see where is the day and night time, we should try clustering method.</p>
-<div id="k-means-hierarchical-clustering" class="section level2">
-<h2 class="hasAnchor">
-<a href="#k-means-hierarchical-clustering" class="anchor"></a>K-MEANS + Hierarchical clustering</h2>
-<p>Here we test a package well-known to perform clustering <code>FactoMineR</code>. The idea behind its main method is to performed a hierarchical clustering where the initial centroids are positioned based on a pre-performed k-means using the first component of a PCA. For more information feel free to have a look at their <a href="http://factominer.free.fr/factomethods/hierarchical-clustering-on-principal-components.html">website</a>.</p>
+<div class="section level2">
+<h2 id="k-means-hierarchical-clustering">K-MEANS + Hierarchical clustering<a class="anchor" aria-label="anchor" href="#k-means-hierarchical-clustering"></a>
+</h2>
+<p>Here we test a package well-known to perform clustering <code>FactoMineR</code>. The idea behind its main method is to performed a hierarchical clustering where the initial centroids are positioned based on a pre-performed k-means using the first component of a PCA. For more information feel free to have a look at their <a href="http://factominer.free.fr/factomethods/hierarchical-clustering-on-principal-components.html" class="external-link">website</a>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># remove nan value</span>
-<span class="va">df_clust</span> <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,<span class="fu">.</span><span class="op">(</span><span class="va">hour</span>,<span class="va">day_departure</span>,<span class="va">lightatsurf</span><span class="op">)</span><span class="op">]</span>
+<span class="va">df_clust</span> <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,<span class="fu">.</span><span class="op">(</span><span class="va">hour</span>,<span class="va">day_departure</span>,<span class="va">lightatsurf</span><span class="op">)</span><span class="op">]</span>
                     
 <span class="co"># HCPC with onlys 2 groups</span>
-<span class="va">res_hcpc</span> <span class="op">=</span> <span class="fu">FactoMineR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FactoMineR/man/HCPC.html">HCPC</a></span><span class="op">(</span><span class="va">df_clust</span>, nb.clust <span class="op">=</span> <span class="fl">2</span>, graph <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">res_hcpc</span> <span class="op">=</span> <span class="fu">FactoMineR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FactoMineR/man/HCPC.html" class="external-link">HCPC</a></span><span class="op">(</span><span class="va">df_clust</span>, nb.clust <span class="op">=</span> <span class="fl">2</span>, graph <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
+  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_hcpc</span><span class="op">$</span><span class="va">data.clust</span><span class="op">$</span><span class="va">clust</span><span class="op">]</span>, 
-            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"cluster"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-11-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)" width="100%"><p class="caption">
 Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)
@@ -339,11 +334,11 @@ Visualization of the moment where the light was measured at the surface colored 
 </div>
 <p>Well, clearly this algorithm is not suited to deal with this kind of patterns!</p>
 </div>
-<div id="dbscan" class="section level2">
-<h2 class="hasAnchor">
-<a href="#dbscan" class="anchor"></a><a href="https://en.wikipedia.org/wiki/DBSCAN">DBSCAN</a>
+<div class="section level2">
+<h2 id="dbscan">
+<a href="https://en.wikipedia.org/wiki/DBSCAN" class="external-link">DBSCAN</a><a class="anchor" aria-label="anchor" href="#dbscan"></a>
 </h2>
-<p>DBSCAN seems to be an <a href="http://www.sthda.com/english/wiki/wiki.php?id_contents=7940">elegant</a> algorithm to deal with outliers and non-convex cluster. The only <strong>issue</strong> is that we have to choose the right value for its two parameters:</p>
+<p>DBSCAN seems to be an <a href="http://www.sthda.com/english/wiki/wiki.php?id_contents=7940" class="external-link">elegant</a> algorithm to deal with outliers and non-convex cluster. The only <strong>issue</strong> is that we have to choose the right value for its two parameters:</p>
 <ul>
 <li>Reachability distance</li>
 <li>Reachability minimum number of points</li>
@@ -353,21 +348,21 @@ Visualization of the moment where the light was measured at the surface colored 
 <code class="sourceCode R"><span class="co"># determine the right values by testing several of them...</span>
 <span class="va">res_dbscan</span> <span class="op">=</span> <span class="fu">dbscan</span><span class="op">(</span><span class="va">df_clust</span>,
             eps <span class="op">=</span> <span class="fl">45</span>,
-            MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.06</span>,
+            MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.06</span>,
             method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
+  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">]</span>,
-            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>,
        y <span class="op">=</span> <span class="st">"Hour"</span>,
        fill <span class="op">=</span> <span class="st">"cluster"</span>,
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/dbscan_first_test-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=45`, `MinPts=nrow(dataPlot)*0.06`)" width="100%"><p class="caption">
 Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, <code>eps=45</code>, <code>MinPts=nrow(dataPlot)*0.06</code>)
@@ -378,21 +373,21 @@ Visualization of the moment where the light was measured at the surface colored 
 <code class="sourceCode R"><span class="co"># let's try other parameters</span>
 <span class="va">res_dbscan</span> <span class="op">=</span> <span class="fu">dbscan</span><span class="op">(</span><span class="va">df_clust</span>, 
                   eps <span class="op">=</span> <span class="fl">8</span>, 
-                  MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span>, 
+                  MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span>, 
                   method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
+  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">]</span>, 
-            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"cluster"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-12-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)" width="100%"><p class="caption">
 Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, <code>eps=8</code>, <code>MinPts=nrow(dataPlot)*0.0001</code>)
@@ -402,17 +397,17 @@ Visualization of the moment where the light was measured at the surface colored 
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
 <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
+  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span>
                               <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="fu">fifelse</span><span class="op">(</span><span class="va">cluster</span><span class="op">==</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">]</span>, 
-            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"cluster"</span>, 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/unnamed-chunk-13-1.png" alt="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`" width="100%"><p class="caption">
 Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the others</code>
@@ -420,19 +415,19 @@ Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the
 </div>
 </div>
 </div>
-<div id="conclusion" class="section level1">
-<h1 class="hasAnchor">
-<a href="#conclusion" class="anchor"></a>Conclusion</h1>
+<div class="section level1">
+<h1 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h1>
 <p>For now we will used the result from the <code>DBSCAN</code> algorithm, since results seem to be better!</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># referential creation</span>
-<span class="va">ref_phase_day</span> <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
+<span class="va">ref_phase_day</span> <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
          <span class="op">]</span><span class="op">[</span>, <span class="va">cluster</span> <span class="op">:=</span> <span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span>
            <span class="op">]</span><span class="op">[</span>, <span class="va">cluster</span> <span class="op">:=</span> <span class="fu">fifelse</span><span class="op">(</span><span class="va">cluster</span> <span class="op">==</span> <span class="fl">1</span>, <span class="st">"night"</span>, <span class="st">"day"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="op">]</span>
 
 <span class="co"># reshape</span>
 <span class="va">ref_phase_day</span> <span class="op">=</span> <span class="fu">melt</span><span class="op">(</span><span class="va">ref_phase_day</span>, 
-                     id.vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">".id"</span>,<span class="st">"date"</span>,<span class="st">"hour"</span><span class="op">)</span>, 
+                     id.vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".id"</span>,<span class="st">"date"</span>,<span class="st">"hour"</span><span class="op">)</span>, 
                      measure.vars <span class="op">=</span> <span class="st">"cluster"</span>, 
                      value.name <span class="op">=</span> <span class="st">"phase"</span><span class="op">)</span>
 
@@ -444,9 +439,9 @@ Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the
 <span class="co"># rolling join</span>
 <span class="va">data_2018</span> <span class="op">=</span> <span class="va">ref_phase_day</span><span class="op">[</span><span class="va">data_2018</span>, roll<span class="op">=</span><span class="cn">T</span>, on <span class="op">=</span> <span class="fu">.</span><span class="op">(</span><span class="va">.id</span>, <span class="va">date</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 </div>
-<div id="wip" class="section level1">
-<h1 class="hasAnchor">
-<a href="#wip" class="anchor"></a>WIP</h1>
+<div class="section level1">
+<h1 id="wip">WIP<a class="anchor" aria-label="anchor" href="#wip"></a>
+</h1>
 <p>We could also try to define two other phases of the day:</p>
 <ul>
 <li>sunset: plus or minus 30 min from the transition night to day</li>
@@ -454,18 +449,18 @@ Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the
 </ul>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># identification of transition</span>
-<span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">transition</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">phase</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
+<span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">transition</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">phase</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># keep only the first date and the last date (i.e transition) by date and individual</span>
-<span class="va">ref_phase_day</span> <span class="op">=</span> <span class="va">ref_phase_day</span><span class="op">[</span><span class="va">transition</span><span class="op">==</span><span class="fl">1</span>, <span class="va">.SD</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">.N</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>,<span class="va">date</span><span class="op">)</span><span class="op">]</span>
+<span class="va">ref_phase_day</span> <span class="op">=</span> <span class="va">ref_phase_day</span><span class="op">[</span><span class="va">transition</span><span class="op">==</span><span class="fl">1</span>, <span class="va">.SD</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">.N</span><span class="op">)</span><span class="op">]</span>, by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>,<span class="va">date</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># convert date to take into account hour</span>
 <span class="va">ref_phase_day</span><span class="op">[</span>, <span class="va">date</span><span class="op">:=</span><span class="va">date</span><span class="op">+</span><span class="fu">hours</span><span class="op">(</span><span class="va">hour</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># add sunset</span>
-<span class="va">test</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">.SD</span>,.SDcols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"transition"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>, <span class="va">date</span><span class="op">:=</span> <span class="va">date</span><span class="op">+</span><span class="fu">minutes</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">]</span>,
-             <span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">.SD</span>,.SDcols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"transition"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">phase</span><span class="op">==</span><span class="st">"night"</span>,<span class="op">]</span><span class="op">[</span>, <span class="va">date</span> <span class="op">:=</span> <span class="va">date</span> <span class="op">-</span> <span class="fu">minutes</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>,<span class="va">phase</span><span class="op">:=</span><span class="st">"sunset"</span><span class="op">]</span>,
-             <span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">.SD</span>,.SDcols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"transition"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">phase</span><span class="op">==</span><span class="st">"day"</span>,<span class="op">]</span><span class="op">[</span>, <span class="va">date</span> <span class="op">:=</span> <span class="va">date</span> <span class="op">-</span> <span class="fu">minutes</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>,<span class="va">phase</span><span class="op">:=</span><span class="st">"sunrise"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<span class="va">test</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">.SD</span>,.SDcols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transition"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>, <span class="va">date</span><span class="op">:=</span> <span class="va">date</span><span class="op">+</span><span class="fu">minutes</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">]</span>,
+             <span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">.SD</span>,.SDcols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transition"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">phase</span><span class="op">==</span><span class="st">"night"</span>,<span class="op">]</span><span class="op">[</span>, <span class="va">date</span> <span class="op">:=</span> <span class="va">date</span> <span class="op">-</span> <span class="fu">minutes</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>,<span class="va">phase</span><span class="op">:=</span><span class="st">"sunset"</span><span class="op">]</span>,
+             <span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">.SD</span>,.SDcols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transition"</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="va">phase</span><span class="op">==</span><span class="st">"day"</span>,<span class="op">]</span><span class="op">[</span>, <span class="va">date</span> <span class="op">:=</span> <span class="va">date</span> <span class="op">-</span> <span class="fu">minutes</span><span class="op">(</span><span class="fl">30</span><span class="op">)</span><span class="op">]</span><span class="op">[</span>,<span class="va">phase</span><span class="op">:=</span><span class="st">"sunrise"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <blockquote>
 <p>Problem, when there are no day times found during several days, there all marked as night!</p>
 </blockquote>
@@ -483,11 +478,13 @@ Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the
 
 
       <footer><div class="copyright">
-  <p>Developed by Joffrey Joumaa.</p>
+  <p></p>
+<p>Developed by Joffrey Joumaa.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>
@@ -495,6 +492,8 @@ Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the
 
   
 
+
+  
 
   </body>
 </html>
