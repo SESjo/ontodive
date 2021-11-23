@@ -1078,6 +1078,8 @@ gradient_map <- addLayersControl(
 # format(object.size(gradient_map), units = "Mb")
 ```
 
+Because for some data the contrast in changes was not enough marked, the only treatment applied on these data is to remove outliers for each variable using the interquartile range rule. 
+
 ```{r}
 # interactive map
 gradient_map <- leaflet() %>%
@@ -1095,11 +1097,14 @@ for (i in seq(data_2018_filter[!is.na(lat),unique(.id)])){
                           .[.id==data_2018_filter[!is.na(lat), unique(.id)][i] &
                               divetype == "2: drift" &
                               !is.na(get(k)), 
-                            c("lat", "lon", k), with=FALSE])
+                            c("lat", "lon", k), with=FALSE] %>% 
+                          .[!is_outlier(get(k)),])
       # color palette creation
       colPal <- colorNumeric(
         palette = "BrBG",
-        domain = seq(-1,1,0.1)
+        domain = seq(-dataPlot[,max(abs(driftrate))],
+                     dataPlot[,max(abs(driftrate))],
+                     0.1)
       )
     } else {
       # set dataset used to plot
@@ -1108,7 +1113,8 @@ for (i in seq(data_2018_filter[!is.na(lat),unique(.id)])){
                           .[.id==data_2018_filter[!is.na(lat), unique(.id)][i] & 
                               divetype != "2: drift" &
                               !is.na(get(k)), 
-                            c("lat", "lon", k), with=FALSE]) 
+                            c("lat", "lon", k), with=FALSE] %>% 
+                          .[!is_outlier(get(k)),]) 
       # color palette creation
       colPal <- colorNumeric(
         palette = "YlGnBu",
@@ -1126,6 +1132,8 @@ for (i in seq(data_2018_filter[!is.na(lat),unique(.id)])){
     # mark the end of the trip
     dataPlot[.N, `:=` (color = "red",
                       radius = 4)]
+    # reorder to make the end and the beginning in front
+    dataPlot = rbind(dataPlot[-1,],dataPlot[1,])
     # add markers to map
     gradient_map <- addCircleMarkers(
       map = gradient_map,
@@ -1159,7 +1167,7 @@ gradient_map <- addLayersControl(
 ) %>% hideGroup(grps)
 ```
 
-```{r, fig.cap="Tracking data 2018 individuals", fig.width=8}
+```{r, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)", fig.width=8}
 # display
 gradient_map
 ```
