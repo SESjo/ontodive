@@ -2,17 +2,35 @@
 #'
 #' This function can estimate daytime and nightime based on light level using several different methods.
 #'
-#' method = DBSCAN: use the dbscan clustering algorithm to identify night time and so daytime.
+#' Methods
+#'
+#' * DBSCAN: use the dbscan clustering algorithm to identify night time and so daytime.
+#'
+#' * ...: to be implemented
 #'
 #' @param dataset A dataset containing the light level per individual per time
 #' @param method Method used to identify phases of day
 #'
 #' @return Return the same data.table with an additional "phase" columns
+#'
 #' @export
 #'
 #' @importFrom fpc dbscan
+#'
 #' @import data.table
+#'
 #' @examples
+#' \dontrun{
+#' # load data
+#' data("data_nes")
+#'
+#' # night and day calculation
+#' result <- calc_phase_day(rbindlist(
+#` data_nes$year_2018,
+#` use.name = TRUE, idcol = TRUE
+#` ))
+#' }
+#'
 calc_phase_day <- function(dataset, method = "dbscan") {
   # check class data
   if (!check_dt(dataset)) {

@@ -1,6 +1,6 @@
 #' Flatten correlation matrix
 #'
-#' Flatten correlation matrix into a 2D dataframe based on \code{\link[www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation]{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}}
+#' Flatten a correlation matrix into a 2D dataframe.
 #'
 #' @param cormat A correlation matrix
 #' @param pmat A p-value matrix
@@ -10,6 +10,9 @@
 #'
 #' @importFrom ggcorrplot cor_pmat
 #' @importFrom data.table data.table
+#'
+#' @references
+#' \href{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}
 #'
 #' @examples # Dataset generation
 #' data_test = data.frame(sapply(c(1:10),function(x) rnorm(10)))

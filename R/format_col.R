@@ -1,14 +1,19 @@
+#' Format
+#'
 #' Format columns of a dataset by removing capital letters, bracket and
 #' transform white space as underscore
 #'
 #' @param col_names A vector of character containing column names to be
 #' formatted
 #'
-#' @return The input whose NAs are replaced by the input's mean.
+#' @return The input correctly formatted
 #'
 #' @export
 #' @importFrom stringr str_replace_all str_to_lower str_replace_all
-#' @examples format_col(c("lkjez alzkj","kjfe[lkjz]","lkjee [lkj]"))
+#' @examples
+#' # format several vectors of characters
+#' format_col(c("lkjez alzkj","kjfe[lkjz]","lkjee [lkj]"))
+#'
 format_col <- function(col_names) {
   # remove white space
   col_names_trim = str_replace_all(string = col_names,

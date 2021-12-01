@@ -9,8 +9,10 @@
 #'
 #' @examples # generate data from gaussian and exponential distribution
 #' X = sample(c(rnorm(100), c(rexp(50), -rexp(50))))
+#'
 #' # plot data
-#' plot(X, col = ifelse(is_outlier(X),"red","black"))#'
+#' plot(X, col = ifelse(is_outlier(X),"red","black"))
+#'
 is_outlier <- function(x){
   # Q1 & Q3 calculation
   q1 = quantile(x, 0.25)
