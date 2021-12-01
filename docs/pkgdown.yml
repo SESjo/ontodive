@@ -5,5 +5,8 @@ articles:
   data_exploration: data_exploration.html
   phase_of_the_day: phase_of_the_day.html
   test: test.html
-last_built: 2021-11-18T04:50Z
+last_built: 2021-11-30T23:32Z
+urls:
+  reference: jjoumaa.ddns.net/weanlingNES/reference
+  article: jjoumaa.ddns.net/weanlingNES/articles
 
