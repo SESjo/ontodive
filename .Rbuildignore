@@ -9,3 +9,4 @@
 ^pkgdown$
 inst\rmd
 ^inst/rmd$
+^README\.Rmd$
