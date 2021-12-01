@@ -2,25 +2,31 @@
 % Please edit documentation in R/check_dt.R
 \name{check_dt}
 \alias{check_dt}
-\title{Check is an object is a `data.table`}
+\title{Check if an object is a `data.table`}
 \usage{
-check_dt(data)
+check_dt(dt)
 }
 \arguments{
-\item{data}{}
+\item{dt}{The object to check}
 }
 \value{
 A boolean:
-TRUE: the object is a data.table
-FALSE: the object is not a data.table
+
+* TRUE the object is a data.table
+
+* FALSE the object is not a data.table
 }
 \description{
-Allow to rapidly check if an object is a `data.table`
+Allow to quickly check if an object is a `data.table`
+}
+\details{
+This function checks if the class `data.table` is among the considered object's classes.
 }
 \examples{
 # data.table creation
-dt = data.table()
+dt <- data.table()
 
 # check if `dt` is a data.table
 check_dt(dt)
+
 }

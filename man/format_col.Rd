@@ -2,8 +2,7 @@
 % Please edit documentation in R/format_col.R
 \name{format_col}
 \alias{format_col}
-\title{Format columns of a dataset by removing capital letters, bracket and
-transform white space as underscore}
+\title{Format}
 \usage{
 format_col(col_names)
 }
@@ -12,12 +11,14 @@ format_col(col_names)
 formatted}
 }
 \value{
-The input whose NAs are replaced by the input's mean.
+The input correctly formatted
 }
 \description{
 Format columns of a dataset by removing capital letters, bracket and
 transform white space as underscore
 }
 \examples{
+# format several vectors of characters
 format_col(c("lkjez alzkj","kjfe[lkjz]","lkjee [lkj]"))
+
 }

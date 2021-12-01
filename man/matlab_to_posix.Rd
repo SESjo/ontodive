@@ -2,24 +2,25 @@
 % Please edit documentation in R/matlab_to_posix.R
 \name{matlab_to_posix}
 \alias{matlab_to_posix}
-\title{matlab_to_posix}
+\title{Convert Matlab datenum to POSIXt}
 \usage{
 matlab_to_posix(x, timez = "UTC")
 }
 \arguments{
 \item{x}{column with Matlab datenum}
 
-\item{timez}{time zone to use}
+\item{timez}{time zone to be used}
 }
 \value{
 A vector of POSIXct
 }
 \description{
-matlab_to_posix
+Small function to convert Matlab datenum to POSIX time
 }
 \examples{
 matlab_to_posix(c(737182.4))
+
 }
 \references{
-\code{\link["http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/"]{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}}
+\href{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}
 }

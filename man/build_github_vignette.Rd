@@ -4,17 +4,26 @@
 \alias{build_github_vignette}
 \title{Build Vignette for Github}
 \usage{
-build_github_vignette()
+build_github_vignette(website = TRUE)
+}
+\arguments{
+\item{website}{A boolean to compile the website associated with weanlingNES package}
 }
 \value{
-
+A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignettes
 }
 \description{
-This function aims at processing vignettes (building, organizing) before pushing on Github so that user can download a package with vignettes
+This function aims at processing vignettes (building, organizing) before pushing on Github so that user can download a package with pre-compiled vignettes. Using the website argument allow to build the associated website.
+}
+\details{
+To make sure pre-compiled vignettes are enclosed within the package downloaded from Github, vignettes are (i) compiled with tools::buildVignettes, (ii) then copy-paste to `inst\\doc`. To build the website, this function first converts README.Rmd file to README.md file, and then calls pkgdown::build_site() since this function only take into account *.md.
 }
 \examples{
+\dontrun{
+# compile vignettes
 build_github_vignette()
 }
+}
 \references{
-\code{\link[community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7]{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}}
+\href{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}
 }

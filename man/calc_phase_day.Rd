@@ -18,5 +18,19 @@ Return the same data.table with an additional "phase" columns
 This function can estimate daytime and nightime based on light level using several different methods.
 }
 \details{
-method = DBSCAN: use the dbscan clustering algorithm to identify night time and so daytime.
+Methods
+
+* DBSCAN: use the dbscan clustering algorithm to identify night time and so daytime.
+
+* ...: to be implemented
+}
+\examples{
+\dontrun{
+# load data
+data("data_nes")
+
+# night and day calculation
+result <- calc_phase_day(rbindlist(
+}
+
 }

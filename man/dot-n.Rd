@@ -10,12 +10,16 @@
 The name of the element considered
 }
 \description{
-This small function should be used within an apply function when retrieving the element's name is needed.
+This small function should be used within an `apply` function when retrieving the element's name is needed.
 }
 \examples{
+# list creation
 A = list(name_1 = NULL, name_2 = NULL)
+
+# print name of each element using .n()
 sapply(A,function(x) .n())
+
 }
 \references{
-<https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun>
+\href{https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun}{https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun}
 }

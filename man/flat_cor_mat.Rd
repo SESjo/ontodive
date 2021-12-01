@@ -15,7 +15,7 @@ flat_cor_mat(cormat, pmat)
 A dataframe with correlation and p-values for each pairwise comparison
 }
 \description{
-Flatten correlation matrix into a 2D dataframe based on \code{\link[www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation]{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}}
+Flatten a correlation matrix into a 2D dataframe.
 }
 \examples{
 # Dataset generation
@@ -30,4 +30,7 @@ cor_test_p = ggcorrplot::cor_pmat(data_test)
 # Flatten the correlation matrix
 flat_cor_mat(cor_test, cor_test_p)
 
+}
+\references{
+\href{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}
 }
