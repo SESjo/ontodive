@@ -3,7 +3,7 @@ title: "Detect phases of the day"
 author: "Joffrey JOUMAA"
 date: "`r format(Sys.Date(), format = '%d %B %Y')`"
 resource_files:
-  - img/2004023_DaylengthWithSunriseSunset.png
+  - ../man/figures/2004023_DaylengthWithSunriseSunset.png
 output:
   bookdown::html_document2:
     css: cosmo_custom.css
@@ -70,9 +70,9 @@ theme_jjo <- function(base_size = 12) {
 
 We'll like to find something similar to what was done for the individual `2004023`, that is to say find the different phase of the day: day and night, by identifying the sunrise and the sunset. For that we'll try the function previously used in `2004023` and apply it to 2018 individuals. Then we'll try other methods and decide which method fit the most our needs. Our ultimate goal is to be able to plot this kind of figure:
 
-![](./img/2004023_DaylengthWithSunriseSunset.png)
+![](../man/figures/2004023_DaylengthWithSunriseSunset.png)
 
-# Display the data of 2018-individuals
+## Display the data of 2018-individuals
 
 Let's first load our package and our data.
 
@@ -120,7 +120,7 @@ ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
 There is a bimodal distribution for each individual that seems to be quite well separated by a threshold at `110`, which correspond to the threshold that has been used for the individual `2004023`. In 2018 individuals, 110 seems also to be an appropriate value.
 
 
-# Let's give a try to the `findTwilights` function {.tabset}
+## Let's give a try to the `findTwilights` function
 
 Let's first reshape our data to complied with the `findTwilights` function.
 
@@ -196,9 +196,11 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("top"))
 ```
-As we can see, some low light levels are encountered in the middle of daytime that mislead the `findTwilight` function in finding the sunrise or the sunset. Two ways could be explored to deal with these outliers.
+As we can see, some low light levels are encountered in the middle of daytime that mislead the `findTwilight` function in finding the sunrise or the sunset. Two ways could be explored to deal with these outliers:
 
-## Add condition on the distribution of `period_time`
+## {.unlisted .unnumbered .tabset}
+
+### Adding a condition on the distribution of `period_time` {.unlisted .unnumbered}
 
 Since some of the outliers observed Figure \@ref(fig:zoom_2010074) are during daytime, it means that `period_time` should be longer than usual for these days. Considering this, we could impose condition on this variable to make sure it is neither too long either too short.
 
@@ -240,7 +242,7 @@ ggplot() +
 ```
 > This does not work! If several sunset and sunrise are identified within a day, the current algorithm will only calculates `period_time` between two successive rows, whereas we should test every possible combination.
 
-## Smooth light level signal
+### Smoothing light level signal {.unlisted .unnumbered}
 
 Since those points are due to outliers during the day, we could try to smooth the light level signal and run the `findTwilight` function on it.
 
@@ -268,11 +270,11 @@ Since those points are due to outliers during the day, we could try to smooth th
 > So far, I have not been successful using this method cause it seems quite tricky to smooth a signal with a lot of missing values.
 
 
-# Let's try a clustering method
+## Let's try a clustering method
 
 Since we can visually see where is the day and night time, we should try clustering method.
 
-## K-MEANS +  Hierarchical clustering
+### K-MEANS +  Hierarchical clustering
 
 Here we test a package well-known to perform clustering `FactoMineR`. The idea behind its main method is to performed a hierarchical clustering where the initial centroids are positioned based on a pre-performed k-means using the first component of a PCA. For more information feel free to have a look at their [website](http://factominer.free.fr/factomethods/hierarchical-clustering-on-principal-components.html).
 
@@ -298,7 +300,7 @@ ggplot() +
 ```
 Well, clearly this algorithm is not suited to deal with this kind of patterns!
 
-## [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN)
+### [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN)
 
 DBSCAN seems to be an [elegant](http://www.sthda.com/english/wiki/wiki.php?id_contents=7940) algorithm to deal with outliers and non-convex cluster. The only **issue** is that we have to choose the right value for its two parameters:
 
@@ -369,7 +371,7 @@ ggplot() +
   theme(legend.position = c("bottom"))
 ```
 
-# Conclusion
+## Conclusion
 
 For now we will used the result from the `DBSCAN` algorithm, since results seem to be better! 
 
@@ -395,7 +397,7 @@ data_2018 = ref_phase_day[data_2018, roll=T, on = .(.id, date)]
 ```
 
 
-# WIP
+## WIP
 
 We could also try to define two other phases of the day:
 

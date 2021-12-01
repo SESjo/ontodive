@@ -19,7 +19,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r setup, include=FALSE}
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
@@ -28,7 +28,6 @@ vignette: >
 # reduce png size
 knitr::knit_hooks$set(optipng = knitr::hook_optipng)
 knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
-
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
@@ -52,6 +51,7 @@ library(corrplot)
 library(ggcorrplot)
 library(ggnewscale)
 library(magrittr)
+library(DT)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -92,6 +92,8 @@ theme_jjo <- function(base_size = 12) {
 }
 ```
 
+## {.unnumbered}
+
 This document aims at exploring two datasets, one in 2016 on 6 individuals and another one in 2018 on 4 individuals. For that purpose, we need first to load the `weanlingNES` package to load data.
 
 ```{r}
@@ -103,11 +105,10 @@ data("data_nes", package = "weanlingNES")
 # load("../data/data_nes.rda")
 ```
 
-
-# 2016-individuals 
+## 2016-individuals 
 
 Let's have a look at what's inside `data_nes$data_2016`:
-
+  
 ```{r}
 # list structure
 str(data_nes$year_2016, max.level = 1, give.attr = F, no.list = T)
@@ -135,7 +136,7 @@ cat("<table style='width: 50%'>", paste0("<caption>", "(#tab:myDThtmltools)", "S
 DT::datatable(data_2016[sample.int(.N, 100), ], options = list(scrollX = T))
 ```
 
-## Summary
+### Summary
 
 ```{r}
 # raw_data
@@ -152,7 +153,6 @@ data_2016[, .(
 ```
 
 Well, it seems that `sst` is a bit odd. Let's have a look at its distribution.
-
 
 ```{r, fig.cap="Distribution of raw `sst2` for the four individuals in 2016"}
 ggplot(data_2016, aes(x = sst2_c, fill = .id)) +
@@ -266,9 +266,9 @@ leaflet() %>%
 ```
 
 > I'll better ask Roxanne!
-
-## Missing values
-
+  
+### Missing values
+  
 ```{r fig.cap="Check for missing value in 2016-individuals", out.width="100%"}
 # build dataset to check for missing values
 dataPlot <- melt(data_2016_filter[, .(.id, is.na(.SD)), .SDcol = -c(
@@ -297,10 +297,10 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
   )
 ```
 
-# 2018-individuals
+## 2018-individuals
 
 Let’s have a look at what’s inside `data_nes$data_2018`:
-
+  
 ```{r}
 # list structure
 str(data_nes$year_2018, max.level = 1, give.attr = F, no.list = T)
@@ -329,7 +329,7 @@ cat("<table style='width: 50%'>", paste0("<caption>", "(#tab:myDThtmltools)", "S
 DT::datatable(data_2018[sample.int(.N, 100), ], options = list(scrollX = T))
 ```
 
-## Summary
+### Summary
 
 ```{r}
 # raw_data
@@ -348,9 +348,9 @@ data_2018[, .(
 ```
 > Very nice dataset :)
 
-## Some explanatory plots
+### Some explanatory plots
 
-### Missing values
+#### Missing values
 
 ```{r fig.cap="Check for missing value in 2018-individuals", fig.width=9}
 # build dataset to check for missing values
@@ -391,7 +391,7 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
 ```
 
 So far so good, only few variables seems to have missing values:
-
+  
 ```{r}
 # table with percent
 table_inter <- data_2018[, lapply(.SD, function(x) {
@@ -424,11 +424,11 @@ table_inter[, which(cond_inter) := NULL] %>%
   scroll_box(width = "100%")
 ```
 
-### Outliers {.tabset}
+#### Outliers {.tabset}
 
 Ok, let's have a look at all the data. But first, we have to remove outliers. Some of them are quiet easy to spot looking at the distribution of dive duration:
 
-#### Before {-}
+##### Before {-}
 
 ```{r, fig.cap='Distribution of `dduration` for each seal. The dashed line highlight the "subjective" threshold used to remove outliers (3000 sec)', fig.height=3}
 ggplot(
@@ -444,7 +444,7 @@ ggplot(
   theme_jjo()
 ```
 
-#### After {-}
+##### After {-}
 
 ```{r, fig.cap='Same distribution of `dduration` for each seal but after removing any `dduration` > 3000 sec. The dashed line highlight the "subjective" threshold used to remove outliers', fig.height=3}
 ggplot(
@@ -459,7 +459,8 @@ ggplot(
   labs(x = "# of dives", y = "Dive duration (s)") +
   theme_jjo()
 ```
-It seems muche better, so let's remove any rows with `dduration` > 3000 sec.
+
+It seems much better, so let's remove any rows with `dduration` > 3000 sec.
 
 ```{r}
 # filter data
@@ -470,9 +471,9 @@ data_2018[dduration >= 3000, .(nb_row_removed = .N), by = .id] %>%
   sable(caption = "# of rows removed by 2018-individuals")
 ```
 
-### Check day and night {.tabset}
+#### Check day and night {.tabset}
 
-#### Light levels
+##### Light levels
 
 ```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6}
 # let's first average `lightatsurf` by individuals, day since departure and hour
@@ -489,7 +490,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
   theme(legend.position = c("bottom"))
 ```
 
-#### Day and night detection
+##### Day and night detection
 
 ```{r, fig.cap="Visualization of detected night time and day time along 2018-individuals' trip", fig.height=6}
 # let's first average `lightatsurf` by individuals, day since departure and hour
@@ -506,10 +507,9 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = phase)) +
   theme(legend.position = c("bottom"))
 ```
 
+#### All Variables 
 
-### All Variables {.tabset .tabset-fade .tabset-pills}
-
-```{r, results='asis', cache=TRUE}
+```{r}
 names_display <- names(data_2018_filter[, -c(
   ".id",
   "date",
@@ -529,8 +529,11 @@ names_display <- names(data_2018_filter[, -c(
   "lat",
   "lon"
 )])
+```
+
+```{r, eval=FALSE, include=TRUE}
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
     print(
       ggplot() +
@@ -641,26 +644,145 @@ for (i in names_display) {
     )
   }
   
-  cat(" \n \n")
+  cat("\n \n")
 }
 ```
 
-### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
+#### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
+
+```{r, results='asis', cache=TRUE, echo=FALSE}
+for (i in names_display) {
+  cat("#####", i, "{.unlisted .unnumbered} \n")
+  if (i == "maxdepth") {
+    print(
+      ggplot() +
+        geom_point(
+          data = data_2018_filter[, .(
+            .id,
+            date,
+            thermoclinedepth
+          )],
+          aes(
+            x = as.Date(date),
+            y = -thermoclinedepth,
+            colour = "Thermocline (m)"
+          ),
+          alpha = .2,
+          size = .5
+        ) +
+        geom_point(
+          data = data_2018_filter[, .(
+            .id,
+            date,
+            euphoticdepth
+          )],
+          aes(
+            x = as.Date(date),
+            y = -euphoticdepth,
+            colour = "Euphotic (m)"
+          ),
+          alpha = .2,
+          size = .5
+        ) +
+        scale_colour_manual(
+          values = c(
+            "Thermocline (m)" = "red",
+            "Euphotic (m)" = "black"
+          ),
+          name = "Zone"
+        ) +
+        new_scale_color() +
+        geom_point(
+          data = melt(data_2018_filter[, .(.id, date, get(i))], id.vars = c(".id", "date")),
+          aes(
+            x = as.Date(date),
+            y = -value,
+            col = .id
+          ),
+          alpha = 1 / 10,
+          size = .5,
+          show.legend = FALSE
+        ) +
+        facet_wrap(. ~ .id, scales = "free") +
+        scale_x_date(date_labels = "%m/%Y") +
+        labs(x = "Date", y = "Maximum Depth (m)") +
+        theme_jjo() +
+        theme(
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "bottom"
+        )
+    )
+    cat("<blockquote> Considering `ind_2018074` has slightly different values than other individuals for the thermocline depth, it would be interesting to see where the animal went. </blockquote>")
+  } else if (i == "driftrate") {
+    print(
+      ggplot(
+        data = melt(data_2018_filter[, .(.id, date, get(i), divetype)], id.vars = c(".id", "date", "divetype")),
+        aes(
+          x = as.Date(date),
+          y = value,
+          col = divetype
+        )
+      ) +
+        geom_point(
+          alpha = 1 / 10,
+          size = .5
+        ) +
+        facet_wrap(. ~ .id, scales = "free") +
+        scale_x_date(date_labels = "%m/%Y") +
+        labs(x = "Date", y = "Drift Rate 'm/s", col = "Dive Type") +
+        theme_jjo() +
+        theme(
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "bottom"
+        ) +
+        guides(colour = guide_legend(override.aes = list(
+          size = 7,
+          alpha = 1
+        )))
+    )
+  } else {
+    print(
+      ggplot(
+        data = melt(data_2018_filter[, .(.id, date, get(i))], id.vars = c(".id", "date")),
+        aes(
+          x = as.Date(date),
+          y = value,
+          col = .id
+        )
+      ) +
+        geom_point(
+          show.legend = FALSE,
+          alpha = 1 / 10,
+          size = .5
+        ) +
+        facet_wrap(. ~ .id, scales = "free") +
+        scale_x_date(date_labels = "%m/%Y") +
+        labs(x = "Date", y = i) +
+        theme_jjo() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    )
+  }
+  
+  cat("\n \n")
+}
+```
+
+#### {.unlisted .unnumbered}
 
 > Few questions, that I should look into it:
->
-> * is the bimodal distribution of `dduration`, `desctime` due to nycthemeral migration?
-> * is the bimodal distribution of `descrate` (especially for `ind2018070` and `ind_2018072`) due to drift dive?
-> * is `lightatbott` could be used to identify bioluminescence, cause it seems there is a lot going on at the bottom?
-> * are the variations observed for `lightatsurf` is due to moon cycle?
-> * not sure why is there a bimodal distribution of `tempatbott`!
-> * `drifrate` that one is awesome! Thanks to `divetype` we can clearly see a pattern of how driftrate (and so buoyancy) change according time.
+  >
+  > * is the bimodal distribution of `dduration`, `desctime` due to nycthemeral migration?
+  > * is the bimodal distribution of `descrate` (especially for `ind2018070` and `ind_2018072`) due to drift dive?
+  > * is `lightatbott` could be used to identify bioluminescence, cause it seems there is a lot going on at the bottom?
+  > * are the variations observed for `lightatsurf` is due to moon cycle?
+  > * not sure why is there a bimodal distribution of `tempatbott`!
+  > * `drifrate` that one is awesome! Thanks to `divetype` we can clearly see a pattern of how driftrate (and so buoyancy) change according time.
 > * the bimodal distribution of `verticalspeed90` and `verticalspeed95` should be due to drift dive.
 
-```{r, results='asis', cache=TRUE}
+```{r, eval=FALSE, include=TRUE}
 # same plot with a colored for the phase of the day
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{-} \n")
   print(
     ggplot(
       data = melt(data_2018_filter[, .(.id, date, get(i), phase)],
@@ -693,15 +815,58 @@ for (i in names_display) {
         alpha = 1
       )))
   )
-  cat(" \n \n")
+  cat("\n \n")
 }
 ```
 
-### All Variables during the first month {.tabset .tabset-fade .tabset-pills}
+#### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
 
-```{r, results='asis', cache=TRUE}
+```{r, results='asis', cache=TRUE, echo=FALSE}
+# same plot with a colored for the phase of the day
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{-} \n")
+  print(
+    ggplot(
+      data = melt(data_2018_filter[, .(.id, date, get(i), phase)],
+                  id.vars = c(
+                    ".id",
+                    "date",
+                    "phase"
+                  )
+      ),
+      aes(
+        x = as.Date(date),
+        y = value,
+        col = phase
+      )
+    ) +
+      geom_point(
+        alpha = 1 / 10,
+        size = .5
+      ) +
+      facet_wrap(. ~ .id, scales = "free") +
+      scale_x_date(date_labels = "%m/%Y") +
+      labs(x = "Date", y = i) +
+      theme_jjo() +
+      theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom"
+      ) +
+      guides(colour = guide_legend(override.aes = list(
+        size = 7,
+        alpha = 1
+      )))
+  )
+  cat("\n \n")
+}
+```
+
+
+### All Variables during the first month
+
+```{r, eval=FALSE, include=TRUE}
+for (i in names_display) {
+  cat("#####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
     print(
       ggplot() +
@@ -781,41 +946,103 @@ for (i in names_display) {
         theme_jjo()
     )
   }
-  
-  cat(" \n \n")
+  cat("\n \n")
 }
 ```
-```{r}
-print(
-  ggplot(
-    data = melt(
-      data_2018_filter[day_departure < 32 &
-                         divetype == "2: drift", .(.id, day_departure, get(i), divetype)],
-      id.vars = c(".id", "day_departure", "divetype")
-    ),
-    aes(
-      x = day_departure,
-      y = value,
-      color = divetype,
-      group = day_departure
+
+#### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
+
+```{r, results='asis', cache=TRUE, echo=FALSE}
+for (i in names_display) {
+  cat("#####", i, "{.unlisted .unnumbered} \n")
+  if (i == "maxdepth") {
+    print(
+      ggplot() +
+        geom_point(
+          data = data_2018_filter[day_departure < 32, .(
+            .id,
+            day_departure,
+            thermoclinedepth
+          )],
+          aes(
+            x = day_departure,
+            y = -thermoclinedepth,
+            colour = "Thermocline (m)",
+            group = day_departure
+          ),
+          alpha = .2,
+          size = .5
+        ) +
+        geom_point(
+          data = data_2018_filter[day_departure < 32, .(
+            .id,
+            day_departure,
+            euphoticdepth
+          )],
+          aes(
+            x = day_departure,
+            y = -euphoticdepth,
+            colour = "Euphotic (m)",
+            group = day_departure
+          ),
+          alpha = .2,
+          size = .5
+        ) +
+        scale_colour_manual(
+          values = c(
+            "Thermocline (m)" = "red",
+            "Euphotic (m)" = "black"
+          ),
+          name = "Zone"
+        ) +
+        new_scale_color() +
+        geom_boxplot(
+          data = melt(data_2018_filter[day_departure < 32, .(.id, day_departure, get(i))], id.vars = c(".id", "day_departure")),
+          aes(
+            x = day_departure,
+            y = -value,
+            col = .id,
+            group = day_departure
+          ),
+          alpha = 1 / 10,
+          size = .5,
+          show.legend = FALSE
+        ) +
+        facet_wrap(. ~ .id, scales = "free") +
+        labs(x = "# days since departure", y = "Maximum Depth (m)") +
+        theme_jjo() +
+        theme(legend.position = "bottom")
     )
-  ) +
-    geom_boxplot(
-      show.legend = FALSE,
-      alpha = 1 / 10,
-      size = .5
-    ) +
-    facet_wrap(. ~ .id, scales = "free") +
-    labs(x = "# days since departure", y = i) +
-    theme_jjo()
-)
+  } else {
+    print(
+      ggplot(
+        data = melt(data_2018_filter[day_departure < 32, .(.id, day_departure, get(i))], id.vars = c(".id", "day_departure")),
+        aes(
+          x = day_departure,
+          y = value,
+          color = .id,
+          group = day_departure
+        )
+      ) +
+        geom_boxplot(
+          show.legend = FALSE,
+          alpha = 1 / 10,
+          size = .5
+        ) +
+        facet_wrap(. ~ .id, scales = "free") +
+        labs(x = "# days since departure", y = i) +
+        theme_jjo()
+    )
+  }
+  cat("\n \n")
+}
 ```
 
-### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
+#### {.unlisted .unnumbered}
 
-```{r, results='asis', cache=TRUE}
+```{r, eval=FALSE, include=TRUE}
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{.unlisted .unnumbered} \n")
   print(
     ggplot(
       data = melt(data_2018_filter[
@@ -840,14 +1067,47 @@ for (i in names_display) {
       theme_jjo() +
       theme(legend.position = "bottom")
   )
-  cat(" \n \n")
+  cat("\n \n")
 }
 ```
 
-### Correlation
+#### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
+
+```{r, results='asis', cache=TRUE, echo=FALSE}
+for (i in names_display) {
+  cat("#####", i, "{.unlisted .unnumbered} \n")
+  print(
+    ggplot(
+      data = melt(data_2018_filter[
+        day_departure < 32,
+        .(.id, day_departure, get(i), phase)
+      ],
+      id.vars = c(".id", "day_departure", "phase")
+      ),
+      aes(
+        x = day_departure,
+        y = value,
+        color = phase,
+        group = interaction(day_departure, phase),
+      )
+    ) +
+      geom_boxplot(
+        alpha = 1 / 10,
+        size = .5
+      ) +
+      facet_wrap(. ~ .id, scales = "free") +
+      labs(x = "# days since departure", y = i) +
+      theme_jjo() +
+      theme(legend.position = "bottom")
+  )
+  cat("\n \n")
+}
+```
+
+#### Correlation
 
 Can we find nice correlation?
-
+  
 ```{r, fig.cap="Correlation matrix (crosses indicate non significant correlation)", fig.width=10, fig.height=10}
 # compute correlation
 corr_2018 <- round(cor(data_2018_filter[, names_display, with = F],
@@ -877,7 +1137,7 @@ ggcorrplot(
 ```
 
 Another way to see it:
-
+  
 ```{r}
 # flatten correlation matrix
 cor_result_2018 <- flat_cor_mat(corr_2018, corr_p_2018)
@@ -889,7 +1149,7 @@ cor_result_2018[cor >= .7, ][order(-abs(cor))] %>%
 
 > I guess nothing unexpected here, I'll have to check with Patrick about the efficiency ;)
 
-## Dive Type
+### Dive Type
 
 ```{r, fig.cap="Proportion dive types"}
 # dataset to plot proportional area plot
@@ -910,9 +1170,9 @@ ggplot(dataPlot, aes(
   labs(x = "# of days since departure", y = "Proportion of dives", fill = "Dive types")
 ```
 
-## Dive duration *vs.* Maximum depth {.tabset}
+### Dive duration *vs.* Maximum depth {.tabset}
 
-### Colored by ID
+#### Colored by ID
 
 ```{r, fig.cap="Dive duration vs. Maximum Depth colored 2018-individuals"}
 # plot
@@ -923,8 +1183,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = .id)) +
   theme_jjo()
 ```
 
-
-### Colored by Dive Type
+#### Colored by Dive Type
 
 ```{r, fig.cap="Dive duration vs. Maximum Depth colored by Dive Type"}
 # plot
@@ -937,7 +1196,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = divetype)
   theme(legend.position = "bottom")
 ```
 
-### Colored by # days since departure
+#### Colored by # days since departure
 
 ```{r, fig.cap="Dive duration vs. Maximum Depth colored by # days since departure"}
 # plot
@@ -950,7 +1209,7 @@ ggplot(data = data_2018_filter[, prop_track := (day_departure * 100) / max(day_d
   theme(legend.position = "bottom")
 ```
 
-### Colored by phases of day
+#### Colored by phases of day
 
 ```{r, fig.cap="Dive duration vs. Maximum Depth colored by phases of the day"}
 # plot
@@ -965,7 +1224,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = phase)) +
 
 > There seems to be a *patch* for high depths (especially visible for `ind2018070`), but I don't know what it could be linked to...
 
-## Drift Rate
+### Drift Rate
 
 > In the following graphs:
 >
@@ -992,7 +1251,6 @@ dataPlot <- data_2018_filter[divetype == "2: drift",
 on = c(".id", "day_departure")
 ]
 ```
-
 
 ```{r, fig.cap="Drift rate vs. Bottom time"}
 # plot
@@ -1028,7 +1286,7 @@ ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
   theme_jjo()
 ```
 
-## GPS data
+### GPS data
 
 ```{r, fig.cap="Map with polylines", fig.width=8, eval=FALSE}
 # This piece of code is only there to show how to draw a polylines with a gradient color using leaflet.
@@ -1131,7 +1389,7 @@ for (i in seq(data_2018_filter[!is.na(lat),unique(.id)])){
                       radius = 4)]
     # mark the end of the trip
     dataPlot[.N, `:=` (color = "red",
-                      radius = 4)]
+                       radius = 4)]
     # reorder to make the end and the beginning in front
     dataPlot = rbind(dataPlot[-1,],dataPlot[1,])
     # add markers to map
@@ -1171,5 +1429,4 @@ gradient_map <- addLayersControl(
 # display
 gradient_map
 ```
-
 
