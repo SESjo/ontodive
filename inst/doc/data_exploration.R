@@ -7,7 +7,6 @@
 knitr::knit_hooks$set(optipng = knitr::hook_optipng)
 knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
-
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -30,6 +29,7 @@ library(corrplot)
 library(ggcorrplot)
 library(ggnewscale)
 library(magrittr)
+library(DT)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -390,7 +390,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = phase)) +
   labs(x = "# of days since departure", y = "Hour", fill = "Day time and night time as detected by the `cal_phase_day` function") +
   theme(legend.position = c("bottom"))
 
-## ---- results='asis', cache=TRUE----------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------------------------
 names_display <- names(data_2018_filter[, -c(
   ".id",
   "date",
@@ -410,8 +410,126 @@ names_display <- names(data_2018_filter[, -c(
   "lat",
   "lon"
 )])
+
+## ---- eval=FALSE, include=TRUE------------------------------------------------------------------------------
+#  for (i in names_display) {
+#    cat("#####", i, "{.unlisted .unnumbered} \n")
+#    if (i == "maxdepth") {
+#      print(
+#        ggplot() +
+#          geom_point(
+#            data = data_2018_filter[, .(
+#              .id,
+#              date,
+#              thermoclinedepth
+#            )],
+#            aes(
+#              x = as.Date(date),
+#              y = -thermoclinedepth,
+#              colour = "Thermocline (m)"
+#            ),
+#            alpha = .2,
+#            size = .5
+#          ) +
+#          geom_point(
+#            data = data_2018_filter[, .(
+#              .id,
+#              date,
+#              euphoticdepth
+#            )],
+#            aes(
+#              x = as.Date(date),
+#              y = -euphoticdepth,
+#              colour = "Euphotic (m)"
+#            ),
+#            alpha = .2,
+#            size = .5
+#          ) +
+#          scale_colour_manual(
+#            values = c(
+#              "Thermocline (m)" = "red",
+#              "Euphotic (m)" = "black"
+#            ),
+#            name = "Zone"
+#          ) +
+#          new_scale_color() +
+#          geom_point(
+#            data = melt(data_2018_filter[, .(.id, date, get(i))], id.vars = c(".id", "date")),
+#            aes(
+#              x = as.Date(date),
+#              y = -value,
+#              col = .id
+#            ),
+#            alpha = 1 / 10,
+#            size = .5,
+#            show.legend = FALSE
+#          ) +
+#          facet_wrap(. ~ .id, scales = "free") +
+#          scale_x_date(date_labels = "%m/%Y") +
+#          labs(x = "Date", y = "Maximum Depth (m)") +
+#          theme_jjo() +
+#          theme(
+#            axis.text.x = element_text(angle = 45, hjust = 1),
+#            legend.position = "bottom"
+#          )
+#      )
+#      cat("<blockquote> Considering `ind_2018074` has slightly different values than other individuals for the thermocline depth, it would be interesting to see where the animal went. </blockquote>")
+#    } else if (i == "driftrate") {
+#      print(
+#        ggplot(
+#          data = melt(data_2018_filter[, .(.id, date, get(i), divetype)], id.vars = c(".id", "date", "divetype")),
+#          aes(
+#            x = as.Date(date),
+#            y = value,
+#            col = divetype
+#          )
+#        ) +
+#          geom_point(
+#            alpha = 1 / 10,
+#            size = .5
+#          ) +
+#          facet_wrap(. ~ .id, scales = "free") +
+#          scale_x_date(date_labels = "%m/%Y") +
+#          labs(x = "Date", y = "Drift Rate 'm/s", col = "Dive Type") +
+#          theme_jjo() +
+#          theme(
+#            axis.text.x = element_text(angle = 45, hjust = 1),
+#            legend.position = "bottom"
+#          ) +
+#          guides(colour = guide_legend(override.aes = list(
+#            size = 7,
+#            alpha = 1
+#          )))
+#      )
+#    } else {
+#      print(
+#        ggplot(
+#          data = melt(data_2018_filter[, .(.id, date, get(i))], id.vars = c(".id", "date")),
+#          aes(
+#            x = as.Date(date),
+#            y = value,
+#            col = .id
+#          )
+#        ) +
+#          geom_point(
+#            show.legend = FALSE,
+#            alpha = 1 / 10,
+#            size = .5
+#          ) +
+#          facet_wrap(. ~ .id, scales = "free") +
+#          scale_x_date(date_labels = "%m/%Y") +
+#          labs(x = "Date", y = i) +
+#          theme_jjo() +
+#          theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#      )
+#    }
+#  
+#    cat("\n \n")
+#  }
+
+## ---- results='asis', cache=TRUE, echo=FALSE----------------------------------------------------------------
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
     print(
       ggplot() +
@@ -522,13 +640,52 @@ for (i in names_display) {
     )
   }
   
-  cat(" \n \n")
+  cat("\n \n")
 }
 
-## ---- results='asis', cache=TRUE----------------------------------------------------------------------------
+## ---- eval=FALSE, include=TRUE------------------------------------------------------------------------------
+#  # same plot with a colored for the phase of the day
+#  for (i in names_display) {
+#    cat("#####", i, "{-} \n")
+#    print(
+#      ggplot(
+#        data = melt(data_2018_filter[, .(.id, date, get(i), phase)],
+#                    id.vars = c(
+#                      ".id",
+#                      "date",
+#                      "phase"
+#                    )
+#        ),
+#        aes(
+#          x = as.Date(date),
+#          y = value,
+#          col = phase
+#        )
+#      ) +
+#        geom_point(
+#          alpha = 1 / 10,
+#          size = .5
+#        ) +
+#        facet_wrap(. ~ .id, scales = "free") +
+#        scale_x_date(date_labels = "%m/%Y") +
+#        labs(x = "Date", y = i) +
+#        theme_jjo() +
+#        theme(
+#          axis.text.x = element_text(angle = 45, hjust = 1),
+#          legend.position = "bottom"
+#        ) +
+#        guides(colour = guide_legend(override.aes = list(
+#          size = 7,
+#          alpha = 1
+#        )))
+#    )
+#    cat("\n \n")
+#  }
+
+## ---- results='asis', cache=TRUE, echo=FALSE----------------------------------------------------------------
 # same plot with a colored for the phase of the day
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{-} \n")
   print(
     ggplot(
       data = melt(data_2018_filter[, .(.id, date, get(i), phase)],
@@ -561,12 +718,97 @@ for (i in names_display) {
         alpha = 1
       )))
   )
-  cat(" \n \n")
+  cat("\n \n")
 }
 
-## ---- results='asis', cache=TRUE----------------------------------------------------------------------------
+## ---- eval=FALSE, include=TRUE------------------------------------------------------------------------------
+#  for (i in names_display) {
+#    cat("#####", i, "{.unlisted .unnumbered} \n")
+#    if (i == "maxdepth") {
+#      print(
+#        ggplot() +
+#          geom_point(
+#            data = data_2018_filter[day_departure < 32, .(
+#              .id,
+#              day_departure,
+#              thermoclinedepth
+#            )],
+#            aes(
+#              x = day_departure,
+#              y = -thermoclinedepth,
+#              colour = "Thermocline (m)",
+#              group = day_departure
+#            ),
+#            alpha = .2,
+#            size = .5
+#          ) +
+#          geom_point(
+#            data = data_2018_filter[day_departure < 32, .(
+#              .id,
+#              day_departure,
+#              euphoticdepth
+#            )],
+#            aes(
+#              x = day_departure,
+#              y = -euphoticdepth,
+#              colour = "Euphotic (m)",
+#              group = day_departure
+#            ),
+#            alpha = .2,
+#            size = .5
+#          ) +
+#          scale_colour_manual(
+#            values = c(
+#              "Thermocline (m)" = "red",
+#              "Euphotic (m)" = "black"
+#            ),
+#            name = "Zone"
+#          ) +
+#          new_scale_color() +
+#          geom_boxplot(
+#            data = melt(data_2018_filter[day_departure < 32, .(.id, day_departure, get(i))], id.vars = c(".id", "day_departure")),
+#            aes(
+#              x = day_departure,
+#              y = -value,
+#              col = .id,
+#              group = day_departure
+#            ),
+#            alpha = 1 / 10,
+#            size = .5,
+#            show.legend = FALSE
+#          ) +
+#          facet_wrap(. ~ .id, scales = "free") +
+#          labs(x = "# days since departure", y = "Maximum Depth (m)") +
+#          theme_jjo() +
+#          theme(legend.position = "bottom")
+#      )
+#    } else {
+#      print(
+#        ggplot(
+#          data = melt(data_2018_filter[day_departure < 32, .(.id, day_departure, get(i))], id.vars = c(".id", "day_departure")),
+#          aes(
+#            x = day_departure,
+#            y = value,
+#            color = .id,
+#            group = day_departure
+#          )
+#        ) +
+#          geom_boxplot(
+#            show.legend = FALSE,
+#            alpha = 1 / 10,
+#            size = .5
+#          ) +
+#          facet_wrap(. ~ .id, scales = "free") +
+#          labs(x = "# days since departure", y = i) +
+#          theme_jjo()
+#      )
+#    }
+#    cat("\n \n")
+#  }
+
+## ---- results='asis', cache=TRUE, echo=FALSE----------------------------------------------------------------
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
     print(
       ggplot() +
@@ -646,38 +888,42 @@ for (i in names_display) {
         theme_jjo()
     )
   }
-  
-  cat(" \n \n")
+  cat("\n \n")
 }
 
-## -----------------------------------------------------------------------------------------------------------
-print(
-  ggplot(
-    data = melt(
-      data_2018_filter[day_departure < 32 &
-                         divetype == "2: drift", .(.id, day_departure, get(i), divetype)],
-      id.vars = c(".id", "day_departure", "divetype")
-    ),
-    aes(
-      x = day_departure,
-      y = value,
-      color = divetype,
-      group = day_departure
-    )
-  ) +
-    geom_boxplot(
-      show.legend = FALSE,
-      alpha = 1 / 10,
-      size = .5
-    ) +
-    facet_wrap(. ~ .id, scales = "free") +
-    labs(x = "# days since departure", y = i) +
-    theme_jjo()
-)
+## ---- eval=FALSE, include=TRUE------------------------------------------------------------------------------
+#  for (i in names_display) {
+#    cat("#####", i, "{.unlisted .unnumbered} \n")
+#    print(
+#      ggplot(
+#        data = melt(data_2018_filter[
+#          day_departure < 32,
+#          .(.id, day_departure, get(i), phase)
+#        ],
+#        id.vars = c(".id", "day_departure", "phase")
+#        ),
+#        aes(
+#          x = day_departure,
+#          y = value,
+#          color = phase,
+#          group = interaction(day_departure, phase),
+#        )
+#      ) +
+#        geom_boxplot(
+#          alpha = 1 / 10,
+#          size = .5
+#        ) +
+#        facet_wrap(. ~ .id, scales = "free") +
+#        labs(x = "# days since departure", y = i) +
+#        theme_jjo() +
+#        theme(legend.position = "bottom")
+#    )
+#    cat("\n \n")
+#  }
 
-## ---- results='asis', cache=TRUE----------------------------------------------------------------------------
+## ---- results='asis', cache=TRUE, echo=FALSE----------------------------------------------------------------
 for (i in names_display) {
-  cat("####", i, "{-} \n")
+  cat("#####", i, "{.unlisted .unnumbered} \n")
   print(
     ggplot(
       data = melt(data_2018_filter[
@@ -702,7 +948,7 @@ for (i in names_display) {
       theme_jjo() +
       theme(legend.position = "bottom")
   )
-  cat(" \n \n")
+  cat("\n \n")
 }
 
 ## ---- fig.cap="Correlation matrix (crosses indicate non significant correlation)", fig.width=10, fig.height=10----
@@ -945,7 +1191,7 @@ for (i in seq(data_2018_filter[!is.na(lat),unique(.id)])){
                       radius = 4)]
     # mark the end of the trip
     dataPlot[.N, `:=` (color = "red",
-                      radius = 4)]
+                       radius = 4)]
     # reorder to make the end and the beginning in front
     dataPlot = rbind(dataPlot[-1,],dataPlot[1,])
     # add markers to map
