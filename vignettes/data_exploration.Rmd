@@ -52,6 +52,8 @@ library(ggcorrplot)
 library(ggnewscale)
 library(magrittr)
 library(DT)
+library(plotly)
+library(geosphere)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -1257,7 +1259,7 @@ on = c(".id", "day_departure")
 ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
   geom_smooth(method = "lm") +
-  guides(color = FALSE) +
+  guides(color = "none") +
   facet_wrap(.id ~ .) +
   scale_x_continuous(limits = c(0, 700)) +
   labs(x = "Daily median Bottom time (s)", y = "Daily median drift rate (m.s-1)") +
@@ -1269,7 +1271,7 @@ ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
 ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
   geom_smooth(method = "lm") +
-  guides(color = FALSE) +
+  guides(color = "none") +
   facet_wrap(.id ~ .) +
   labs(x = "Daily median Maximum depth (m)", y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
@@ -1280,10 +1282,229 @@ ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
 ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
   geom_smooth(method = "lm") +
-  guides(color = FALSE) +
+  guides(color = "none") +
   facet_wrap(.id ~ .) +
   labs(x = "Daily median Dive duration (s)", y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
+```
+
+### Behavioral Aerobic Dive Limit (bADL)
+
+#### [Cook et al (2008)](https://www.sciencedirect.com/science/article/pii/S000334720800136X?via%3Dihub)
+
+```{r, fig.cap="Post-dive duration vs. dive duration"}
+# dive duration vs pdi by days
+ggplot(data = data_2018_filter[pdi < 300, ], aes(
+  x = dduration,
+  y = pdi,
+  color = .id,
+  group = dduration,
+  fill = "none"
+)) +
+  geom_boxplot(show.legend = FALSE, outlier.alpha = 0.05, alpha = 0) +
+  labs(x = "Dive duration (s)", y = "Post-dive duration (s)") +
+  facet_wrap(. ~ .id, scales = "free_x") +
+  theme_jjo()
+```
+
+```{r, fig.cap="Post-dive duration vs. dive duration (raw data)"}
+# dive duration vs pdi by days
+ggplot(data = data_2018_filter[pdi < 300,], aes(x = dduration, 
+                                                y = pdi, 
+                                                color = .id)) +
+  geom_point(show.legend = FALSE, alpha = 0.05) +
+  geom_smooth(
+    method = "gam",
+    show.legend = FALSE,
+    col = "black",
+    linetype = "dashed"
+  ) +
+  labs(x = "Dive duration (s)", y = "Post-dive duration (s)") +
+  facet_wrap(. ~ .id, scales = "free_x") +
+  theme_jjo()
+```
+```{r, fig.cap="Post-dive duration / dive duration ratio vs. day since departure"}
+# dive duration vs pdi by days
+ggplot(data = data_2018_filter[pdi < 300, .(.id, pdi_ratio = pdi / dduration, day_departure)], aes(
+  x = day_departure,
+  y = pdi_ratio,
+  color = .id,
+  group = day_departure,
+  fill = "none"
+)) +
+  geom_boxplot(show.legend = FALSE, outlier.alpha = 0.05, alpha = 0) +
+  labs(x = "# days since departure", y = "Post-dive / Dive duration ratio") +
+  facet_wrap(. ~ .id, scales = "free_x") +
+  # zoom
+  coord_cartesian(ylim=c(0,0.4)) +
+  theme_jjo()
+```
+#### [Shero et *al.* (2018)](https://www.researchgate.net/publication/222683042_To_breathe_or_not_to_breathe_Optimal_breathing_aerobic_dive_limit_and_oxygen_stores_in_deep-diving_blue-eyed_shags)
+
+Based on [Shero et *al.* (2018)](https://www.researchgate.net/publication/222683042_To_breathe_or_not_to_breathe_Optimal_breathing_aerobic_dive_limit_and_oxygen_stores_in_deep-diving_blue-eyed_shags), we decided to look at the *bADL* as the 95th percentile of dive duration each day, for those with $n \geq 50$. This threshold was chosen following this figure:
+
+```{r, fig.cap="Distribution of the number of dives each day. The threshold used to calculate bADL is fixed at 50 dives per day.", fig.height=3}
+ggplot(data_2018_filter[,.(nb_dives = .N), 
+                        by = .(.id, day_departure)], 
+       aes(x=nb_dives, fill=.id)) +
+  geom_histogram(show.legend = FALSE) + 
+  facet_grid(.~.id) +
+  labs(y="# of days", x = "# of dives per day") +
+  theme_jjo()
+```
+
+```{r, fig.cap="Behavioral ADL vs. drift rate along animals' trip (Am I the only one seeing some kind of relationship?)"}
+# select day that have at least 50 dives
+days_to_keep = data_2018_filter[,
+                                .(nb_dives = .N),
+                                by = .(.id, day_departure)] %>%
+  .[nb_dives >= 50,]
+
+# keep only those days
+data_2018_filter_complete_day = merge(data_2018_filter,
+                                      days_to_keep,
+                                      by = c(".id", "day_departure"))
+
+# data plot
+dataPlot = data_2018_filter_complete_day[,
+                                         .(badl = quantile(dduration, 0.95)),
+                                         by = .(.id, day_departure)]
+
+# combine two datasets to be able to use a second axis
+# https://stackoverflow.com/questions/49185583/two-y-axes-with-different-scales-for-two-datasets-in-ggplot2
+dataMegaPlot = rbind(data_2018_filter_complete_day[divetype == "2: drift"] %>%
+                       .[, .(w = .id,
+                             y = driftrate,
+                             x = day_departure,
+                             z = "second_plot")],
+                     dataPlot[, .(
+                       w = .id,
+                       # tricky one
+                       y = (badl / 1000) - 1,
+                       x = day_departure,
+                       z = "first_plot"
+                     )])
+
+# plot
+ggplot() +
+  geom_point(
+    data = dataMegaPlot[z == "second_plot", ],
+    aes(x = x, y = y),
+    alpha = 1 / 10,
+    size = 0.5,
+    color = "grey40",
+    show.legend = FALSE
+  ) +
+  geom_path(data = dataMegaPlot[z == "first_plot", ],
+            aes(x = x, y = y, color = w),
+            show.legend = FALSE) +
+  scale_y_continuous(
+    # Features of the first axis
+    name = "Drift rate (m/s)",
+    # Add a second axis and specify its features
+    sec.axis = sec_axis( ~ (. * 1000) + 1000, name = "Behavioral Aerobic Dive Limit (s)")
+  ) +
+  labs(x = "# days since departure") +
+  facet_wrap(w ~ .) +
+  theme_jjo()
+```
+
+> Looking at this graph, I want to believe that there is some kind of relationship between the *bADL* as defined by [Shero et *al.* (2018)](https://www.researchgate.net/publication/222683042_To_breathe_or_not_to_breathe_Optimal_breathing_aerobic_dive_limit_and_oxygen_stores_in_deep-diving_blue-eyed_shags) and the drift rate (and so buyoancy).
+
+```{r}
+# get badl
+dataplot_1 = data_2018_filter_complete_day[,
+                              .(badl = quantile(dduration, 0.95)),
+                              by = .(.id, day_departure)]
+# get driftrate
+dataplot_2 = data_2018_filter_complete_day[divetype == "2: drift",
+                              .(driftrate = median(driftrate)),
+                              by = .(.id, day_departure)]
+
+# merge
+dataPlot = merge(dataplot_1,
+                 dataplot_2,
+                 by = c(".id", "day_departure"),
+                 all = TRUE)
+
+# plot
+ggplot(data = dataPlot, aes(x = badl, y = driftrate, col = .id)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(.id~., scales = "free") +
+  theme_jjo()
+```
+
+#### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
+
+##### ind_2018070 {.unlisted .unnumbered}
+
+```{r}
+# ind_2018070
+plot_ly(
+  x = dataPlot[.id == "ind_2018070", badl],
+  y = dataPlot[.id == "ind_2018070", day_departure],
+  z = dataPlot[.id == "ind_2018070", driftrate],
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 2),
+  color = dataPlot[.id == "ind_2018070", day_departure]
+) %>% 
+  layout(scene = list(xaxis = list(title = 'Behavioral ADL'),
+                      yaxis = list(title = '# days since departure'),
+                      zaxis = list(title = 'Drift rate (m/s)')))
+```
+##### ind_2018072 {.unlisted .unnumbered}
+
+```{r}
+# ind_2018072
+plot_ly(
+  x = dataPlot[.id == "ind_2018072", badl],
+  y = dataPlot[.id == "ind_2018072", day_departure],
+  z = dataPlot[.id == "ind_2018072", driftrate],
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 2),
+  color = dataPlot[.id == "ind_2018072", day_departure]
+) %>% 
+  layout(scene = list(xaxis = list(title = 'Behavioral ADL'),
+                      yaxis = list(title = '# days since departure'),
+                      zaxis = list(title = 'Drift rate (m/s)')))
+```
+
+##### ind_2018074 {.unlisted .unnumbered}
+
+```{r}
+# ind_2018074
+plot_ly(
+  x = dataPlot[.id == "ind_2018074", badl],
+  y = dataPlot[.id == "ind_2018074", day_departure],
+  z = dataPlot[.id == "ind_2018074", driftrate],
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 2),
+  color = dataPlot[.id == "ind_2018074", day_departure]
+) %>% 
+  layout(scene = list(xaxis = list(title = 'Behavioral ADL'),
+                      yaxis = list(title = '# days since departure'),
+                      zaxis = list(title = 'Drift rate (m/s)')))
+```
+
+##### ind_2018072 {.unlisted .unnumbered}
+
+```{r}
+# ind_2018080
+plot_ly(
+  x = dataPlot[.id == "ind_2018080", badl],
+  y = dataPlot[.id == "ind_2018080", day_departure],
+  z = dataPlot[.id == "ind_2018080", driftrate],
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 2),
+  color = dataPlot[.id == "ind_2018080", day_departure]
+) %>% 
+  layout(scene = list(xaxis = list(title = 'Behavioral ADL'),
+                      yaxis = list(title = '# days since departure'),
+                      zaxis = list(title = 'Drift rate (m/s)')))
 ```
 
 ### GPS data
