@@ -7,6 +7,7 @@ library(data.table)
 library(stringr)
 library(lubridate)
 library(magrittr)
+library(geosphere)
 
 # set the maximum number of threads
 setDTthreads(parallel::detectCores())
@@ -131,6 +132,7 @@ data_2018 <- lapply(data_2018, function(x) {
                                                      as.Date(date) - seconds(1)
                                                    ),
                                                    units = "days")))]
+
 })
 gps_2018 <- lapply(gps_2018, function(x) {
   # colnames
@@ -172,7 +174,7 @@ data_2018 <- lapply(data_2018, function(x) {
   # check if 2018-ind is also in gps_2018
   if (!is.null(gps_2018[[.n()]])) {
     # let's merge with gps_2018
-    gps_2018[[weanlingNES:::.n()]] %>%
+    x = gps_2018[[weanlingNES:::.n()]] %>%
       .[, c("date",
             "mostlikelylatitude",
             "mostlikelylongitude")] %>%
@@ -183,8 +185,18 @@ data_2018 <- lapply(data_2018, function(x) {
         mostlikelylatitude = NULL,
         mostlikelylongitude = NULL
       )]
+    # then calculate distance since the departure, i.e. the first location
+    # 1. add two columns with the coordinate of the first location
+    x[, `:=`(lon_dep = first(lon), lat_dep = first(lat))]
+    # 2. calculate the distance
+    res_inter = distGeo(as.matrix(x[, .(lon_dep, lat_dep)]),
+             as.matrix(x[, .(lon, lat)]))
+    # 3. add the result in dataset
+    x[, dist_dep := res_inter]
+    # 3. remove lat_dep and lon_dep column
+    x[, `:=`(lat_dep = NULL, lon_dep = NULL)]
   } else {
-    x[, `:=`(lat = NA, lon = NA)]
+    x[, `:=`(lat = NA, lon = NA, dist_dep = NA)]
   }
 })
 
