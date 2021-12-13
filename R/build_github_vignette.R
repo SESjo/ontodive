@@ -29,16 +29,26 @@ build_github_vignette <- function(website = TRUE) {
     # compute website
     pkgdown::build_site()
   }
+  # copy paste tutorials into vignettes folder to compute all vignettes
+  file.copy(dir("vignettes/tutorials/",
+                full.names = TRUE,
+                pattern = "*.Rmd$"),
+            "vignettes")
   # build vignettes
-  tools::buildVignettes(dir = ".", tangle = TRUE)
+  tools::buildVignettes(dir = ".",
+                        tangle = TRUE)
   # create the proper folders
   dir.create("inst/doc")
   # copy the proper files
   file.copy(dir(
     "vignettes",
+    recursive = TRUE,
     full.names = TRUE,
-    pattern = c("*.html|*.Rmd|*.R")
+    pattern = c("*.html$|*.Rmd$|*.R$")
   ),
   "inst/doc",
   overwrite = TRUE)
+  # remove tutorials from vignettes folder (it has to stay in tutorials folder)
+  file.remove(paste0("vignettes/",
+                     dir("vignettes/tutorials/", pattern = "*.Rmd$")))
 }
