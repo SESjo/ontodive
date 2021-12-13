@@ -20,6 +20,10 @@
 #' }
 build_github_vignette <- function(website = TRUE) {
   if (website == TRUE){
+    # update favicon
+    pkgdown::build_favicons(pkg = ".", overwrite = TRUE)
+    # "re"initiate a website
+    pkgdown::init_site()
     # compute readme as *.md
     rmarkdown::render("README.Rmd", rmarkdown::md_document())
     # compute website
@@ -36,6 +40,5 @@ build_github_vignette <- function(website = TRUE) {
     pattern = c("*.html|*.Rmd|*.R")
   ),
   "inst/doc",
-  overwrite = TRUE
-  )
+  overwrite = TRUE)
 }
