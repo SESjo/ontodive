@@ -1,4 +1,4 @@
-## ----setup, include=FALSE-----------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -43,7 +43,7 @@ theme_jjo <- function(base_size = 12) {
     )
 }
 
-## -----------------------------------------------------------------------------
+## ----phase-of-the-day-1-------------------------------------------------------------------------------------------------
 # load library
 library(weanlingNES)
 
@@ -56,7 +56,7 @@ data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
 # remove phase column for the purpose of this document
 data_2018[, phase := NULL]
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6----
+## ----phase-of-the-day-2, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6----
 # let's first average `lightatsurf` by individuals, day since departure and hour
 dataPlot = data_2018[,.(lightatsurf = median(lightatsurf)), 
                      by=.(.id,day_departure,date = as.Date(date),hour)]
@@ -69,7 +69,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
   labs(x = "# of days since departure", y = "Hour", fill = "Light level at the surface") +
   theme(legend.position = c("bottom"))
 
-## ---- fig.cap="Distribution of `lightatsurf` with a threshold at 110."--------
+## ----phase-of-the-day-3, fig.cap="Distribution of `lightatsurf` with a threshold at 110."-------------------------------
 # display the result
 ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   geom_histogram(show.legend = FALSE) + 
@@ -77,7 +77,7 @@ ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   facet_wrap(.id ~ .)+
   theme_jjo()
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points", fig.height=6----
+## ----phase-of-the-day-4, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points", fig.height=6----
 # identification of sunset, sunrise pairs
 res_twi = data_2018[!is.na(lightatsurf),
                     findTwilights(.(Date = date, Light = lightatsurf), 
@@ -103,7 +103,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## -----------------------------------------------------------------------------
+## ----phase-of-the-day-5-------------------------------------------------------------------------------------------------
 # calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)
 res_twi[, period_time := c(0,as.numeric(diff(Twilight,units="hours"), units="mins")), 
         by= .(.id, as.Date(Twilight))]
@@ -117,7 +117,7 @@ res_twi_inter = res_twi[c(
   # reorder by date
   ][order(Twilight)]
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6----
+## ----phase-of-the-day-6, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6----
 # display the result
 ggplot() +
   geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -142,14 +142,14 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("top"))
 
-## ---- fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"----
+## ----phase-of-the-day-7, fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"----
 # display
 ggplot(res_twi_inter, aes(x=period_time, fill=.id)) + 
   geom_histogram() + 
   facet_grid(.id~.) + 
   theme_jjo()
 
-## -----------------------------------------------------------------------------
+## ----phase-of-the-day-8-------------------------------------------------------------------------------------------------
 # remove outlier (but keep the 0)
 res_twi_out = res_twi[period_time==0 | period_time %between% c(300,900)]
 
@@ -162,7 +162,7 @@ res_twi_out_inter = res_twi_out[c(
   # reorder by date
   ][order(Twilight)]
 
-## ---- fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6----
+## ----phase-of-the-day-9, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6----
 # display the result
 ggplot() +
   geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -175,7 +175,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## -----------------------------------------------------------------------------
+## ----phase-of-the-day-10------------------------------------------------------------------------------------------------
 # # let's first split our dataset by individual
 # split_inter = split(data_2018, data_2018$.id)
 # 
@@ -195,7 +195,7 @@ ggplot() +
 # # unlist
 # data_2018 = rbindlist(split_inter)
 
-## ---- cahce=TRUE, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)", fig.height=6----
+## ----phase-of-the-day-11, cahce=TRUE, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)", fig.height=6----
 # remove nan value
 df_clust = dataPlot[!is.na(lightatsurf),.(hour,day_departure,lightatsurf)]
                     
@@ -235,7 +235,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ---- fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)", fig.height=6----
+## ----phase-of-the-day-12, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)", fig.height=6----
 # let's try other parameters
 res_dbscan = dbscan(df_clust, 
                   eps = 8, 
@@ -256,7 +256,7 @@ ggplot() +
   theme(legend.position = c("bottom"))
 
 
-## ---- fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6----
+## ----phase-of-the-day-13, fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6----
 # display the result
 ggplot() +
   geom_tile(data = dataPlot[!is.na(lightatsurf),
@@ -271,7 +271,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## -----------------------------------------------------------------------------
+## ----phase-of-the-day-14------------------------------------------------------------------------------------------------
 # referential creation
 ref_phase_day = dataPlot[!is.na(lightatsurf),
          ][, cluster := res_dbscan$cluster
@@ -291,7 +291,7 @@ ref_phase_day[, `:=` (date = date + hours(hour),
 # rolling join
 data_2018 = ref_phase_day[data_2018, roll=T, on = .(.id, date)]
 
-## ----eval=FALSE---------------------------------------------------------------
+## ----phase-of-the-day-15, eval=FALSE------------------------------------------------------------------------------------
 #  # identification of transition
 #  ref_phase_day[,transition := c(1,abs(diff(as.numeric(as.factor(phase)))))]
 #  

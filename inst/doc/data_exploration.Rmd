@@ -529,7 +529,8 @@ names_display <- names(data_2018_filter[, -c(
   "day_departure",
   "phase",
   "lat",
-  "lon"
+  "lon",
+  "dist_dep"
 )])
 ```
 
@@ -1325,18 +1326,23 @@ ggplot(data = data_2018_filter[pdi < 300,], aes(x = dduration,
 ```
 ```{r, fig.cap="Post-dive duration / dive duration ratio vs. day since departure"}
 # dive duration vs pdi by days
-ggplot(data = data_2018_filter[pdi < 300, .(.id, pdi_ratio = pdi / dduration, day_departure)], aes(
-  x = day_departure,
-  y = pdi_ratio,
-  color = .id,
-  group = day_departure,
-  fill = "none"
-)) +
-  geom_boxplot(show.legend = FALSE, outlier.alpha = 0.05, alpha = 0) +
+ggplot(
+  data = data_2018_filter[pdi < 300, .(.id, pdi_ratio = pdi / dduration, day_departure)],
+  aes(
+    x = day_departure,
+    y = pdi_ratio,
+    color = .id,
+    group = day_departure,
+    fill = "none"
+  )
+) +
+  geom_boxplot(show.legend = FALSE,
+               outlier.alpha = 0.05,
+               alpha = 0) +
   labs(x = "# days since departure", y = "Post-dive / Dive duration ratio") +
   facet_wrap(. ~ .id, scales = "free_x") +
   # zoom
-  coord_cartesian(ylim=c(0,0.4)) +
+  coord_cartesian(ylim = c(0, 0.4)) +
   theme_jjo()
 ```
 #### [Shero et *al.* (2018)](https://www.researchgate.net/publication/222683042_To_breathe_or_not_to_breathe_Optimal_breathing_aerobic_dive_limit_and_oxygen_stores_in_deep-diving_blue-eyed_shags)

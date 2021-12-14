@@ -1,0 +1,104 @@
+---
+title: "Logo Design"
+author: "Joffrey JOUMAA"
+date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    css: cosmo_custom.css
+    number_sections: yes
+    code_folding: show
+    df_print: default
+    fig_caption: yes
+    code_download: yes
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+vignette: >
+  %\VignetteIndexEntry{Logo Design}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+# global option relative to rmarkdown
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  message = FALSE,
+  warning = FALSE
+  # tidy = TRUE
+)
+```
+
+Just a small vignette to explain how to create its own logo.
+
+## Load R package
+
+```{r create-logo-1}
+# loading library
+library(hexSticker)
+library(showtext)
+
+# utomatically use showtext to render text for future devices
+showtext_auto()
+```
+
+* `hexSticker`: allows to build your sticker
+* `showtext`: allows to use various types of fonts
+
+## Look for the right image
+
+This part is not mandatory since you can use a graph instead of an image. For our logo, we used a vector graphic found on [freesvg.org](https://freesvg.org/baby-seal-drawing) and then we've [modified](https://imgur.com/a/mPpVdiJ) it a bit to reach our needs.
+
+![The original](https://freesvg.org/img/Cute-baby-seal.png)
+
+## Build your sticker
+
+```{r create-logo-2, fig.cap = "Our logo!!"}
+# load the right font
+font_add_google("Courier Prime")
+
+# print
+print(
+  sticker(
+    "https://i.imgur.com/QUzPuJK.png",
+    package = "weanlingNES",
+    p_family = "Courier Prime",
+    p_size = 28,
+    p_y = .6,
+    s_x = 1,
+    s_y = 1.3,
+    s_width = .8,
+    h_color = "#fdc700",
+    h_fill = "#003c6c",
+    url = "jjoumaa.ddns.net/weanlingNES",
+    u_color = "#13a5dc",
+    u_size = 6,
+    spotlight = T,
+    asp = 0.8,
+  )
+)
+```
+```{r create-logo-3}
+# just as a back to create it whiht the right proportion
+sticker(
+  "https://i.imgur.com/QUzPuJK.png",
+  package = "weanlingNES",
+  p_family = "Courier Prime",
+  p_size = 18,
+  s_x = 1,
+  s_y = 1.3,
+  p_y = .6,
+  filename = "inst/logo/logo.png",
+  h_color = "#fdc700",
+  h_fill = "#003c6c",
+  spotlight = T,
+  s_width = .8,
+  asp = 0.8,
+  url = "jjoumaa.ddns.net/weanlingNES",
+  u_color = "#13a5dc",
+  u_size = 4
+)
+```
+

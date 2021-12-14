@@ -1,11 +1,12 @@
 pandoc: 2.14.0.3
 pkgdown: 2.0.1.9000
-pkgdown_sha: 1c2bedc10283fe39c5e539083021cb87f208903a
+pkgdown_sha: bbefae3575a7c2484810f9b3b60af4b1faf0d2f4
 articles:
-  data_exploration: data_exploration.html
+  data_exploration_2016: data_exploration_2016.html
+  data_exploration_2018: data_exploration_2018.html
   phase_of_the_day: phase_of_the_day.html
   test: test.html
-last_built: 2021-12-08T23:14Z
+last_built: 2021-12-13T23:21Z
 urls:
   reference: jjoumaa.ddns.net/weanlingNES/reference
   article: jjoumaa.ddns.net/weanlingNES/articles

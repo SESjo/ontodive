@@ -48,7 +48,8 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/data_exploration.html">Data Exploration</a>
+    <a class="dropdown-item" href="../articles/data_exploration_2016.html">Data Exploration - 2016</a>
+    <a class="dropdown-item" href="../articles/data_exploration_2018.html">Data Exploration - 2018</a>
     <a class="dropdown-item" href="../articles/phase_of_the_day.html">Detect phases of the day</a>
     <a class="dropdown-item" href="../articles/test.html">test</a>
   </div>
@@ -70,7 +71,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Detect phases of the day</h1>
                         <h4 data-toc-skip class="author">Joffrey JOUMAA</h4>
             
-            <h4 data-toc-skip class="date">08 décembre 2021</h4>
+            <h4 data-toc-skip class="date">December 13, 2021</h4>
       
       
       <div class="d-none name"><code>phase_of_the_day.Rmd</code></div>
@@ -110,7 +111,7 @@
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, y <span class="op">=</span> <span class="st">"Hour"</span>, fill <span class="op">=</span> <span class="st">"Light level at the surface"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-2-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-2-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip
 </p>
 </div>
@@ -126,7 +127,7 @@ Visualization of light level at the surface along 2018-individuals’ trip
   <span class="fu">facet_wrap</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-3-1.png" alt="Distribution of `lightatsurf` with a threshold at 110." width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-3-1.png" alt="Distribution of `lightatsurf` with a threshold at 110." width="100%"><p class="caption">
 Distribution of <code>lightatsurf</code> with a threshold at 110.
 </p>
 </div>
@@ -162,7 +163,7 @@ Distribution of <code>lightatsurf</code> with a threshold at 110.
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-4-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-4-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip, with twilight detection points
 </p>
 </div>
@@ -193,7 +194,7 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-6-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-6-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip, with twilight detection points corrected
 </p>
 </div>
@@ -235,7 +236,7 @@ Visualization of light level at the surface for the first 100 days of <code>ind_
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-7-1.png" alt="Distributions of the time difference between two rows identified as sunrise and sunset" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-7-1.png" alt="Distributions of the time difference between two rows identified as sunrise and sunset" width="100%"><p class="caption">
 Distributions of the time difference between two rows identified as sunrise and sunset
 </p>
 </div>
@@ -265,7 +266,7 @@ Distributions of the time difference between two rows identified as sunrise and 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-9-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-9-1.png" alt="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected" width="100%"><p class="caption">
 Visualization of light level at the surface along 2018-individuals’ trip, with twilight detection points corrected
 </p>
 </div>
@@ -329,7 +330,7 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-11-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-11-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)" width="100%"><p class="caption">
 Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)
 </p>
 </div>
@@ -390,7 +391,7 @@ Visualization of the moment where the light was measured at the surface colored 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-12-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-12-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)" width="100%"><p class="caption">
 Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, <code>eps=8</code>, <code>MinPts=nrow(dataPlot)*0.0001</code>)
 </p>
 </div>
@@ -410,7 +411,7 @@ Visualization of the moment where the light was measured at the surface colored 
        col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/unnamed-chunk-13-1.png" alt="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`" width="100%"><p class="caption">
+<img src="phase_of_the_day_files/figure-html/phase-of-the-day-13-1.png" alt="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`" width="100%"><p class="caption">
 Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the others</code>
 </p>
 </div>

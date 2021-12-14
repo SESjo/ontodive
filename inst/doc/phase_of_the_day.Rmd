@@ -1,7 +1,7 @@
 ---
 title: "Detect phases of the day"
 author: "Joffrey JOUMAA"
-date: "`r format(Sys.Date(), format = '%d %B %Y')`"
+date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
 resource_files:
   - ../man/figures/2004023_DaylengthWithSunriseSunset.png
 output:
@@ -76,7 +76,7 @@ We'll like to find something similar to what was done for the individual `200402
 
 Let's first load our package and our data.
 
-```{r}
+```{r phase-of-the-day-1}
 # load library
 library(weanlingNES)
 
@@ -92,7 +92,7 @@ data_2018[, phase := NULL]
 
 To visualize the data, we summarize each point on the plot as the median of the light level during one hour of one day.
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6}
+```{r phase-of-the-day-2, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6}
 # let's first average `lightatsurf` by individuals, day since departure and hour
 dataPlot = data_2018[,.(lightatsurf = median(lightatsurf)), 
                      by=.(.id,day_departure,date = as.Date(date),hour)]
@@ -109,7 +109,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
 
 Well, the good news is that we can clearly see the same pattern we saw in `2004023`. Let's look at the distribution
 
-```{r, fig.cap="Distribution of `lightatsurf` with a threshold at 110."}
+```{r phase-of-the-day-3, fig.cap="Distribution of `lightatsurf` with a threshold at 110."}
 # display the result
 ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   geom_histogram(show.legend = FALSE) + 
@@ -124,7 +124,7 @@ There is a bimodal distribution for each individual that seems to be quite well 
 
 Let's first reshape our data to complied with the `findTwilights` function.
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points", fig.height=6}
+```{r phase-of-the-day-4, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points", fig.height=6}
 # identification of sunset, sunrise pairs
 res_twi = data_2018[!is.na(lightatsurf),
                     findTwilights(.(Date = date, Light = lightatsurf), 
@@ -153,7 +153,7 @@ ggplot() +
 
 Not bad actually! But there are many outliers that need to be addressed. Let's try to only keep the pair `Rise` (`TRUE`, `FALSE`) that has the longer period of time of the day.
 
-```{r}
+```{r phase-of-the-day-5}
 # calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)
 res_twi[, period_time := c(0,as.numeric(diff(Twilight,units="hours"), units="mins")), 
         by= .(.id, as.Date(Twilight))]
@@ -168,7 +168,7 @@ res_twi_inter = res_twi[c(
   ][order(Twilight)]
 ```
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6}
+```{r phase-of-the-day-6, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6}
 # display the result
 ggplot() +
   geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -204,7 +204,7 @@ As we can see, some low light levels are encountered in the middle of daytime th
 
 Since some of the outliers observed Figure \@ref(fig:zoom_2010074) are during daytime, it means that `period_time` should be longer than usual for these days. Considering this, we could impose condition on this variable to make sure it is neither too long either too short.
 
-```{r, fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"}
+```{r phase-of-the-day-7, fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"}
 # display
 ggplot(res_twi_inter, aes(x=period_time, fill=.id)) + 
   geom_histogram() + 
@@ -213,7 +213,7 @@ ggplot(res_twi_inter, aes(x=period_time, fill=.id)) +
 ```
 Considering this graph, let's try to keep rows where `period_time==0` or `300<period_time<900`
 
-```{r}
+```{r phase-of-the-day-8}
 # remove outlier (but keep the 0)
 res_twi_out = res_twi[period_time==0 | period_time %between% c(300,900)]
 
@@ -227,7 +227,7 @@ res_twi_out_inter = res_twi_out[c(
   ][order(Twilight)]
 ```
 
-```{r, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6}
+```{r phase-of-the-day-9, fig.cap="Visualization of light level at the surface along 2018-individuals' trip, with twilight detection points corrected", fig.height=6}
 # display the result
 ggplot() +
   geom_tile(data = dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) + 
@@ -246,7 +246,7 @@ ggplot() +
 
 Since those points are due to outliers during the day, we could try to smooth the light level signal and run the `findTwilight` function on it.
 
-```{r}
+```{r phase-of-the-day-10}
 # # let's first split our dataset by individual
 # split_inter = split(data_2018, data_2018$.id)
 # 
@@ -278,7 +278,7 @@ Since we can visually see where is the day and night time, we should try cluster
 
 Here we test a package well-known to perform clustering `FactoMineR`. The idea behind its main method is to performed a hierarchical clustering where the initial centroids are positioned based on a pre-performed k-means using the first component of a PCA. For more information feel free to have a look at their [website](http://factominer.free.fr/factomethods/hierarchical-clustering-on-principal-components.html).
 
-```{r, cahce=TRUE, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)", fig.height=6}
+```{r phase-of-the-day-11, cahce=TRUE, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (HCPC)", fig.height=6}
 # remove nan value
 df_clust = dataPlot[!is.na(lightatsurf),.(hour,day_departure,lightatsurf)]
                     
@@ -331,7 +331,7 @@ ggplot() +
 ```
 Well that's quite nice :) There are still few outliers (especially for individual `ind_201874`) identify as cluster 1 whereas we would like to see them in cluster 2. Let's try using other parameters.
 
-```{r, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)", fig.height=6}
+```{r phase-of-the-day-12, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)", fig.height=6}
 # let's try other parameters
 res_dbscan = dbscan(df_clust, 
                   eps = 8, 
@@ -355,7 +355,7 @@ ggplot() +
 
 Here, the algorithm find several clusters, but it is the cluster `1` that has our attention. It seems better defined than the previous figure \@ref(fig:dbscan_first_test), but there are still few rows (for `ind_2018074`) that have been mislabelled.
 
-```{r, fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6}
+```{r phase-of-the-day-13, fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6}
 # display the result
 ggplot() +
   geom_tile(data = dataPlot[!is.na(lightatsurf),
@@ -375,7 +375,7 @@ ggplot() +
 
 For now we will used the result from the `DBSCAN` algorithm, since results seem to be better! 
 
-```{r}
+```{r phase-of-the-day-14}
 # referential creation
 ref_phase_day = dataPlot[!is.na(lightatsurf),
          ][, cluster := res_dbscan$cluster
@@ -404,7 +404,7 @@ We could also try to define two other phases of the day:
 * sunset: plus or minus 30 min from the transition night to day
 * sunrise: plus or minus 30 min from the transition day to night
 
-```{r eval=FALSE}
+```{r phase-of-the-day-15, eval=FALSE}
 # identification of transition
 ref_phase_day[,transition := c(1,abs(diff(as.numeric(as.factor(phase)))))]
 
