@@ -1,4 +1,5 @@
 url: jjoumaa.ddns.net/weanlingNES
+
 template:
   bootstrap: 5
 authors:
@@ -6,3 +7,22 @@ authors:
     href: "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwic8O6l9bH0AhXMJjQIHZ-HBMIQFnoECAIQAQ&url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fjoffreyjoumaa&usg=AOvVaw2R2txhLGptY1KcDYL9VUrK"
   Roxanne Beltran:
     href: "https://roxannebeltran.weebly.com/people.html"
+
+articles:
+  - title: Articles
+    navbar: Analyses
+    contents:
+      - data_exploration_2016
+      - data_exploration_2018
+      - data_exploration_2018_map
+  - title: Articles
+    navbar: Others
+    contents:
+      - create_logo
+      - phase_of_the_day
+      - netcdf_read
+  - title: Articles
+    navbar: Troubleshooting
+    contents:
+      - session_info
+      - test
