@@ -18,7 +18,7 @@ Description: The purpose of this package is to encompass datasets,
         scripts and analyses used in the Weanling paper.
 License: file LICENSE
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 7.1.2
 Imports: 
     fpc,
@@ -33,6 +33,4 @@ Depends: R (>= 2.10)
 Suggests:
     knitr,
     rmarkdown
-VignetteBuilder:
-    knitr,
-    rmarkdown
+VignetteBuilder:knitr
