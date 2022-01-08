@@ -4,7 +4,7 @@
 \alias{build_github_vignette}
 \title{Build Vignette for Github}
 \usage{
-build_github_vignette(website = TRUE)
+build_github_vignette(vignette = NULL, website = TRUE, vignettes = TRUE)
 }
 \arguments{
 \item{website}{A boolean to compile the website associated with weanlingNES package}

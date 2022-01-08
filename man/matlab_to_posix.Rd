@@ -2,7 +2,7 @@
 % Please edit documentation in R/matlab_to_posix.R
 \name{matlab_to_posix}
 \alias{matlab_to_posix}
-\title{Convert Matlab datenum to POSIXt}
+\title{Convert Matlab datenum to POSIX}
 \usage{
 matlab_to_posix(x, timez = "UTC")
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_phase_day.R
 \name{calc_phase_day}
 \alias{calc_phase_day}
-\title{Determine the different phasesof the day}
+\title{Determine the different phases of the day}
 \usage{
 calc_phase_day(dataset, method = "dbscan")
 }
@@ -27,10 +27,16 @@ Methods
 \examples{
 \dontrun{
 # load data
-data("data_nes")
+ data("data_nes")
 
-# night and day calculation
-result <- calc_phase_day(rbindlist(
+ # night and day calculation
+ result <- calc_phase_day(rbindlist(data_nes$year_2018,
+                                    use.name = TRUE,
+                                    idcol = TRUE
+ ))
 }
 
+}
+\references{
+`vignette("phase_of_the_day")`
 }
