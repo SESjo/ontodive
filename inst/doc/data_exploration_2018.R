@@ -1,4 +1,4 @@
-## ----setup, include=FALSE-----------------------------------------------------------------------------------------------
+## ----setup, include=FALSE---------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   # tidy = TRUE,
+  cache.lazy = FALSE,
   optipng = "-o7 -quiet",
   pngquant = "--speed=1"
 )
@@ -32,6 +33,11 @@ library(magrittr)
 library(DT)
 library(plotly)
 library(geosphere)
+library(tidync)
+library(gganimate)
+library(transformr)
+library(magick)
+library(gifski)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -71,7 +77,7 @@ theme_jjo <- function(base_size = 12) {
     )
 }
 
-## ----data-exploration-2018-1--------------------------------------------------------------------------------------------
+## ----data-exploration-2018-1------------------------------------------------------------
 # load library
 library(weanlingNES)
 
@@ -79,18 +85,18 @@ library(weanlingNES)
 data("data_nes", package = "weanlingNES")
 # load("../data/data_nes.rda")
 
-## ----data-exploration-2018-2--------------------------------------------------------------------------------------------
+## ----data-exploration-2018-2------------------------------------------------------------
 # list structure
 str(data_nes$year_2018, max.level = 1, give.attr = F, no.list = T)
 
-## ----data-exploration-2018-3, eval=FALSE--------------------------------------------------------------------------------
+## ----data-exploration-2018-3, eval=FALSE------------------------------------------------
 #  # combine all individuals
 #  data_2018 <- rbindlist(data_nes$year_2018)
 #  
 #  # display
 #  DT::datatable(data_2018[sample.int(.N, 10), ], options = list(scrollX = T))
 
-## ----data-exploration-2018-4, echo=FALSE, results='asis'----------------------------------------------------------------
+## ----data-exploration-2018-4, echo=FALSE, results='asis'--------------------------------
 # combine all individuals
 data_2018 <- rbindlist(data_nes$year_2018)
 
@@ -107,7 +113,7 @@ cat("<table style='width: 50%'>",
 # display
 DT::datatable(data_2018[sample.int(.N, 10), ], options = list(scrollX = T))
 
-## ----data-exploration-2018-5--------------------------------------------------------------------------------------------
+## ----data-exploration-2018-5------------------------------------------------------------
 # raw_data
 data_2018[, .(
   nb_days_recorded = uniqueN(as.Date(date)),
@@ -122,7 +128,7 @@ data_2018[, .(
     digits = 2
   )
 
-## ----data-exploration-2018-6, fig.cap="Check for missing value in 2018-individuals", fig.width=9------------------------
+## ----data-exploration-2018-6, fig.cap="Check for missing value in 2018-individuals", fig.width=9----
 # build dataset to check for missing values
 dataPlot <- melt(data_2018[, .(.id, is.na(.SD)), .SDcol = -c(
   ".id",
@@ -159,7 +165,7 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
     legend.key = element_rect(colour = "black")
   )
 
-## ----data-exploration-2018-7--------------------------------------------------------------------------------------------
+## ----data-exploration-2018-7------------------------------------------------------------
 # table with percent
 table_inter <- data_2018[, lapply(.SD, function(x) {
   round(length(x[is.na(x)]) * 100 / length(x), 1)
@@ -216,7 +222,7 @@ ggplot(
   labs(x = "# of dives", y = "Dive duration (s)") +
   theme_jjo()
 
-## ----data-exploration-2018-10-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-10-----------------------------------------------------------
 # filter data
 data_2018_filter <- data_2018[dduration < 3000, ]
 
@@ -260,7 +266,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = phase)) +
        fill = "Day time and night time as detected by the `cal_phase_day` function") +
   theme(legend.position = c("bottom"))
 
-## ----data-exploration-2018-13-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-13-----------------------------------------------------------
 names_display <- names(data_2018_filter[, -c(
   ".id",
   "date",
@@ -282,7 +288,7 @@ names_display <- names(data_2018_filter[, -c(
   "dist_dep"
 )])
 
-## ----data-exploration-2018-14, eval=FALSE, include=TRUE-----------------------------------------------------------------
+## ----data-exploration-2018-14, eval=FALSE, include=TRUE---------------------------------
 #  for (i in names_display) {
 #    cat("#####", i, "{.unlisted .unnumbered} \n")
 #    if (i == "maxdepth") {
@@ -401,7 +407,7 @@ names_display <- names(data_2018_filter[, -c(
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-15, results='asis', cache=TRUE, echo=FALSE---------------------------------------------------
+## ----data-exploration-2018-15, results='asis', cache=TRUE, echo=FALSE-------------------
 for (i in names_display) {
   cat("####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
@@ -520,7 +526,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-16, eval=FALSE, include=TRUE-----------------------------------------------------------------
+## ----data-exploration-2018-16, eval=FALSE, include=TRUE---------------------------------
 #  # same plot with a colored for the phase of the day
 #  for (i in names_display) {
 #    cat("####", i, "{-} \n")
@@ -559,7 +565,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-17, results='asis', cache=TRUE, echo=FALSE---------------------------------------------------
+## ----data-exploration-2018-17, results='asis', cache=TRUE, echo=FALSE-------------------
 # same plot with a colored for the phase of the day
 for (i in names_display) {
   cat("####", i, "{-} \n")
@@ -598,7 +604,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-18, eval=FALSE, include=TRUE-----------------------------------------------------------------
+## ----data-exploration-2018-18, eval=FALSE, include=TRUE---------------------------------
 #  for (i in names_display) {
 #    cat("####", i, "{.unlisted .unnumbered} \n")
 #    if (i == "maxdepth") {
@@ -687,7 +693,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-19, results='asis', cache=TRUE, echo=FALSE---------------------------------------------------
+## ----data-exploration-2018-19, results='asis', cache=TRUE, echo=FALSE-------------------
 for (i in names_display) {
   cat("####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
@@ -776,7 +782,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-20, eval=FALSE, include=TRUE-----------------------------------------------------------------
+## ----data-exploration-2018-20, eval=FALSE, include=TRUE---------------------------------
 #  for (i in names_display) {
 #    cat("####", i, "{.unlisted .unnumbered} \n")
 #    print(
@@ -806,7 +812,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-21, results='asis', cache=TRUE, echo=FALSE---------------------------------------------------
+## ----data-exploration-2018-21, results='asis', cache=TRUE, echo=FALSE----
 for (i in names_display) {
   cat("####", i, "{.unlisted .unnumbered} \n")
   print(
@@ -863,7 +869,7 @@ ggcorrplot(
   colors =  c("#00AFBB", "#E7B800", "#FC4E07")
 )
 
-## ----data-exploration-2018-23-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-23-----------------------------------
 # flatten correlation matrix
 cor_result_2018 <- flat_cor_mat(corr_2018, corr_p_2018)
 
@@ -871,7 +877,7 @@ cor_result_2018 <- flat_cor_mat(corr_2018, corr_p_2018)
 cor_result_2018[cor >= .7, ][order(-abs(cor))] %>%
   sable(caption = "Pairwise correlation above 0.75 and associated p-values")
 
-## ----data-exploration-2018-24, fig.cap="Proportion dive types"----------------------------------------------------------
+## ----data-exploration-2018-24, fig.cap="Proportion dive types"----
 # dataset to plot proportional area plot
 data_2018_filter[, sum_id := .N, by = .(.id, day_departure)] %>%
   .[, sum_id_days := .N, by = .(.id, day_departure, divetype)] %>%
@@ -892,7 +898,7 @@ ggplot(dataPlot, aes(
        y = "Proportion of dives", 
        fill = "Dive types")
 
-## ----data-exploration-2018-25, fig.cap="Dive duration vs. Maximum Depth colored 2018-individuals"-----------------------
+## ----data-exploration-2018-25, fig.cap="Dive duration vs. Maximum Depth colored 2018-individuals"----
 # plot
 ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = .id)) +
   geom_point(size = .5, alpha = .1, show.legend = FALSE) +
@@ -900,7 +906,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = .id)) +
   labs(x = "Maximum depth (m)", y = "Dive duration (s)") +
   theme_jjo()
 
-## ----data-exploration-2018-26, fig.cap="Dive duration vs. Maximum Depth colored by Dive Type"---------------------------
+## ----data-exploration-2018-26, fig.cap="Dive duration vs. Maximum Depth colored by Dive Type"----
 # plot
 ggplot(data = data_2018_filter, aes(y = dduration, 
                                     x = maxdepth, 
@@ -912,7 +918,7 @@ ggplot(data = data_2018_filter, aes(y = dduration,
   theme_jjo() +
   theme(legend.position = "bottom")
 
-## ----data-exploration-2018-27, fig.cap="Dive duration vs. Maximum Depth colored by # days since departure"--------------
+## ----data-exploration-2018-27, fig.cap="Dive duration vs. Maximum Depth colored by # days since departure"----
 # plot
 ggplot(data = data_2018_filter[, prop_track := (day_departure * 100) / max(day_departure), by = .id], 
        aes(y = dduration, x = maxdepth, col = prop_track)) +
@@ -925,7 +931,7 @@ ggplot(data = data_2018_filter[, prop_track := (day_departure * 100) / max(day_d
   theme_jjo() +
   theme(legend.position = "bottom")
 
-## ----data-exploration-2018-28, fig.cap="Dive duration vs. Maximum Depth colored by phases of the day"-------------------
+## ----data-exploration-2018-28, fig.cap="Dive duration vs. Maximum Depth colored by phases of the day"----
 # plot
 ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = phase)) +
   geom_point(size = .5, alpha = .1) +
@@ -937,7 +943,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = phase)) +
   theme_jjo() +
   theme(legend.position = "bottom")
 
-## ----data-exploration-2018-29-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-29-----------------------------------
 # build dataset
 dataPlot <- data_2018_filter[divetype == "2: drift",
                              # median drift rate for drift dive
@@ -957,7 +963,7 @@ dataPlot <- data_2018_filter[divetype == "2: drift",
 on = c(".id", "day_departure")
 ]
 
-## ----data-exploration-2018-30, fig.cap="Drift rate vs. Bottom time"-----------------------------------------------------
+## ----data-exploration-2018-30, fig.cap="Drift rate vs. Bottom time"----
 # plot
 ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -969,7 +975,7 @@ ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
        y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
 
-## ----data-exploration-2018-31, fig.cap="Drift rate vs. Maximum depth"---------------------------------------------------
+## ----data-exploration-2018-31, fig.cap="Drift rate vs. Maximum depth"----
 # plot
 ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -980,7 +986,7 @@ ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
        y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
 
-## ----data-exploration-2018-32, fig.cap="Drift rate vs. Dive duration"---------------------------------------------------
+## ----data-exploration-2018-32, fig.cap="Drift rate vs. Dive duration"----
 # plot
 ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -991,7 +997,7 @@ ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
        y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
 
-## ----data-exploration-2018-33, fig.cap="Post-dive duration vs. dive duration"-------------------------------------------
+## ----data-exploration-2018-33, fig.cap="Post-dive duration vs. dive duration"----
 # dive duration vs pdi by days
 ggplot(data = data_2018_filter[pdi < 300, ], aes(
   x = dduration,
@@ -1005,7 +1011,7 @@ ggplot(data = data_2018_filter[pdi < 300, ], aes(
   facet_wrap(. ~ .id, scales = "free_x") +
   theme_jjo()
 
-## ----data-exploration-2018-34, fig.cap="Post-dive duration vs. dive duration (raw data)"--------------------------------
+## ----data-exploration-2018-34, fig.cap="Post-dive duration vs. dive duration (raw data)"----
 # dive duration vs pdi by days
 ggplot(data = data_2018_filter[pdi < 300,], aes(x = dduration, 
                                                 y = pdi, 
@@ -1021,7 +1027,7 @@ ggplot(data = data_2018_filter[pdi < 300,], aes(x = dduration,
   facet_wrap(. ~ .id, scales = "free_x") +
   theme_jjo()
 
-## ----data-exploration-2018-35, fig.cap="Post-dive duration / dive duration ratio vs. day since departure"---------------
+## ----data-exploration-2018-35, fig.cap="Post-dive duration / dive duration ratio vs. day since departure"----
 # dive duration vs pdi by days
 ggplot(
   data = data_2018_filter[pdi < 300, .(.id, pdi_ratio = pdi / dduration, day_departure)],
@@ -1107,7 +1113,7 @@ ggplot() +
   facet_wrap(w ~ .) +
   theme_jjo()
 
-## ----data-exploration-2018-38-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-38-----------------------------------
 # get badl
 dataplot_1 = data_2018_filter_complete_day[,
                               .(badl = quantile(dduration, 0.95)),
@@ -1129,7 +1135,7 @@ ggplot(data = dataPlot, aes(x = badl, y = driftrate, col = .id)) +
   facet_wrap(.id~., scales = "free") +
   theme_jjo()
 
-## ----data-exploration-2018-39-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-39-----------------------------------
 # ind_2018070
 plot_ly(
   x = dataPlot[.id == "ind_2018070", badl],
@@ -1144,7 +1150,7 @@ plot_ly(
                       yaxis = list(title = '# days since departure'),
                       zaxis = list(title = 'Drift rate (m/s)')))
 
-## ----data-exploration-2018-40-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-40-----------------------------------
 # ind_2018072
 plot_ly(
   x = dataPlot[.id == "ind_2018072", badl],
@@ -1159,7 +1165,7 @@ plot_ly(
                       yaxis = list(title = '# days since departure'),
                       zaxis = list(title = 'Drift rate (m/s)')))
 
-## ----data-exploration-2018-41-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-41-----------------------------------
 # ind_2018074
 plot_ly(
   x = dataPlot[.id == "ind_2018074", badl],
@@ -1174,7 +1180,7 @@ plot_ly(
                       yaxis = list(title = '# days since departure'),
                       zaxis = list(title = 'Drift rate (m/s)')))
 
-## ----data-exploration-2018-42-------------------------------------------------------------------------------------------
+## ----data-exploration-2018-42-----------------------------------
 # ind_2018080
 plot_ly(
   x = dataPlot[.id == "ind_2018080", badl],
@@ -1189,141 +1195,7 @@ plot_ly(
                       yaxis = list(title = '# days since departure'),
                       zaxis = list(title = 'Drift rate (m/s)')))
 
-## ----data-exploration-2018-43, fig.cap="Map with polylines", fig.width=8, eval=FALSE------------------------------------
-#  # This piece of code is only there to show how to draw a polylines with a
-#  # gradient color using leaflet.We're not using it due to the size of the
-#  # created map, and will continue using circle marker
-#  
-#  # datasets used to display map
-#  df_driftrate = unique(data_2018_filter[.id == "ind_2018070" &
-#                                           divetype == "2: drift",
-#                                         .(.id, lat, lon, dduration)])
-#  
-#  # color palette
-#  pal <- colorNumeric(
-#    palette = "YlGnBu",
-#    domain = df_driftrate$dduration
-#  )
-#  
-#  # add
-#  df_driftrate[, `:=`(nextLat = shift(lat),
-#                      nextLon = shift(lon),
-#                      color = pal(df_driftrate$dduration))]
-#  
-#  # interactive map
-#  gradient_map <- leaflet() %>%
-#    setView(lng = -122, lat = 38, zoom = 2) %>%
-#    addTiles()
-#  
-#  # add lines
-#  for (i in 1:nrow(df_driftrate)) {
-#    gradient_map <- addPolylines(
-#      map = gradient_map,
-#      data = df_driftrate,
-#      lat = as.numeric(df_driftrate[i, c('lat', 'nextLat')]),
-#      lng = as.numeric(df_driftrate[i, c('lon', 'nextLon')]),
-#      color = df_driftrate[i, color],
-#      weight = 3,
-#      group = "individual_1"
-#    )
-#  }
-#  
-#  # add layer control
-#  gradient_map <- addLayersControl(
-#    map = gradient_map,
-#    overlayGroups = c("individual_1"),
-#    options = layersControlOptions(collapsed = FALSE)
-#  )
-#  
-#  # format(object.size(gradient_map), units = "Mb")
-
-## ----data-exploration-2018-44-------------------------------------------------------------------------------------------
-# interactive map
-gradient_map <- leaflet() %>%
-  setView(lng = -132, lat = 48, zoom = 4) %>%
-  addTiles()
-
-# loop by individuals and variable
-grps = NULL
-for (i in seq(data_2018_filter[!is.na(lat),unique(.id)])){
-  for (k in c("dduration","maxdepth","efficiency", "driftrate")){
-    if (k == "driftrate"){
-      # set dataset used to plot
-      dataPlot = unique(data_2018_filter %>% 
-                          .[order(date),] %>% 
-                          .[.id==data_2018_filter[!is.na(lat), unique(.id)][i] &
-                              divetype == "2: drift" &
-                              !is.na(get(k)), 
-                            c("lat", "lon", k), with=FALSE] %>% 
-                          .[!is_outlier(get(k)),])
-      # color palette creation
-      colPal <- colorNumeric(
-        palette = "BrBG",
-        domain = seq(-dataPlot[,max(abs(driftrate))],
-                     dataPlot[,max(abs(driftrate))],
-                     0.1)
-      )
-    } else {
-      # set dataset used to plot
-      dataPlot = unique(data_2018_filter %>% 
-                          .[order(date),] %>% 
-                          .[.id==data_2018_filter[!is.na(lat), unique(.id)][i] & 
-                              divetype != "2: drift" &
-                              !is.na(get(k)), 
-                            c("lat", "lon", k), with=FALSE] %>% 
-                          .[!is_outlier(get(k)),]) 
-      # color palette creation
-      colPal <- colorNumeric(
-        palette = "YlGnBu",
-        domain = dataPlot[,get(k)]
-      )
-    }
-    
-    # add color to dataset
-    dataPlot[, color := colPal(dataPlot[,get(k)])]
-    # add size column
-    dataPlot[, radius := 3]
-    # mark the beginning of the trip
-    dataPlot[1, `:=` (color = "green",
-                      radius = 4)]
-    # mark the end of the trip
-    dataPlot[.N, `:=` (color = "red",
-                       radius = 4)]
-    # reorder to make the end and the beginning in front
-    dataPlot = rbind(dataPlot[-1,],dataPlot[1,])
-    # add markers to map
-    gradient_map <- addCircleMarkers(
-      map = gradient_map,
-      data = dataPlot,
-      lat = ~lat,
-      lng = ~lon,
-      radius = ~radius,
-      stroke = FALSE,
-      color = ~color,
-      fillOpacity = 1,
-      group = paste(data_2018_filter[,unique(.id)][i], "-", k)
-    ) %>% 
-      addLegend("bottomleft", 
-                data = dataPlot,
-                group = paste(data_2018_filter[,unique(.id)][i], "-", k),
-                pal = colPal, 
-                values = ~get(k),
-                title = k,
-                opacity = 1
-      )
-    # retrieve groups
-    grps = c(grps, paste(data_2018_filter[,unique(.id)][i], "-", k))
-  }
-}
-
-# add layer control
-gradient_map <- addLayersControl(
-  map = gradient_map,
-  overlayGroups = grps,
-  options = layersControlOptions(collapsed = TRUE)
-) %>% hideGroup(grps)
-
-## ----data-exploration-2018-45, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)", fig.width=8----
-# display
-gradient_map
+## ---------------------------------------------------------------
+# saving the data_2018_filter dataset
+saveRDS(data_2018_filter, file = "tmp/data_2018_filter.rds")
 
