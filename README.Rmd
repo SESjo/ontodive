@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-# weanlingNES  <img src="man/figures/logo.png" align="right" />
+# weanlingNES  <img src="man/figures/logo.png" align="right" alt="" width="120"/>
 
 The goal of weanlingNES is to provide in the same place analyses and functions developed within the framework of my postdoc on the ontogeny of diving behavior in northern elephant seal ([*Mirounga angustirostris*](https://en.wikipedia.org/wiki/Northern_elephant_seal)). Hopefully, it will be helpful for those seeking to pursue this work or just trying to apply similar analysis to their field. In the near future, it should also include a bibliography and a draft of a potential paper.
 
