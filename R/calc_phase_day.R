@@ -24,13 +24,13 @@
 #' @examples
 #' \dontrun{
 #' # load data
-#' data("data_nes")
+#'  data("data_nes")
 #'
-#' # night and day calculation
-#' result <- calc_phase_day(rbindlist(
-#` data_nes$year_2018,
-#` use.name = TRUE, idcol = TRUE
-#` ))
+#'  # night and day calculation
+#'  result <- calc_phase_day(rbindlist(data_nes$year_2018,
+#'                                     use.name = TRUE,
+#'                                     idcol = TRUE
+#'  ))
 #' }
 #'
 calc_phase_day <- function(dataset, method = "dbscan") {
