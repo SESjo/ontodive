@@ -26,12 +26,12 @@ knitr::opts_chunk$set(
   echo = TRUE,
   fig.align = "center",
   message = FALSE,
-  warning = FALSE,
-  tidy = TRUE
+  warning = FALSE
+  # tidy = TRUE
 )
 ```
 
-Just a small vignette to explain how to create its own logo.
+Just a small vignette to explain how to create your own logo.
 
 ## Load R package
 
@@ -40,7 +40,7 @@ Just a small vignette to explain how to create its own logo.
 library(hexSticker)
 library(showtext)
 
-# utomatically use showtext to render text for future devices
+# automatically use showtext to render text for future devices
 showtext_auto()
 ```
 
@@ -80,8 +80,9 @@ print(
   )
 )
 ```
-```{r create-logo-3}
-# just as a back to create it whiht the right proportion
+```{r create-logo-3, eval=FALSE, include=FALSE}
+#' just as a back up to recreate the logo with the right proportion, i.e. it
+#' it renders differently with rmarkdown
 sticker(
   "https://i.imgur.com/QUzPuJK.png",
   package = "weanlingNES",
