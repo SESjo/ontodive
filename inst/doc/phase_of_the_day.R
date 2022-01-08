@@ -1,4 +1,4 @@
-## ----setup, include=FALSE-----------------------------------------------------------------------------------------------
+## ----setup, include=FALSE---------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -43,7 +43,7 @@ theme_jjo <- function(base_size = 12) {
     )
 }
 
-## ----phase-of-the-day-1-------------------------------------------------------------------------------------------------
+## ----phase-of-the-day-1-----------------------------------------
 # load library
 library(weanlingNES)
 
@@ -69,7 +69,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
   labs(x = "# of days since departure", y = "Hour", fill = "Light level at the surface") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-3, fig.cap="Distribution of `lightatsurf` with a threshold at 110."-------------------------------
+## ----phase-of-the-day-3, fig.cap="Distribution of `lightatsurf` with a threshold at 110."----
 # display the result
 ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   geom_histogram(show.legend = FALSE) + 
@@ -103,7 +103,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-5-------------------------------------------------------------------------------------------------
+## ----phase-of-the-day-5-----------------------------------------
 # calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)
 res_twi[, period_time := c(0,as.numeric(diff(Twilight,units="hours"), units="mins")), 
         by= .(.id, as.Date(Twilight))]
@@ -149,7 +149,7 @@ ggplot(res_twi_inter, aes(x=period_time, fill=.id)) +
   facet_grid(.id~.) + 
   theme_jjo()
 
-## ----phase-of-the-day-8-------------------------------------------------------------------------------------------------
+## ----phase-of-the-day-8-----------------------------------------
 # remove outlier (but keep the 0)
 res_twi_out = res_twi[period_time==0 | period_time %between% c(300,900)]
 
@@ -175,7 +175,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-10------------------------------------------------------------------------------------------------
+## ----phase-of-the-day-10----------------------------------------
 # # let's first split our dataset by individual
 # split_inter = split(data_2018, data_2018$.id)
 # 
@@ -271,7 +271,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-14------------------------------------------------------------------------------------------------
+## ----phase-of-the-day-14----------------------------------------
 # referential creation
 ref_phase_day = dataPlot[!is.na(lightatsurf),
          ][, cluster := res_dbscan$cluster
@@ -291,7 +291,7 @@ ref_phase_day[, `:=` (date = date + hours(hour),
 # rolling join
 data_2018 = ref_phase_day[data_2018, roll=T, on = .(.id, date)]
 
-## ----phase-of-the-day-15, eval=FALSE------------------------------------------------------------------------------------
+## ----phase-of-the-day-15, eval=FALSE----------------------------
 #  # identification of transition
 #  ref_phase_day[,transition := c(1,abs(diff(as.numeric(as.factor(phase)))))]
 #  
