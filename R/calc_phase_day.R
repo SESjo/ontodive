@@ -1,4 +1,4 @@
-#' Determine the different phasesof the day
+#' Determine the different phases of the day
 #'
 #' This function can estimate daytime and nightime based on light level using several different methods.
 #'
@@ -14,6 +14,8 @@
 #' @return Return the same data.table with an additional "phase" columns
 #'
 #' @export
+#'
+#' @references `vignette("phase_of_the_day")`
 #'
 #' @importFrom fpc dbscan
 #'
