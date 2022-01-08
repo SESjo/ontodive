@@ -1,4 +1,4 @@
-#' Convert Matlab datenum to POSIXt
+#' Convert Matlab datenum to POSIX
 #'
 #' Small function to convert Matlab datenum to POSIX time
 #'
