@@ -32,6 +32,16 @@ build_github_vignette <- function(vignette = NULL,
       rmarkdown::render("README.Rmd", rmarkdown::md_document())
       # compute website
       pkgdown::build_site()
+      # copy the external files
+      file.copy(dir(
+        "vignettes",
+        recursive = TRUE,
+        full.names = TRUE,
+        pattern = c("*.mp4$")
+      ),
+      "docs/articles",
+      overwrite = TRUE
+      )
     }
     if (vignettes == TRUE){
       # build vignettes
@@ -46,7 +56,7 @@ build_github_vignette <- function(vignette = NULL,
         "vignettes",
         recursive = TRUE,
         full.names = TRUE,
-        pattern = c("*.html$|*.Rmd$|*.R$")
+        pattern = c("*.html$|*.Rmd$|*.R$|*.mp4$")
       ),
       "inst/doc",
       overwrite = TRUE
@@ -72,6 +82,16 @@ build_github_vignette <- function(vignette = NULL,
         pattern = c(paste0(vignette, ".html$|",
                            vignette, ".Rmd$|",
                            vignette, "*.R$"))
+      ),
+      "inst/doc",
+      overwrite = TRUE
+      )
+      # copy the external files
+      file.copy(dir(
+        "vignettes",
+        recursive = TRUE,
+        full.names = TRUE,
+        pattern = c("*.mp4$")
       ),
       "inst/doc",
       overwrite = TRUE
