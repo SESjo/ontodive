@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 <!-- badges: end -->
@@ -22,31 +21,27 @@ paper.
 You can install the released version of weanlingNES from
 [GitHub](https://github.com/) with:
 
-``` r
-if (require(devtools)) {
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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")
-} else {
-  install.packages("devtools")
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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")
-}
-```
+    if (require(devtools)) {
+      devtools::install_github(repo = "SESjo/weanlingNES", 
+                               auth_token = "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")
+    } else {
+      install.packages("devtools")
+      devtools::install_github(repo = "SESjo/weanlingNES", 
+                               auth_token = "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")
+    }
 
 And the development version with:
 
-``` r
-if (require(devtools)) {
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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", 
-                           ref = "develop")
-} else {
-  install.packages("devtools")
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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", 
-                           ref = "develop")
-}
-```
+    if (require(devtools)) {
+      devtools::install_github(repo = "SESjo/weanlingNES", 
+                               auth_token = "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", 
+                               ref = "develop")
+    } else {
+      install.packages("devtools")
+      devtools::install_github(repo = "SESjo/weanlingNES", 
+                               auth_token = "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", 
+                               ref = "develop")
+    }
 
 > Please note this package is currently not public which is why you can
 > not access directly to it at <https://github.com/SESjo/weanlingNES>,
@@ -60,18 +55,14 @@ if (require(devtools)) {
 Once installed, you can easily access vignettes (which are supposed to
 be associated with a specific analysis) using these commands:
 
-``` r
-# load the package
-library(weanlingNES)
+    # load the package
+    library(weanlingNES)
 
-# browse vignette
-browseVignettes("weanlingNES")
-```
+    # browse vignette
+    browseVignettes("weanlingNES")
 
 The same way you can get information on functions, you can also get
 information on dataset used for analyses.
 
-``` r
-# get information on dataset used in weanlingNES
-?data_nes
-```
+    # get information on dataset used in weanlingNES
+    ?data_nes

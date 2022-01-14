@@ -1,0 +1,238 @@
+---
+title: "How to deal with netCDF files?"
+author: "Joffrey JOUMAA"
+date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    css: cosmo_custom.css
+    number_sections: yes
+    code_folding: show
+    df_print: default
+    fig_caption: yes
+    code_download: yes
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+vignette: >
+  %\VignetteIndexEntry{How to deal with netCDF files?}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+# command to build package without getting vignette error
+# https://github.com/rstudio/renv/issues/833
+# devtools::check(build_args=c("--no-build-vignettes"))
+
+# # reduce png size
+# knitr::knit_hooks$set(optipng = knitr::hook_optipng)
+# knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+
+# global option relative to rmarkdown
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  out.width = "100%",
+  message = FALSE,
+  warning = FALSE,
+  # tidy = TRUE,
+  optipng = "-o7 -quiet",
+  pngquant = "--speed=1"
+)
+
+# library
+library(data.table)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+library(dplyr)
+library(magrittr)
+library(gganimate)
+
+# remove some warnings
+suppressWarnings(library(ggplot2))
+
+# define my own table format: https://github.com/haozhu233/kableExtra/issues/374
+sable <- function(x, escape = T, ...) {
+  knitr::kable(x, escape = escape, ...) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "responsive"),
+      full_width = F
+    )
+}
+
+# theme ggplot
+# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
+theme_jjo <- function(base_size = 12) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # the whole figure
+      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # figure area
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # axes
+      # axis.title = element_text(size = rel(0.85), face = "bold"),
+      # axis.text = element_text(size = rel(0.70), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
+      # legend
+      # legend.title = element_text(size = rel(0.85), face = "bold"),
+      # legend.text = element_text(size = rel(0.70), face = "bold"),
+      # legend.key = element_rect(fill = "transparent", colour = NA),
+      # legend.key.size = unit(1.5, "lines"),
+      # legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les <U+00E9>tiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "#888888", color = "#888888"),
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
+    )
+}
+```
+
+## What's a netCDF file?
+
+> NetCDF (Network Common Data Form) is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. The project homepage[^1] is hosted by the Unidata program at the University Corporation for Atmospheric Research (UCAR). They are also the chief source of netCDF software, standards development, updates, etc. The format is an open standard. NetCDF Classic and 64-bit Offset Format are an international standard of the Open Geospatial Consortium.[^2] 
+>
+> -- <cite>[Wikipedia](https://en.wikipedia.org/wiki/NetCDF)</cite>
+
+The way I see a netCDF file is that it's a matrix that usually contains environmental data across time and location, plus extra information (called *metadata*) such as where does the dataset comes from, or its resolution.
+
+![Here is an example[^3] of the structure of a netCDF file containing information on temperature and pressure accross time for several location, but also on the elevation and the land cover](https://web.itu.edu.tr/~tokerem/Presentation/netcdf_1.png)
+
+## How to open it
+
+Super simple, using the [`tidync`](https://cran.r-project.org/web/packages/ncdf4/index.html) package! Let's say you have a netcdf file called **global-reanalysis-phy-001-031-grepv2-daily_1639765258612.nc**, here is what you have to do to import this file:
+
+```{r netcdf-read-1}
+# first load `tidync` package
+library(tidync)
+
+# then import your file
+df_nc <- tidync("../inst/extdata/copernicus/global-reanalysis-phy-001-031-grepv2-daily_1639765258612.nc") 
+
+# flatten the multidimensional array
+df = df_nc %>% hyper_tibble() %>% 
+  # not mandatory, but here is the code to convert to a data.table
+  setDT()
+```
+```{r netcdf-read-2}
+# print the first 10 rows
+df[sample(nrow(df), 10),]  %>%
+  sable(
+    caption = "First 10 rows of the flatten netCDF file",
+    digits = 2
+  )
+```
+
+Now we can see that the time is not in a proper format. The first thing to do is to look into the metadata to see if we could find some kind of explanation. To do that, we're going to use the `ncmeta` package, developped for this purpose.
+
+```{r netcdf-read-3}
+# load ncmeta library
+library(ncmeta)
+
+# then we use the function nc_atts to access attributes of times
+print(
+  nc_atts("../inst/extdata/copernicus/global-reanalysis-phy-001-031-grepv2-daily_1639765258612.nc", 
+          "time") %>% 
+    # we want information on the unit for time column 
+    dplyr::filter(name == "units") %>% 
+    pull(value)
+)
+```
+The column `time` seems to be the number of days since `1950-01-01`. Let's use that information to format the `time` column in a proper way.
+
+```{r netcdf-read-4}
+# convert time into a readable format
+df[, time := as.Date(time, origin=as.Date("1950-01-01"))]
+
+# print
+df[sample(nrow(df), 10),]  %>%
+  sable(
+    caption = "First 10 rows of the flatten netCDF file, with reformat time column",
+    digits = 2
+  )
+```
+
+## How to visualize it
+
+Well there are plenty of ways to display data within a netCDF. Here, we are only presenting one simple way to do it using `ggplot2` and `gganimate` package.
+
+```{r netcdf-read-5}
+# first let's calculate the velocity norm
+df[, `:=` (vel_cglo = sqrt(uo_cglo ^ 2 + vo_cglo ^ 2),
+           vel_oras = sqrt(uo_oras ^ 2 + vo_oras ^ 2),
+           vel_foam = sqrt(uo_foam ^ 2 + vo_foam ^ 2),
+           vel_glor = sqrt(uo_glor ^ 2 + vo_glor ^ 2),
+           month = month(time),
+           year = year(time))]
+
+# average by month
+df_summarize = df[, .(vel_cglo = mean(vel_cglo, na.rm = T),
+                      vel_oras = mean(vel_oras, na.rm = T),
+                      vel_foam = mean(vel_foam, na.rm = T),
+                      vel_glor = mean(vel_glor, na.rm = T)),
+                  by = .(date = paste(year, '-', month),
+                         longitude,
+                         latitude)] %>%
+  .[, time := .GRP, by = .(date)]
+```
+
+```{r netcdf-read-6, cache=TRUE}
+# data wrangling
+dataPlot = melt(df_summarize, 
+                id.vars = c("date", "longitude", "latitude", "time"), 
+                variable.name = "model")
+
+# let's comput the ouput of all models
+res_anim = ggplot() +
+  geom_raster(data = dataPlot,
+              aes(x = longitude, y = latitude, fill = value),
+              interpolate = TRUE) +
+  geom_sf(data = spData::world,
+          col = 1,
+          fill = "ivory") +
+  coord_sf(xlim = c(-165, -115), ylim = c(25, 55)) +
+  facet_wrap(. ~ model, ncol = 2) +
+  theme_jjo() +
+  theme(legend.position = "bottom") +
+  labs(x = NULL, y = NULL) +
+  scale_fill_gradientn(colours = oce::oceColors9A(120)) +
+  labs(title = 'Date: {df_summarize[,unique(date)][frame_time]}') +
+  transition_time(time) +
+  ease_aes('linear')
+```
+```{r netcdf-read-7, fig.cap="4 models of the current velocity in the North-East part of Pacific ocean"}
+# let's print
+animate(res_anim, height = 500, width = 500)
+```
+
+Four different GIFs, since there are four different models to get the SST:
+![[Table from Copernicus](https://catalogue.marine.copernicus.eu/documents/QUID/CMEMS-GLO-QUID-001-031.pdf)](https://i.imgur.com/3OOofoP.png)
+
+```{r netcdf-read-8, eval=FALSE, include=FALSE}
+# summarized by week
+df_summarize = df[,.(longitude = mean(longitude),
+                     latitude = mean(latitude),
+                     vel_cglo = mean(vel_cglo)),
+                  by = .(date = paste(year(time), '-', week(time)))] %>%
+  .[, time := .I]
+
+# let's print the output of CGLO
+ggplot() +
+  geom_raster(data = df_summarize,
+              aes(x = longitude, y = latitude, fill = vel_cglo),
+              interpolate = TRUE) +
+  geom_sf(data = spData::world,
+          col = 1,
+          fill = "ivory") +
+  coord_sf(xlim = c(-165, -115), ylim = c(25, 55)) +
+  theme_jjo()+
+  labs(x = NULL, y = NULL) +
+  scale_fill_gradientn(colours = oce::oceColors9A(120)) +
+  labs(title = 'Date: {df_summarize$date[frame_time]}') +
+  gganimate::transition_time(time) +
+  gganimate::ease_aes('linear')
+```
+[^1]: [https://www.unidata.ucar.edu/software/netcdf/](https://www.unidata.ucar.edu/software/netcdf/)
+[^2]: [https://www.ogc.org/standards/netcdf](https://www.ogc.org/standards/netcdf)
+[^3]: [https://web.itu.edu.tr/~tokerem/netcdf.html](https://web.itu.edu.tr/~tokerem/netcdf.html)

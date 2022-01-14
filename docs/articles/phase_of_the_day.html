@@ -83,7 +83,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Detect phases of the day</h1>
                         <h4 data-toc-skip class="author">Joffrey JOUMAA</h4>
             
-            <h4 data-toc-skip class="date">January 07, 2022</h4>
+            <h4 data-toc-skip class="date">January 13, 2022</h4>
       
       
       <div class="d-none name"><code>phase_of_the_day.Rmd</code></div>
@@ -116,7 +116,7 @@
                      by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>,<span class="va">day_departure</span>,date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,<span class="va">hour</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -133,7 +133,7 @@ Visualization of light level at the surface along 2018-individuals’ trip
 <p>Well, the good news is that we can clearly see the same pattern we saw in <code>2004023</code>. Let’s look at the distribution</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">lightatsurf</span>, fill <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">lightatsurf</span>, fill <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_histogram</span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">110</span>, linetype <span class="op">=</span> <span class="st">"longdash"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_wrap</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
@@ -164,7 +164,7 @@ Distribution of <code>lightatsurf</code> with a threshold at 110.
 <span class="va">res_twi</span><span class="op">[</span>, <span class="va">hour</span> <span class="op">:=</span> <span class="fu">hour</span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
@@ -195,7 +195,7 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
   <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi_inter</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
@@ -213,7 +213,7 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 <p>That’s definitely better, but there are few remaining outliers (especially for the individual <code>ind_2018074</code>). Let’s zoom in the first days since departure for this individual, to see what’s going on.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="va">.id</span> <span class="op">==</span> <span class="st">"ind_2018074"</span> <span class="op">&amp;</span> <span class="va">day_departure</span> <span class="op">&lt;</span> <span class="fl">100</span>,<span class="op">]</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi_inter</span><span class="op">[</span><span class="va">.id</span> <span class="op">==</span> <span class="st">"ind_2018074"</span> <span class="op">&amp;</span> <span class="va">day_departure</span> <span class="op">&lt;</span> <span class="fl">100</span><span class="op">]</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -243,7 +243,7 @@ Visualization of light level at the surface for the first 100 days of <code>ind_
 <p>Since some of the outliers observed Figure @ref(fig:zoom_2010074) are during daytime, it means that <code>period_time</code> should be longer than usual for these days. Considering this, we could impose condition on this variable to make sure it is neither too long either too short.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">res_twi_inter</span>, <span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">period_time</span>, fill<span class="op">=</span><span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">res_twi_inter</span>, <span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">period_time</span>, fill<span class="op">=</span><span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_histogram</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -267,7 +267,7 @@ Distributions of the time difference between two rows identified as sunrise and 
   <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi_out_inter</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
@@ -330,7 +330,7 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 <span class="va">res_hcpc</span> <span class="op">=</span> <span class="fu">FactoMineR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FactoMineR/man/HCPC.html" class="external-link">HCPC</a></span><span class="op">(</span><span class="va">df_clust</span>, nb.clust <span class="op">=</span> <span class="fl">2</span>, graph <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_hcpc</span><span class="op">$</span><span class="va">data.clust</span><span class="op">$</span><span class="va">clust</span><span class="op">]</span>, 
             <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
@@ -366,7 +366,7 @@ Visualization of the moment where the light was measured at the surface colored 
             method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">]</span>,
             <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -391,7 +391,7 @@ Visualization of the moment where the light was measured at the surface colored 
                   method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">]</span>, 
             <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
@@ -410,7 +410,7 @@ Visualization of the moment where the light was measured at the surface colored 
 <p>Here, the algorithm find several clusters, but it is the cluster <code>1</code> that has our attention. It seems better defined than the previous figure @ref(fig:dbscan_first_test), but there are still few rows (for <code>ind_2018074</code>) that have been mislabelled.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span>
                               <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="fu">fifelse</span><span class="op">(</span><span class="va">cluster</span><span class="op">==</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">]</span>, 

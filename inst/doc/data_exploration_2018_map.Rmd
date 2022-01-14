@@ -1,0 +1,665 @@
+---
+title: "Data Exploration Map - 2018"
+author: "Joffrey JOUMAA"
+date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    css: cosmo_custom.css
+    number_sections: yes
+    code_folding: show
+    df_print: default
+    fig_caption: yes
+    code_download: yes
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+vignette: >
+  %\VignetteIndexEntry{Data Exploration Map - 2018}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+  
+```{r setup, include=FALSE}
+# command to build package without getting vignette error
+# https://github.com/rstudio/renv/issues/833
+# devtools::check(build_args=c("--no-build-vignettes"))
+
+# reduce png size
+# knitr::knit_hooks$set(optipng = knitr::hook_optipng)
+# knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+
+# global option relative to rmarkdown
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  out.width = "100%",
+  message = FALSE,
+  warning = FALSE,
+  # tidy = TRUE,
+  cache.lazy = FALSE,
+  optipng = "-o7 -quiet",
+  pngquant = "--speed=1"
+)
+
+# library
+library(data.table)
+library(ggplot2)
+library(kableExtra)
+library(leafgl)
+library(leaflet)
+library(gtsummary) # https://cran.r-project.org/web/packages/gtsummary/vignettes/tbl_summary.html
+library(corrplot)
+library(ggcorrplot)
+library(ggnewscale)
+library(magrittr)
+library(DT)
+library(plotly)
+library(geosphere)
+library(tidync)
+library(gganimate)
+library(transformr)
+library(magick)
+library(gifski)
+library(weanlingNES)
+
+# remove some warnings
+suppressWarnings(library(ggplot2))
+
+# define my own table format: https://github.com/haozhu233/kableExtra/issues/374
+sable <- function(x, escape = T, ...) {
+  knitr::kable(x, escape = escape, ...) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "responsive"),
+      full_width = F
+    )
+}
+
+# theme ggplot
+# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
+theme_jjo <- function(base_size = 12) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # the whole figure
+      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # figure area
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # axes
+      # axis.title = element_text(size = rel(0.85), face = "bold"),
+      # axis.text = element_text(size = rel(0.70), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
+      # legend
+      # legend.title = element_text(size = rel(0.85), face = "bold"),
+      # legend.text = element_text(size = rel(0.70), face = "bold"),
+      # legend.key = element_rect(fill = "transparent", colour = NA),
+      # legend.key.size = unit(1.5, "lines"),
+      # legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les <U+00E9>tiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "#888888", color = "#888888"),
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
+    )
+}
+```
+
+Here, the first thing to do is to retrieve the data processed at the end of `vignette("data_exploration_2018")`.
+
+```{r}
+# read the processed data
+data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+```
+
+## GPS data
+
+### General Maps
+
+```{r data-exploration-2018-43, fig.cap="Map with polylines", fig.width=8, eval=FALSE}
+# This piece of code is only there to show how to draw a polylines with a
+# gradient color using leaflet. We're not using it due to the size of the
+# created map, and will continue using circle marker
+
+# datasets used to display map
+df_driftrate <- unique(data_2018_filter[
+  .id == "ind_2018070" &
+    divetype == "2: drift",
+  .(.id, lat, lon, dduration)
+])
+
+# color palette
+pal <- colorNumeric(
+  palette = "YlGnBu",
+  domain = df_driftrate$dduration
+)
+
+# add
+df_driftrate[, `:=`(
+  nextLat = shift(lat),
+  nextLon = shift(lon),
+  color = pal(df_driftrate$dduration)
+)]
+
+# interactive map
+gradient_map <- leaflet() %>%
+  setView(lng = -122, lat = 38, zoom = 2) %>%
+  addTiles()
+
+# add lines
+for (i in 1:nrow(df_driftrate)) {
+  gradient_map <- addPolylines(
+    map = gradient_map,
+    data = df_driftrate,
+    lat = as.numeric(df_driftrate[i, c("lat", "nextLat")]),
+    lng = as.numeric(df_driftrate[i, c("lon", "nextLon")]),
+    color = df_driftrate[i, color],
+    weight = 3,
+    group = "individual_1"
+  )
+}
+
+# add layer control
+gradient_map <- addLayersControl(
+  map = gradient_map,
+  overlayGroups = c("individual_1"),
+  options = layersControlOptions(collapsed = FALSE)
+)
+```
+
+Because for some data the contrast in changes was not enough marked, the only treatment applied on these data was to remove outliers for each variable using the interquartile range rule. 
+
+```{r data-exploration-2018-44}
+# interactive map
+gradient_map <- leaflet() %>%
+  setView(lng = -132, lat = 48, zoom = 4) %>%
+  addTiles()
+
+# loop by individuals and variable
+grps <- NULL
+for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
+  for (k in c("dduration", "maxdepth", "efficiency", "driftrate")) {
+    if (k == "driftrate") {
+      # set dataset used to plot
+      dataPlot <- unique(data_2018_filter %>%
+        .[order(date), ] %>%
+        .[.id == data_2018_filter[!is.na(lat), unique(.id)][i] &
+          divetype == "2: drift" &
+          !is.na(get(k)),
+        c("lat", "lon", k),
+        with = FALSE
+        ] %>%
+        .[!is_outlier(get(k)), ])
+      # color palette creation
+      colPal <- colorNumeric(
+        palette = "BrBG",
+        domain = seq(
+          -dataPlot[, max(abs(driftrate))],
+          dataPlot[, max(abs(driftrate))],
+          0.1
+        )
+      )
+    } else {
+      # set dataset used to plot
+      dataPlot <- unique(data_2018_filter %>%
+        .[order(date), ] %>%
+        .[.id == data_2018_filter[!is.na(lat), unique(.id)][i] &
+          divetype != "2: drift" &
+          !is.na(get(k)),
+        c("lat", "lon", k),
+        with = FALSE
+        ] %>%
+        .[!is_outlier(get(k)), ])
+      # color palette creation
+      colPal <- colorNumeric(
+        palette = "YlGnBu",
+        domain = dataPlot[, get(k)]
+      )
+    }
+
+    # add color to dataset
+    dataPlot[, color := colPal(dataPlot[, get(k)])]
+    # add size column
+    dataPlot[, radius := 3]
+    # mark the beginning of the trip
+    dataPlot[1, `:=`(
+      color = "green",
+      radius = 4
+    )]
+    # mark the end of the trip
+    dataPlot[.N, `:=`(
+      color = "red",
+      radius = 4
+    )]
+    # reorder to make the end and the beginning in front
+    dataPlot <- rbind(dataPlot[-1, ], dataPlot[1, ])
+    
+    # convert to sf
+    dataPlot <- sf::st_as_sf(dataPlot, coords = c("lon", "lat"), crs = 4326)
+  
+    # add markers to map
+    gradient_map <- addGlPoints(
+      map = gradient_map,
+      data = dataPlot,
+      radius = dataPlot$radius * 4,
+      stroke = FALSE,
+      fillColor = ~color,
+      group = paste(data_2018_filter[, unique(.id)][i], "-", k)
+    ) %>%
+      addLegend("bottomleft",
+        data = dataPlot,
+        group = paste(data_2018_filter[, unique(.id)][i], "-", k),
+        pal = colPal,
+        values = ~ get(k),
+        title = k
+      )
+    # retrieve groups
+    grps <- c(grps, paste(data_2018_filter[, unique(.id)][i], "-", k))
+  }
+}
+
+# add layer control
+gradient_map <- addLayersControl(
+  map = gradient_map,
+  overlayGroups = grps,
+  options = layersControlOptions(collapsed = TRUE)
+) %>% hideGroup(grps)
+```
+
+```{r data-exploration-2018-45, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)", fig.width=8}
+# display
+gradient_map
+```
+
+```{r}
+# clear memory
+gc()
+rm(
+  gradient_map,
+  dataPlot
+)
+gc()
+```
+
+
+```{r fit_foie_gras, eval=FALSE, include=FALSE}
+x <- data_2018_filter
+x[, lc := "G"]
+fit <- fit_ssm(x[, .(.id, date, lc, lon, lat)], model = "rw", time.step = 24)
+```
+
+### Current Velocity Map
+
+First we need to load current data. Here we loaded data from [Copernicus platform](https://marine.copernicus.eu/) using the product [**Global Ocean Physics Reanalysis**](https://resources.marine.copernicus.eu/product-detail/GLOBAL_MULTIYEAR_PHY_001_030/INFORMATION) that allow to get an estimation of the current velocity and eddies at the surface at a spatial resolution of 0.083° × 0.083° every day.
+
+> This step might take time since that represents a lot of data.
+
+```{r load_current, eval = FALSE}
+# import the already pre-treated ncdf
+data("data_cop", package = "weanlingNES")
+```
+
+Then we can build the animation for each individual. The code below is not executed when this document is compiled, since it's quite time consuming.
+
+```{r data-exploration-2018-1-bis, eval=FALSE}
+# easier (it's also because it was the only way that works) using a function
+anim_plot_current <- function(data, id_inter) {
+  # plot
+  ggplot() +
+    geom_raster(
+      data = data_cop[time %between% c(
+        data[
+          .id == id_inter,
+          min(as.Date(date))
+        ],
+        data[
+          .id == id_inter,
+          max(as.Date(date))
+        ]
+      ) &
+        longitude %between% c(
+          data[
+            .id == id_inter,
+            min(lon)
+          ] - 2,
+          data[
+            .id == id_inter,
+            max(lon)
+          ] + 2
+        ) &
+        latitude %between% c(
+          data[
+            .id == id_inter,
+            min(lat)
+          ] - 2,
+          data[
+            .id == id_inter,
+            max(lat)
+          ] + 2
+        )],
+      aes(x = longitude, y = latitude, fill = vel),
+      interpolate = TRUE
+    ) +
+    geom_point(
+      data = unique(data[
+        .id == id_inter,
+        .(
+          time = as.Date(date),
+          lat,
+          lon
+        )
+      ]),
+      aes(x = lon, y = lat),
+      color = "white"
+    ) +
+    geom_sf(
+      data = spData::world,
+      col = 1,
+      fill = "ivory"
+    ) +
+    coord_sf(
+      xlim = c(
+        data[.id == id_inter, min(lon)] - 2,
+        data[.id == id_inter, max(lon)] + 2
+      ),
+      ylim = c(
+        data[.id == id_inter, min(lat)] - 2,
+        data[.id == id_inter, max(lat)] + 2
+      )
+    ) +
+    theme_jjo() +
+    labs(x = NULL, y = NULL) +
+    scale_fill_gradientn(
+      colours = oce::oceColors9A(120),
+      limits = c(0, 1)
+    ) +
+    labs(title = paste(id_inter, "- Date: {frame_time}")) +
+    transition_time(time) #+
+  # ease_aes('linear')
+}
+
+# apply this function to all individuals
+res_ggplot <- lapply(data_2018_filter[!is.na(lat), unique(.id)],
+  anim_plot_current,
+  data = data_2018_filter
+)
+
+# apply the animation for each individual
+res_gganimate <- lapply(res_ggplot, function(x) {
+  animate(x, renderer = magick_renderer())
+})
+
+# then to display the first individuals
+res_gganimate[[1]]
+
+# save the plot
+anim_save("ind_2018070_vel_alltrip.gif", animation = last_animation())
+```
+
+<!-- for f in *.gif;  -->
+<!-- do  -->
+<!--     ffmpeg -i "$f" -movflags faststart -pix_fmt yuv420p -vf "scale=t -->
+<!-- runc(iw/2)*2:trunc(ih/2)*2" "${f%.gif}".mp4; -->
+<!-- done -->
+
+<p align="center">
+![ind_2018070 track with current velocity](ind_2018070_vel_alltrip.mp4)
+</p>
+
+<p align="center">
+![ind_2018072 track with current velocity](ind_2018072_vel_alltrip.mp4)
+</p>
+
+<p align="center">
+![ind_2018080 track with current velocity](ind_2018080_vel_alltrip.mp4)
+</p>
+
+### Water Height Map
+
+Another approach is to look at that with a view centered on the animal (I find it easier to spot any relation with the animal's track and environmental conditions). Let's have a look at another variable, the sea surface above geoid (often called SSH for **S**ea **S**urface **H**eight, but called `zos` hereafter), that can be used to [identify eddies](https://www.researchgate.net/figure/Eddy-definition-using-the-left-SSH-and-right-Q-methods-for-a-cyclonic-eddy-at_fig4_247778001).
+
+```{r data-exploration-2018-6-bis, eval=FALSE, include=FALSE}
+# ` this code allow to use the function view_follow with gganimate, and
+# ` specifying at the same time which layer to not follow
+view_follow <-
+  function(fixed_x = FALSE,
+           fixed_y = FALSE,
+           exclude_layer = NULL,
+           aspect_ratio = 1) {
+    ggproto(
+      NULL,
+      ViewFollow,
+      exclude_layer = exclude_layer,
+      aspect_ratio = aspect_ratio,
+      fixed_lim = list(x = fixed_x, y = fixed_y)
+    )
+  }
+
+ViewFollow <- ggproto(
+  "ViewFollow",
+  View,
+  set_view = function(self, plot, params, i) {
+    if (inherits(plot$layout$coord, "CoordPolar")) {
+      stop("This view does not support polar coordinates")
+    }
+    ranges <- self$get_ranges(plot$data, params)
+    ranges <-
+      ranges[!seq_along(ranges) %in% params$excluded_layer]
+    x_range <-
+      range(inf.omit(unlist(lapply(ranges, `[[`, "x"))))
+    y_range <-
+      range(inf.omit(unlist(lapply(ranges, `[[`, "y"))))
+    if (!is.null(plot$layout$panel_scales_x[[1]]$trans)) {
+      x_range <- plot$layout$panel_scales_x[[1]]$trans$inverse(x_range)
+    }
+    if (!is.null(plot$layout$panel_scales_y[[1]]$trans)) {
+      y_range <- plot$layout$panel_scales_y[[1]]$trans$inverse(y_range)
+    }
+
+    self$reset_limits(plot, x_range, y_range)
+  }
+)
+
+inf.omit <- function(x) {
+  x[is.finite(x)]
+}
+```
+
+Same as above, since this step is time-consuming, the following code will not be run, but gives you an idea of how to generate `*.gif`.
+
+```{r data-exploration-2018-7-bis, eval=FALSE}
+# get the position of the animal each day
+gps_day <- data_2018_filter[!is.na(lat), .(date, lat, lon, .id)] %>%
+  .[, .(
+    lat = mean(lat, na.rm = T),
+    lon = mean(lon, na.rm = T)
+  ),
+  by = .(.id, time = as.Date(date))
+  ]
+
+anim_plot_zos_center <- function(id_inter) {
+  # initiate
+  df_raster_inter <- data.table()
+
+  # example with id_inter
+  for (i in 1:gps_day[.id == id_inter, .N]) {
+    # retrieve the right values
+    time_inter <- gps_day[.id == id_inter, time][i]
+    lat_inter <- gps_day[.id == id_inter, lat][i]
+    lon_inter <- gps_day[.id == id_inter, lon][i]
+
+    # get the right data
+    df_raster_inter <- rbind(
+      df_raster_inter,
+      data_cop[time == time_inter &
+        latitude %between% c(
+          lat_inter - 4,
+          lat_inter + 4
+        ) &
+        longitude %between% c(
+          lon_inter - 4,
+          lon_inter + 4
+        )]
+    )
+  }
+
+  # release memory
+  gc()
+
+  # plot
+  plot_animate <- ggplot() +
+    geom_raster(
+      data = df_raster_inter[, .(longitude, latitude, zos, time)],
+      aes(x = longitude, y = latitude, fill = zos)
+    ) +
+    geom_path(
+      data = unique(data_2018_filter[.id == id_inter, .(lat, lon)]),
+      aes(x = lon, y = lat),
+      color = "red",
+      size = 2
+    ) +
+    geom_point(
+      data = gps_day[.id == id_inter, ],
+      aes(x = lon, y = lat),
+      color = "white",
+      size = 2
+    ) +
+    theme_jjo() +
+    labs(x = NULL, y = NULL) +
+    scale_fill_gradientn(colours = oce::oceColors9A(120)) +
+    labs(title = paste(id_inter, "- Date: {frame_time}")) +
+    transition_time(time) +
+    # ease_aes('linear') +
+    view_follow(exclude_layer = 2)
+
+  # rm
+  rm(df_raster_inter)
+
+  # return
+  return(plot_animate)
+}
+
+# apply this function to all individuals
+res_ggplot_center <- lapply(
+  data_2018_filter[!is.na(lat), unique(.id)],
+  anim_plot_zos_center
+)
+
+# apply the animation for each individual
+res_gganimate_center <- lapply(res_ggplot_center, function(x) {
+  animate(x, duration = 20, nframes = 200, renderer = magick_renderer())
+  gc()
+})
+
+# first individual
+res_gganimate_center[[1]]
+
+# save gif file
+anim_save("ind_2018070_zos_center.gif", animation = last_animation())
+```
+
+In addition, using `gganimate` to generate `*.gif` file was found to be memory consuming so we had to developed for some individuals another way to generate `*.gif` file. Here we used the "old-fashioned" way consisting in generating all the plots and then compile them into a `*.gif` file.
+
+```{r message=FALSE, warning=FALSE, eval = FALSE}
+another_anim_plot_zos_center <- function(id_inter) {
+  # example with id_inter
+  for (i in 1:gps_day[.id == id_inter, .N]) {
+    # retrieve the right values
+    time_inter <- gps_day[.id == id_inter, time][i]
+    lat_inter <- gps_day[.id == id_inter, lat][i]
+    lon_inter <- gps_day[.id == id_inter, lon][i]
+
+    # get the right data
+    df_raster_inter <- data_cop[time == time_inter &
+      latitude %between% c(
+        lat_inter - 4,
+        lat_inter + 4
+      ) &
+      longitude %between% c(
+        lon_inter - 4,
+        lon_inter + 4
+      )]
+    # plot
+    p <- ggplot() +
+      geom_tile(
+        data = df_raster_inter[, .(longitude, latitude, zos, time)],
+        aes(x = longitude, y = latitude, fill = zos)
+      ) +
+      geom_path(
+        data = unique(data_2018_filter[.id == id_inter, .(lat, lon)]),
+        aes(x = lon, y = lat),
+        color = "red",
+        size = 1.5
+      ) +
+      geom_point(
+        data = gps_day[.id == id_inter, ][i, ],
+        aes(x = lon, y = lat),
+        color = "white",
+        size = 2
+      ) +
+      theme_jjo() +
+      theme(axis.text.y = element_text(angle = 90)) +
+      labs(x = NULL, y = NULL) +
+      scale_fill_gradientn(colours = oce::oceColors9A(120)) +
+      labs(title = paste(id_inter, "- Date: ", time_inter)) +
+      coord_cartesian(
+        ylim = c(lat_inter - 4, lat_inter + 4),
+        xlim = c(lon_inter - 4, lon_inter + 4)
+      )
+
+    # save
+    ggsave(
+      plot = p,
+      filename = paste0("./tmp/", id_inter, " - Date: ", time_inter, ".png"),
+      device = "png"
+    )
+  }
+}
+
+# run the function for one individual
+another_anim_plot_zos_center("ind_2018072")
+
+# compile the gif file
+gifski(
+  list.files("tmp/", pattern = "png$", full.names = T),
+  gif_file = "ind_2018072_zos_center.gif",
+  width = 480,
+  height = 480,
+  delay = 0.1
+)
+```
+
+<p align="center">
+![ind_2018070 centered-track with sea surface height](ind_2018070_zos_center.mp4)
+</p>
+
+<p align="center">
+![ind_2018072 centered-track with sea surface height](ind_2018072_zos_center.mp4)
+</p>
+
+<p align="center">
+![ind_2018080 centered-track with sea surface height](ind_2018080_zos_center.mp4)
+</p>
+
+Hard to tell if there is any relation, we might need to dig deeper, especially for `ind_2018072` and `ind_2018080` by looking at the current direction and/or the distribution and abundance of different trophic level using [SEAPODYM](http://www.seapodym.eu/).
+
+# Alongs their trip
+
+```{r fig.cap="Evolution of oceanographic data with the number of days since departure"}
+# evolution with trip at sea
+ggplot(
+  melt(
+    data_2018_filter,
+    id.vars = c(".id", "day_departure"),
+    measure.vars = c("temp", "ssh", "psu", "vel")
+  ),
+  aes(
+    x = day_departure,
+    y = value,
+    col = .id
+  )
+) +
+  geom_line() +
+  facet_wrap(variable ~ ., scales = "free") +
+  theme_jjo() +
+  labs(y = "Values", x = "# of days since departure") +
+  theme(legend.position = "bottom")
+```

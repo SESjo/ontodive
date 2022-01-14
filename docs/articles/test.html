@@ -96,60 +96,7 @@
 <li>bullet 2</li>
 </ul>
 </blockquote>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">weanlingNES</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.unibo.it/sitoweb/christian.hennig/en/" class="external-link">fpc</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">665544</span><span class="op">)</span>
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">600</span>
-<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,
-  sd<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>bg<span class="op">=</span><span class="st">"grey40"</span><span class="op">)</span>
-<span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/fpc/man/dbscan.html" class="external-link">dbscan</a></span><span class="op">(</span><span class="va">x</span>, eps<span class="op">=</span><span class="fl">0.2</span>,MinPts <span class="op">=</span> <span class="fl">10</span>,
-            method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
-<span class="co"># run with showplot=1 to see how dbscan works.</span>
-<span class="va">ds</span>
-<span class="co">#&gt; dbscan Pts=600 MinPts=10 eps=0.2</span>
-<span class="co">#&gt;         0  1  2  3  4  5  6  7  8  9 10</span>
-<span class="co">#&gt; border 57  8 11 11 16 14  8 13 11 15 12</span>
-<span class="co">#&gt; seed    0 49 42 45 40 44 46 41 41 32 44</span>
-<span class="co">#&gt; total  57 57 53 56 56 58 54 54 52 47 56</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ds</span>, <span class="va">x</span><span class="op">)</span></code></pre></div>
-<p><img src="test_files/figure-html/test-2-1.png" width="700"></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="st">"https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif"</span><span class="op">)</span></code></pre></div>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif"><!-- --></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gganimate.com" class="external-link">gganimate</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/magick/" class="external-link">magick</a></span><span class="op">)</span>
-<span class="co">#&gt; Linking to ImageMagick 6.9.11.60</span>
-<span class="co">#&gt; Enabled features: fontconfig, freetype, fftw, heic, lcms, pango, webp, x11</span>
-<span class="co">#&gt; Disabled features: cairo, ghostscript, raw, rsvg</span>
-<span class="co">#&gt; Using 4 threads</span>
-
-<span class="va">anim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span>, <span class="va">mpg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="co"># Here comes the gganimate code</span>
-  <span class="fu"><a href="https://gganimate.com/reference/transition_states.html" class="external-link">transition_states</a></span><span class="op">(</span>
-    <span class="va">gear</span>,
-    transition_length <span class="op">=</span> <span class="fl">2</span>,
-    state_length <span class="op">=</span> <span class="fl">1</span>
-  <span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://gganimate.com/reference/enter_exit.html" class="external-link">enter_fade</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://gganimate.com/reference/enter_exit.html" class="external-link">exit_shrink</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://gganimate.com/reference/ease_aes.html" class="external-link">ease_aes</a></span><span class="op">(</span><span class="st">'sine-in-out'</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://gganimate.com/reference/animate.html" class="external-link">animate</a></span><span class="op">(</span><span class="va">anim</span>, nframe <span class="op">=</span> <span class="fl">20</span>, renderer <span class="op">=</span> <span class="fu"><a href="https://gganimate.com/reference/renderers.html" class="external-link">magick_renderer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="test_files/figure-html/unnamed-chunk-1-1.gif"><!-- --></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pun</span> <span class="op">=</span> <span class="fu"><a href="https://gganimate.com/reference/animate.html" class="external-link">animate</a></span><span class="op">(</span><span class="va">anim</span>, nframe <span class="op">=</span> <span class="fl">20</span>, renderer <span class="op">=</span> <span class="fu"><a href="https://gganimate.com/reference/renderers.html" class="external-link">magick_renderer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># pdeux = animate(anim, nframe = 20, renderer = gifski_renderer())</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">pun</span></code></pre></div>
-<p><img src="test_files/figure-html/unnamed-chunk-2-1.gif"><!-- --></p>
-<p><code><a href="../articles/data_exploration_2018.html">vignette("data_exploration_2018")</a></code></p>
+<p><video src="video.mp4" controls=""><a href="video.mp4">Video</a></video></p>
   </main>
 </div>
 

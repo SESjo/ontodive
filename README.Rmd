@@ -74,5 +74,3 @@ The same way you can get information on functions, you can also get information 
 # get information on dataset used in weanlingNES
 ?data_nes
 ```
-
-

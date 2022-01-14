@@ -1,6 +1,6 @@
 pandoc: 2.14.0.3
 pkgdown: 2.0.1.9000
-pkgdown_sha: 72200017e36ad6a99706d085699e974ad5b3e417
+pkgdown_sha: 6ab0c4e57f7eea0d6c76403dc2c873ab82089103
 articles:
   create_logo: create_logo.html
   data_exploration_2016: data_exploration_2016.html
@@ -10,7 +10,7 @@ articles:
   phase_of_the_day: phase_of_the_day.html
   session_info: session_info.html
   test: test.html
-last_built: 2022-01-07T22:07Z
+last_built: 2022-01-14T01:28Z
 urls:
   reference: jjoumaa.ddns.net/weanlingNES/reference
   article: jjoumaa.ddns.net/weanlingNES/articles
