@@ -4,6 +4,8 @@
 #'
 #' @return The name of the element considered
 #'
+#' @export
+#'
 #' @references
 #' \href{https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun}{https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun}
 #'
