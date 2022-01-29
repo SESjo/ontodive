@@ -4,9 +4,8 @@
 .Ruserdata
 data/
 inst/extdata/
+inst/rmd/
+docs
+*.gif
+*.mp4
 inst/doc
-
-# intermediate files
-inst/rmd/data_exploration_files
-inst/rmd/cerulean.min.css
-inst/rmd/fonts

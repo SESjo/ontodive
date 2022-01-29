@@ -3,3 +3,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^.*\_cache$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+inst\rmd
+^inst/rmd$
+^README\.Rmd$
