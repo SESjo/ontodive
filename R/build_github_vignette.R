@@ -1,0 +1,81 @@
+#' Build Vignette for Github
+#'
+#' This function aims at processing vignettes (building, organizing) before pushing on Github so that user can download a package with pre-compiled vignettes. Using the website argument allow to build the associated website.
+#'
+#' To make sure pre-compiled vignettes are enclosed within the package downloaded from Github, vignettes are (i) compiled with tools::buildVignettes, (ii) then copy-paste to `inst\\doc`. To build the website, this function first converts README.Rmd file to README.md file, and then calls pkgdown::build_site() since this function only take into account *.md.
+#'
+#' @param website A boolean to compile the website associated with weanlingNES package
+#'
+#' @return A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignettes
+#'
+#' @export
+#'
+#' @references
+#' \href{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}
+#'
+#' @examples
+#' \dontrun{
+#' # compile vignettes
+#' build_github_vignette()
+#' }
+build_github_vignette <- function(vignette = NULL,
+                                  website = TRUE,
+                                  vignettes = TRUE) {
+  if (is.null(vignette)) {
+    # we rebuild the all documentation (vignettes + website)
+    if (website == TRUE) {
+      # update favicon
+      pkgdown::build_favicons(pkg = ".", overwrite = TRUE)
+      # "re"initiate a website
+      pkgdown::init_site()
+      # compute readme as *.md
+      rmarkdown::render("README.Rmd", rmarkdown::md_document())
+      # compute website
+      pkgdown::build_site()
+    }
+    if (vignettes == TRUE){
+      # build vignettes
+      tools::buildVignettes(
+        dir = ".",
+        tangle = TRUE
+      )
+      # create the proper folders
+      dir.create("inst/doc")
+      # copy the proper files
+      file.copy(dir(
+        "vignettes",
+        recursive = TRUE,
+        full.names = TRUE,
+        pattern = c("*.html$|*.Rmd$|*.R$")
+      ),
+      "inst/doc",
+      overwrite = TRUE
+      )
+    }
+  } else {
+    if (website == TRUE) {
+      # update the article
+      pkgdown::build_article(vignette)
+    }
+    if (vignettes == TRUE){
+      # update the vignettes
+      tools::buildVignette(
+        file = paste0("./vignettes/", vignette, ".Rmd"),
+        dir = "./vignettes/",
+        tangle = TRUE
+      )
+      # copy the proper file
+      file.copy(dir(
+        "vignettes",
+        recursive = TRUE,
+        full.names = TRUE,
+        pattern = c(paste0(vignette, ".html$|",
+                           vignette, ".Rmd$|",
+                           vignette, "*.R$"))
+      ),
+      "inst/doc",
+      overwrite = TRUE
+      )
+    }
+  }
+}

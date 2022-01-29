@@ -1,0 +1,7 @@
+*.R
+*_cache/
+*_files/
+*fonts/
+figure/
+*.html
+tmp
