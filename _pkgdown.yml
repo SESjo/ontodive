@@ -8,16 +8,7 @@ authors:
   Roxanne Beltran:
     href: "https://roxannebeltran.weebly.com/people.html"
 
-navbar:
-  structure:
-    left:  [intro, articles, reference, tutorials, news]
-    right: [search, github]
-
 articles:
-  - title: Articles
-    navbar: Seals
-    contents:
-      - plot_presentation
   - title: Articles
     navbar: Analyses
     contents:
@@ -30,7 +21,6 @@ articles:
       - create_logo
       - phase_of_the_day
       - netcdf_read
-      - buoyancy_detect
   - title: Articles
     navbar: Troubleshooting
     contents:
