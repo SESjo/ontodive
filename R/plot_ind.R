@@ -21,11 +21,12 @@
 #' @export
 #'
 #' @import data.table
+#' @import magrittr
 #' @import scales
-#' @import ggOceanMaps
 #' @import cowplot
-#' @import ggOceanMapsData
 #' @import ggplot2
+#' @import ggOceanMaps
+#' @import ggOceanMapsData
 #'
 #' @examples
 #' # load data
