@@ -167,6 +167,7 @@ gradient_map <- addLayersControl(
 
 Because for some data the contrast in changes was not enough marked, the only treatment applied on these data was to remove outliers for each variable using the interquartile range rule. 
 
+
 ```{r data-exploration-2018-44}
 # interactive map
 gradient_map <- leaflet() %>%
@@ -175,13 +176,13 @@ gradient_map <- leaflet() %>%
 
 # loop by individuals and variable
 grps <- NULL
-for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
-  for (k in c("dduration", "maxdepth", "efficiency", "driftrate")) {
+for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
+  for (k in c("dduration", "efficiency", "driftrate")) {
     if (k == "driftrate") {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == data_2018_filter[!is.na(lat), unique(.id)][i] &
+        .[.id == i &
           divetype == "2: drift" &
           !is.na(get(k)),
         c("lat", "lon", k),
@@ -201,7 +202,7 @@ for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == data_2018_filter[!is.na(lat), unique(.id)][i] &
+        .[.id == i &
           divetype != "2: drift" &
           !is.na(get(k)),
         c("lat", "lon", k),
@@ -242,17 +243,17 @@ for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
       radius = dataPlot$radius * 4,
       stroke = FALSE,
       fillColor = ~color,
-      group = paste(data_2018_filter[, unique(.id)][i], "-", k)
+      group = paste(i, "-", k)
     ) %>%
       addLegend("bottomleft",
         data = dataPlot,
-        group = paste(data_2018_filter[, unique(.id)][i], "-", k),
+        group = paste(i, "-", k),
         pal = colPal,
         values = ~ get(k),
         title = k
       )
     # retrieve groups
-    grps <- c(grps, paste(data_2018_filter[, unique(.id)][i], "-", k))
+    grps <- c(grps, paste(i, "-", k))
   }
 }
 
@@ -264,10 +265,11 @@ gradient_map <- addLayersControl(
 ) %>% hideGroup(grps)
 ```
 
-```{r data-exploration-2018-45, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)", fig.width=8}
+```{r data-exploration-2018-45, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)"}
 # display
 gradient_map
 ```
+
 
 ```{r}
 # clear memory

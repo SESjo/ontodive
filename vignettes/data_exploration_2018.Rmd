@@ -508,7 +508,7 @@ for (i in names_display) {
 }
 ```
 
-The vertical dashed lines represent changes in buoyancy.
+The vertical dashed lines represent changes in buoyancy (see `vignette("buoyancy_detect")` for more information)
 
 ### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
 
@@ -704,7 +704,7 @@ for (i in names_display) {
 }
 ```
 
-The vertical dashed lines represent changes in buoyancy.
+The vertical dashed lines represent changes in buoyancy (see `vignette("buoyancy_detect")` for more information)
 
 ### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
 
@@ -753,7 +753,7 @@ for (i in names_display) {
 }
 ```
 
-## All Variables during the first month
+### All Variables during the first month
 
 ```{r data-exploration-2018-18, eval=FALSE, include=TRUE}
 for (i in names_display) {

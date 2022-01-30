@@ -1,4 +1,4 @@
-## ----setup, include=FALSE----------------------------------------
+## ----setup, include=FALSE--------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -79,7 +79,7 @@ theme_jjo <- function(base_size = 12) {
     )
 }
 
-## ----------------------------------------------------------------
+## --------------------------------------------
 # read the processed data
 data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
 
@@ -133,7 +133,7 @@ data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
 #    options = layersControlOptions(collapsed = FALSE)
 #  )
 
-## ----data-exploration-2018-44------------------------------------
+## ----data-exploration-2018-44----------------
 # interactive map
 gradient_map <- leaflet() %>%
   setView(lng = -132, lat = 48, zoom = 4) %>%
@@ -141,13 +141,13 @@ gradient_map <- leaflet() %>%
 
 # loop by individuals and variable
 grps <- NULL
-for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
-  for (k in c("dduration", "maxdepth", "efficiency", "driftrate")) {
+for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
+  for (k in c("dduration", "efficiency", "driftrate")) {
     if (k == "driftrate") {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == data_2018_filter[!is.na(lat), unique(.id)][i] &
+        .[.id == i &
           divetype == "2: drift" &
           !is.na(get(k)),
         c("lat", "lon", k),
@@ -167,7 +167,7 @@ for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == data_2018_filter[!is.na(lat), unique(.id)][i] &
+        .[.id == i &
           divetype != "2: drift" &
           !is.na(get(k)),
         c("lat", "lon", k),
@@ -208,17 +208,17 @@ for (i in seq(data_2018_filter[!is.na(lat), unique(.id)])) {
       radius = dataPlot$radius * 4,
       stroke = FALSE,
       fillColor = ~color,
-      group = paste(data_2018_filter[, unique(.id)][i], "-", k)
+      group = paste(i, "-", k)
     ) %>%
       addLegend("bottomleft",
         data = dataPlot,
-        group = paste(data_2018_filter[, unique(.id)][i], "-", k),
+        group = paste(i, "-", k),
         pal = colPal,
         values = ~ get(k),
         title = k
       )
     # retrieve groups
-    grps <- c(grps, paste(data_2018_filter[, unique(.id)][i], "-", k))
+    grps <- c(grps, paste(i, "-", k))
   }
 }
 
@@ -229,11 +229,11 @@ gradient_map <- addLayersControl(
   options = layersControlOptions(collapsed = TRUE)
 ) %>% hideGroup(grps)
 
-## ----data-exploration-2018-45, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)", fig.width=8----
+## ----data-exploration-2018-45, fig.cap="Tracking data 2018 individuals (green and red dot respectively indicate the beginning and the end of each trip)"----
 # display
 gradient_map
 
-## ----------------------------------------------------------------
+## --------------------------------------------
 # clear memory
 gc()
 rm(
@@ -242,16 +242,16 @@ rm(
 )
 gc()
 
-## ----fit_foie_gras, eval=FALSE, include=FALSE--------------------
+## ----fit_foie_gras, eval=FALSE, include=FALSE----
 #  x <- data_2018_filter
 #  x[, lc := "G"]
 #  fit <- fit_ssm(x[, .(.id, date, lc, lon, lat)], model = "rw", time.step = 24)
 
-## ----load_current, eval = FALSE----------------------------------
+## ----load_current, eval = FALSE--------------
 #  # import the already pre-treated ncdf
 #  data("data_cop", package = "weanlingNES")
 
-## ----data-exploration-2018-1-bis, eval=FALSE---------------------
+## ----data-exploration-2018-1-bis, eval=FALSE----
 #  # easier (it's also because it was the only way that works) using a function
 #  anim_plot_current <- function(data, id_inter) {
 #    # plot
@@ -345,7 +345,7 @@ gc()
 #  # save the plot
 #  anim_save("ind_2018070_vel_alltrip.gif", animation = last_animation())
 
-## ----data-exploration-2018-6-bis, eval=FALSE, include=FALSE------
+## ----data-exploration-2018-6-bis, eval=FALSE, include=FALSE----
 #  # ` this code allow to use the function view_follow with gganimate, and
 #  # ` specifying at the same time which layer to not follow
 #  view_follow <-
@@ -391,7 +391,7 @@ gc()
 #    x[is.finite(x)]
 #  }
 
-## ----data-exploration-2018-7-bis, eval=FALSE---------------------
+## ----data-exploration-2018-7-bis, eval=FALSE----
 #  # get the position of the animal each day
 #  gps_day <- data_2018_filter[!is.na(lat), .(date, lat, lon, .id)] %>%
 #    .[, .(
@@ -481,7 +481,7 @@ gc()
 #  # save gif file
 #  anim_save("ind_2018070_zos_center.gif", animation = last_animation())
 
-## ----message=FALSE, warning=FALSE, eval = FALSE------------------
+## ----message=FALSE, warning=FALSE, eval = FALSE----
 #  another_anim_plot_zos_center <- function(id_inter) {
 #    # example with id_inter
 #    for (i in 1:gps_day[.id == id_inter, .N]) {

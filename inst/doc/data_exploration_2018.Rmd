@@ -356,6 +356,20 @@ names_display <- names(data_2018_filter[, -c(
   "lon",
   "dist_dep"
 )])
+
+# calulate the median of driftrate for each day
+median_driftrate <- data_2018[divetype == "2: drift",
+  .(driftrate = quantile(driftrate, 0.5)),
+  by = .(date = as.Date(date), .id)
+]
+
+# let's identity when the smooth changes sign
+changes_driftrate <- median_driftrate %>%
+  .[, .(
+    y_smooth = predict(loess(driftrate ~ as.numeric(date), span = 0.25)),
+    date
+  ), by = .id] %>%
+  .[c(FALSE, diff(sign(y_smooth)) != 0), ]
 ```
 
 ```{r data-exploration-2018-14, eval=FALSE, include=TRUE}
@@ -401,8 +415,9 @@ for (i in names_display) {
         ) +
         new_scale_color() +
         geom_point(
-          data = melt(data_2018_filter[, .(.id, date, get(i))], 
-                      id.vars = c(".id", "date")),
+          data = melt(data_2018_filter[, .(.id, date, get(i))],
+                      id.vars = c(".id", "date")
+          ),
           aes(
             x = as.Date(date),
             y = -value,
@@ -412,6 +427,11 @@ for (i in names_display) {
           size = .5,
           show.legend = FALSE
         ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
+        ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
         labs(x = "Date", y = "Maximum Depth (m)") +
@@ -419,8 +439,7 @@ for (i in names_display) {
         theme(
           axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "bottom"
-        )
-    )
+        ))
     cat("<blockquote> Considering `ind_2018074` has slightly different values than other individuals for the thermocline depth, it would be interesting to see where the animal went. </blockquote>")
   } else if (i == "driftrate") {
     print(
@@ -436,6 +455,11 @@ for (i in names_display) {
         geom_point(
           alpha = 1 / 10,
           size = .5
+        ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
         ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
@@ -466,6 +490,12 @@ for (i in names_display) {
           alpha = 1 / 10,
           size = .5
         ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
+        ) +
+        geom_vline(data = dataVline, aes(xintercept = as.Date(date)), colour = "black", linetype=2) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
         labs(x = "Date", y = i) +
@@ -477,6 +507,8 @@ for (i in names_display) {
   cat("\n \n")
 }
 ```
+
+The vertical dashed lines represent changes in buoyancy (see `vignette("buoyancy_detect")` for more information)
 
 ### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
 
@@ -534,6 +566,11 @@ for (i in names_display) {
           size = .5,
           show.legend = FALSE
         ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
+        ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
         labs(x = "Date", y = "Maximum Depth (m)") +
@@ -558,6 +595,11 @@ for (i in names_display) {
         geom_point(
           alpha = 1 / 10,
           size = .5
+        ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
         ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
@@ -587,6 +629,11 @@ for (i in names_display) {
           show.legend = FALSE,
           alpha = 1 / 10,
           size = .5
+        ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
         ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
@@ -635,6 +682,11 @@ for (i in names_display) {
         alpha = 1 / 10,
         size = .5
       ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
+        ) +
       facet_wrap(. ~ .id, scales = "free") +
       scale_x_date(date_labels = "%m/%Y") +
       labs(x = "Date", y = i) +
@@ -651,6 +703,8 @@ for (i in names_display) {
   cat("\n \n")
 }
 ```
+
+The vertical dashed lines represent changes in buoyancy (see `vignette("buoyancy_detect")` for more information)
 
 ### {.unlisted .unnumbered .tabset .tabset-fade .tabset-pills}
 
@@ -677,6 +731,11 @@ for (i in names_display) {
         alpha = 1 / 10,
         size = .5
       ) +
+        geom_vline(
+          data = changes_driftrate,
+          aes(xintercept = date), 
+          linetype = 2
+        ) +
       facet_wrap(. ~ .id, scales = "free") +
       scale_x_date(date_labels = "%m/%Y") +
       labs(x = "Date", y = i) +
@@ -694,7 +753,7 @@ for (i in names_display) {
 }
 ```
 
-## All Variables during the first month
+### All Variables during the first month
 
 ```{r data-exploration-2018-18, eval=FALSE, include=TRUE}
 for (i in names_display) {
@@ -1223,7 +1282,7 @@ data_2018_filter_complete_day = merge(data_2018_filter,
                                       by = c(".id", "day_departure"))
 
 # data plot
-dataPlot = data_2018_filter_complete_day[,
+dataPlot = data_2018_filter_complete_day[divetype=="1: foraging",
                                          .(badl = quantile(dduration, 0.95)),
                                          by = .(.id, day_departure)]
 
