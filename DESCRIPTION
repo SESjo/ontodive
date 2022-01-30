@@ -25,6 +25,7 @@ Imports:
     stringr,
     TwGeos,
     data.table,
+    magrittr,
     ggcorrplot,
     ggplot2
 Remotes: 

@@ -10,6 +10,9 @@ authors:
 
 articles:
   - title: Articles
+    navbar: Seals
+    contents: plot_presentation
+  - title: Articles
     navbar: Analyses
     contents:
       - data_exploration_2016
@@ -21,6 +24,7 @@ articles:
       - create_logo
       - phase_of_the_day
       - netcdf_read
+      - buoyancy_detect
   - title: Articles
     navbar: Troubleshooting
     contents:
