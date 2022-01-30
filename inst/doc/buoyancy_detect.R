@@ -1,0 +1,117 @@
+## ---- include = FALSE------------------------
+# global option relative to rmarkdown
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  out.width = "100%",
+  message = FALSE,
+  warning = FALSE
+)
+
+# library
+library(data.table)
+library(ggplot2)
+library(magrittr)
+library(kableExtra)
+
+# remove some warnings
+suppressWarnings(library(ggplot2))
+
+# theme ggplot
+# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
+theme_jjo <- function(base_size = 12) {
+  theme_bw(base_size = base_size) %+replace%
+    theme(
+      # the whole figure
+      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
+      # figure area
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # axes
+      # axis.title = element_text(size = rel(0.85), face = "bold"),
+      # axis.text = element_text(size = rel(0.70), face = "bold"),
+      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
+      # legend
+      # legend.title = element_text(size = rel(0.85), face = "bold"),
+      # legend.text = element_text(size = rel(0.70), face = "bold"),
+      # legend.key = element_rect(fill = "transparent", colour = NA),
+      # legend.key.size = unit(1.5, "lines"),
+      # legend.background = element_rect(fill = "transparent", colour = NA),
+      # Les <U+00E9>tiquettes dans le cas d'un facetting
+      strip.background = element_rect(fill = "#888888", color = "#888888"),
+      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
+    )
+}
+
+# define my own table format: https://github.com/haozhu233/kableExtra/issues/374
+sable <- function(x, escape = T, ...) {
+  knitr::kable(x, escape = escape, ...) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "responsive"),
+      full_width = F
+    )
+}
+
+## --------------------------------------------
+# read the processed data
+data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+
+## --------------------------------------------
+# calulate the median of driftrate for each day
+median_driftrate <- data_2018_filter[divetype == "2: drift",
+  .(driftrate = quantile(driftrate, 0.5)),
+  by = .(date = as.Date(date), .id)
+]
+
+# display 10 random rows
+median_driftrate[sample(.N, 10), ] %>%
+  sable(caption = "Median of daily drift rate by seals (10 random rows)")
+
+## ----fig.cap="Evolution of daily median drift rate across time for each seals"----
+# display the result
+ggplot(
+  median_driftrate,
+  aes(x = date, y = driftrate, col = .id)
+) +
+  geom_point() +
+  labs(y = "Daily drift rate (m/s)", x = "Date") +
+  theme_jjo() +
+  theme(legend.position = "top")
+
+## ----fig.cap="Evolution of daily median drift rate across time for each seals with a smooth"----
+# display the result
+ggplot(
+  median_driftrate,
+  aes(x = date, y = driftrate, col = .id)
+) +
+  geom_point() +
+  geom_smooth(span = 0.25, col = "black") +
+  scale_x_date(date_labels = "%m/%Y") +
+  labs(y = "Daily drift rate (m/s)", x = "Date") +
+  theme_jjo() +
+  theme(legend.position = "top") +
+  facet_wrap(. ~ .id, scales = "free")
+
+## ----fig.cap="Evolution of daily median drift rate across time for each seals with a smooth and vertical lines to identify changes in buoyancy"----
+# let's identity when the smooth changes sign
+changes_driftrate <- median_driftrate %>%
+  .[, .(
+    y_smooth = predict(loess(driftrate ~ as.numeric(date), span = 0.25)),
+    date
+  ), by = .id] %>%
+  .[c(FALSE, diff(sign(y_smooth)) != 0), ]
+
+# display the result
+ggplot(
+  median_driftrate,
+  aes(x = date, y = driftrate, col = .id)
+) +
+  geom_point() +
+  geom_smooth(span = 0.25) +
+  geom_vline(data = changes_driftrate, aes(xintercept = date)) +
+  scale_x_date(date_labels = "%m/%Y") +
+  labs(y = "Daily drift rate (m/s)", x = "Date") +
+  theme_jjo() +
+  theme(legend.position = "top") +
+  facet_wrap(. ~ .id, scales = "free")
+
