@@ -927,6 +927,21 @@
         "units"
       ]
     },
+    "ggOceanMapsData": {
+      "Package": "ggOceanMapsData",
+      "Version": "1.2",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "ggOceanMapsData",
+      "RemoteUsername": "MikkoVihtakari",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "9b640b2b140dea25eab74aafbc664ac6d5a7df41",
+      "Hash": "16c3e1d2aa98dd49aa0a005550b59b11",
+      "Requirements": [
+        "sp"
+      ]
+    },
     "gganimate": {
       "Package": "gganimate",
       "Version": "1.0.7",
@@ -1616,10 +1631,10 @@
     },
     "magrittr": {
       "Package": "magrittr",
-      "Version": "2.0.1",
+      "Version": "2.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "41287f1ac7d28a92f0a286ed507928d3",
+      "Hash": "cdc87ecd81934679d1557633d8e1fe51",
       "Requirements": []
     },
     "maps": {
@@ -1854,15 +1869,16 @@
     },
     "pillar": {
       "Package": "pillar",
-      "Version": "1.6.4",
+      "Version": "1.6.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "60200b6aa32314ac457d3efbb5ccbd98",
+      "Hash": "464a3e015331eeb8efd1d239cad5128d",
       "Requirements": [
         "cli",
         "crayon",
         "ellipsis",
         "fansi",
+        "glue",
         "lifecycle",
         "rlang",
         "utf8",
@@ -1879,10 +1895,15 @@
     },
     "pkgdown": {
       "Package": "pkgdown",
-      "Version": "2.0.2",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "1ef66f10b752bb5f17e33fe9fa861005",
+      "Version": "2.0.2.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "pkgdown",
+      "RemoteUsername": "r-lib",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "25a1ab2d04c2b8251214b5189fa6735896468cd7",
+      "Hash": "cd212f6cd11c146c0b3bd85c12d58b7d",
       "Requirements": [
         "bslib",
         "callr",
@@ -2223,10 +2244,10 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "0.4.12",
+      "Version": "1.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0879f5388fe6e4d56d7ef0b7ccb031e5",
+      "Hash": "ec923a35ba44bc86fbf95dacaccf65da",
       "Requirements": []
     },
     "rmarkdown": {
@@ -2839,10 +2860,10 @@
     },
     "yaml": {
       "Package": "yaml",
-      "Version": "2.2.1",
+      "Version": "2.2.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "2826c5d9efb0a88f657c7a679c7106db",
+      "Hash": "4597f73aad7d32c2913ec33a345f900b",
       "Requirements": []
     },
     "yulab.utils": {
