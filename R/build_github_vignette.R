@@ -1,28 +1,35 @@
-#' Build Vignette for Github
+#' Build Vignettes for Github
 #'
-#' This function aims at processing vignettes (building, organizing) before pushing on Github so that user can download a package with pre-compiled vignettes. Using the website argument allow to build the associated website.
+#' This function aims at processing vignette (building, organizing) before pushing on Github so that user can download a package with pre-compiled vignette. Using the website argument allow to build the associated website.
 #'
-#' To make sure pre-compiled vignettes are enclosed within the package downloaded from Github, vignettes are (i) compiled with tools::buildVignettes, (ii) then copy-paste to `inst\\doc`. To build the website, this function first converts README.Rmd file to README.md file, and then calls pkgdown::build_site() since this function only take into account *.md.
+#' To make sure pre-compiled vignette are enclosed within the package downloaded from Github, vignette are (i) compiled with tools::buildVignettes, (ii) then copy-paste to `inst\\doc`. To build the website, this function first converts README.Rmd file to README.md file, and then calls pkgdown::build_site() since this function only take into account *.md.
 #'
 #' @param website A boolean to compile the website associated with weanlingNES package
 #'
-#' @return A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignettes
+#' @return A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignette
 #'
 #' @export
 #'
 #' @references
-#' \href{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}
+#' \href{https://community.rstudio.com/t/how-to-add-article-html-or-r-files-to-a-github-rep/45905/7}{https://community.rstudio.com/t/how-to-add-article-html-or-r-files-to-a-github-rep/45905/7}
 #'
 #' @examples
 #' \dontrun{
-#' # compile vignettes
+#' # compile vignette
 #' build_github_vignette()
 #' }
-build_github_vignette <- function(vignette = NULL,
-                                  website = TRUE,
-                                  vignettes = TRUE) {
-  if (is.null(vignette)) {
-    # we rebuild the all documentation (vignettes + website)
+build_github_vignette <- function(article = NULL,
+                                  website = NULL,
+                                  vignette = NULL) {
+  # if nothing is specified then build vignette and website
+  if (is.null(website) & is.null(vignette)){
+    website = TRUE
+    vignette = TRUE
+  }
+
+  # check is their is a name in the article argument
+  if (is.null(article)) {
+    # we rebuild the all documentation (vignette + website)
     if (website == TRUE) {
       # update favicon
       pkgdown::build_favicons(pkg = ".", overwrite = TRUE)
@@ -34,7 +41,7 @@ build_github_vignette <- function(vignette = NULL,
       pkgdown::build_site()
       # copy the external files
       file.copy(dir(
-        "vignettes",
+        "vignette",
         recursive = TRUE,
         full.names = TRUE,
         pattern = c("*.mp4$")
@@ -43,8 +50,8 @@ build_github_vignette <- function(vignette = NULL,
       overwrite = TRUE
       )
     }
-    if (vignettes == TRUE){
-      # build vignettes
+    if (vignette == TRUE){
+      # build vignette
       tools::buildVignettes(
         dir = ".",
         tangle = TRUE
@@ -53,7 +60,7 @@ build_github_vignette <- function(vignette = NULL,
       dir.create("inst/doc")
       # copy the proper files
       file.copy(dir(
-        "vignettes",
+        "vignette",
         recursive = TRUE,
         full.names = TRUE,
         pattern = c("*.html$|*.Rmd$|*.R$|*.mp4$")
@@ -65,30 +72,30 @@ build_github_vignette <- function(vignette = NULL,
   } else {
     if (website == TRUE) {
       # update the article
-      pkgdown::build_article(vignette)
+      pkgdown::build_article(article)
     }
-    if (vignettes == TRUE){
-      # update the vignettes
+    if (vignette == TRUE){
+      # update the vignette
       tools::buildVignette(
-        file = paste0("./vignettes/", vignette, ".Rmd"),
-        dir = "./vignettes/",
+        file = paste0("./vignette/", article, ".Rmd"),
+        dir = "./vignette/",
         tangle = TRUE
       )
       # copy the proper file
       file.copy(dir(
-        "vignettes",
+        "vignette",
         recursive = TRUE,
         full.names = TRUE,
-        pattern = c(paste0(vignette, ".html$|",
-                           vignette, ".Rmd$|",
-                           vignette, "*.R$"))
+        pattern = c(paste0(article, ".html$|",
+                           article, ".Rmd$|",
+                           article, "*.R$"))
       ),
       "inst/doc",
       overwrite = TRUE
       )
       # copy the external files
       file.copy(dir(
-        "vignettes",
+        "vignette",
         recursive = TRUE,
         full.names = TRUE,
         pattern = c("*.mp4$")
