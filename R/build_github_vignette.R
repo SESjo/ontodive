@@ -77,13 +77,13 @@ build_github_vignette <- function(article = NULL,
     if (vignette == TRUE){
       # update the vignette
       tools::buildVignette(
-        file = paste0("./vignette/", article, ".Rmd"),
-        dir = "./vignette/",
+        file = paste0("./vignettes/", article, ".Rmd"),
+        dir = "./vignettes/",
         tangle = TRUE
       )
       # copy the proper file
       file.copy(dir(
-        "vignette",
+        "vignettes",
         recursive = TRUE,
         full.names = TRUE,
         pattern = c(paste0(article, ".html$|",
@@ -95,7 +95,7 @@ build_github_vignette <- function(article = NULL,
       )
       # copy the external files
       file.copy(dir(
-        "vignette",
+        "vignettes",
         recursive = TRUE,
         full.names = TRUE,
         pattern = c("*.mp4$")
