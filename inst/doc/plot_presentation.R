@@ -1,4 +1,4 @@
-## ---- include = FALSE------------------------
+## ---- include = FALSE----------------------------------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   echo = TRUE,
   fig.align = "center",
@@ -24,16 +24,17 @@ library(cowplot)
 library(scales)
 library(sf)
 library(weanlingNES)
+library(ggpubr)
 library(gridExtra)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
 
-## ----echo=FALSE------------------------------
+## ----echo=FALSE----------------------------------------------------------------------------------------------------------------------------------
 # read the processed data
 data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
 
-## ----plot_ind, results='asis', cache=TRUE, echo=FALSE, fig.asp=1.5----
+## ----plot_ind, results='asis', cache=TRUE, echo=FALSE, fig.asp=1.7-------------------------------------------------------------------------------
 for (i in data_2018_filter[!is.na(lat),unique(.id)]) {
   cat("###", i, "{.unlisted .unnumbered} \n")
     print(
