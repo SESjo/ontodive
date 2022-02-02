@@ -27,14 +27,14 @@
 #' @import ggplot2
 #' @import ggOceanMaps
 #' @import ggOceanMapsData
+#' @import ggpubr
 #'
 #' @examples
 #' # load data
-#'  data("data_nes")
+#' data("data_nes")
 #'
-#'  # plot result
-#'  plot_ind(data_nes$year_2018$ind_2018070, ind = "ind_2018070")
-#'
+#' # plot result
+#' plot_ind(data_nes$year_2018$ind_2018070, ind = "ind_2018070")
 plot_ind <- function(data_seal,
                      ind,
                      col_text = "black",
@@ -298,17 +298,34 @@ plot_ind <- function(data_seal,
     theme_plot_ind() +
     facet_grid(variable ~ ., scales = "free")
 
+  # summary table
+  table_1 <- transpose(data_seal[.id == ind, .(
+    "Nb of days recorded" = uniqueN(as.Date(date)),
+    "Nb of dives" = .N,
+    "Average Max Depth (min)" = round(mean(maxdepth) / 60, 1),
+    "Average Dive Duration (min)" = round(mean(dduration) / 60, 1),
+    "Average Bottom Duration (min)" = round(mean(botttime) / 60, 1),
+    "Average Post-dive interval Duration (min)" = round(mean(pdi, na.rm = T) / 60, 1)
+  ), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
+  table_1 <-
+    ggtexttable(
+      table_1,
+      rows = NULL,
+      theme = ttheme(colnames.style = colnames_style(fill = "white"))
+    ) %>% tab_add_hline(at.row = c(1, nrow(table_1) + 1), row.side = c("bottom"))
+
   # return
   return(
     plot_grid(
-      main_plot,
+        table_1,
+        main_plot,
       plot_1,
       plot_2,
       plot_3,
       ncol = 1,
       axis = "rl",
       align = "v",
-      rel_heights = c(2, 1, 1, 1)
+      rel_heights = c(1, 2, 1, 1, 1, 1)
     )
   )
 }
