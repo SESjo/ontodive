@@ -20,7 +20,7 @@ matlab_to_posix = function(x, timez = "UTC") {
     strftime(
       as.POSIXct(secs, origin = '1970-1-1',
                  tz = 'UTC'),
-      format = '%Y-%m-%d %H:%M',
+      format = '%Y-%m-%d %H:%M:%S',
       tz = 'UTC',
       usetz = FALSE
     ),
