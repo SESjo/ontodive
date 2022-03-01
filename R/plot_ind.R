@@ -23,7 +23,7 @@
 #' @import data.table
 #' @import magrittr
 #' @import scales
-#' @import cowplot
+#' @importFrom cowplot ggdraw draw_plot
 #' @import ggplot2
 #' @import ggOceanMaps
 #' @import ggOceanMapsData
@@ -39,6 +39,15 @@ plot_ind <- function(data_seal,
                      ind,
                      col_text = "black",
                      col_back = "transparent") {
+  # require package
+  require(data.table)
+  require(magrittr)
+  require(scales)
+  require(ggplot2)
+  require(ggpubr)
+  require(ggOceanMaps)
+  require(cowplot)
+
   # remove some warnings
   suppressWarnings(library(ggplot2))
 
