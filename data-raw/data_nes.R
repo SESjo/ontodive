@@ -8,6 +8,8 @@ library(stringr)
 library(lubridate)
 library(magrittr)
 library(geosphere)
+library(here)
+library(weanlingNES)
 
 # set the maximum number of threads
 setDTthreads(parallel::detectCores())
@@ -15,9 +17,8 @@ setDTthreads(parallel::detectCores())
 # set the right locale to deal with date
 Sys.setlocale(locale = "C")
 
-# path to dataraw
-path_raw <- system.file("extdata",
-                        package = "weanlingNES")
+# path to dataraw folder
+path_raw <- here("inst","extdata")
 
 # list of files for 2016-individuals
 list_file_name_2016 <- list.files(
@@ -79,7 +80,7 @@ list_gps_file_name_data_2018 <- list.files(
 )
 
 # extract name of individuals
-name_data_2018 <-
+name_ind_2018 <-
   paste0("ind_", sapply(str_split(sapply(
     str_split(list_file_name_data_2018, "/"),
     function(x) {
@@ -119,7 +120,7 @@ col_data_2018_reformat <- format_col(col_data_2018)
 col_gps_2018_reformat <- format_col(col_gps_2018)
 
 # add names
-names(data_2018) <- name_data_2018
+names(data_2018) <- name_ind_2018
 names(gps_2018) <- name_gps_2018
 
 # reformat dataset
@@ -189,7 +190,7 @@ gps_2018 <- lapply(gps_2018, function(x) {
   }
 })
 
-# import the already pre-treated ncdf
+# import the already pre-treated ncdf to add temp, ssh, psu and vel
 data("data_cop", package = "weanlingNES")
 
 # let's only add lat and long to data_2018
@@ -260,7 +261,7 @@ data_2018 <- lapply(data_2018, function(x) {
   }
 })
 
-# add phase
+# add phase of the day
 data_2018 <-
   split(calc_phase_day(rbindlist(
     data_2018,
