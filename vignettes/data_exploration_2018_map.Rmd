@@ -1,5 +1,5 @@
 ---
-title: "Data Exploration Map - 2018"
+title: "Data Exploration NES Map - 2018"
 author: "Joffrey JOUMAA"
 date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
 output:
