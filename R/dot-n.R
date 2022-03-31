@@ -1,6 +1,6 @@
-#' Retrieve elements' name of a list within apply function
+#' @title Retrieve elements' name of a list within apply function
 #'
-#' This small function should be used within an `apply` function when retrieving the element's name is needed.
+#' @description This small function should be used within an `apply` function when retrieving the element's name is needed.
 #'
 #' @return The name of the element considered
 #'
@@ -11,11 +11,10 @@
 #'
 #' @examples
 #' # list creation
-#' A = list(name_1 = NULL, name_2 = NULL)
+#' A <- list(name_1 = NULL, name_2 = NULL)
 #'
 #' # print name of each element using .n()
-#' sapply(A,function(x) .n())
-#'
+#' sapply(A, function(x) .n())
 .n <- function() {
   env <- parent.frame(2)
   names(c(env$X, env$.x))[env$i[]]
