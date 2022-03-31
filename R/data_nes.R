@@ -1,4 +1,4 @@
-#' Diving parameters of weanlings in 2016 and 2018
+#' Diving parameters of weanling Northern Elephant Seals in 2016 and 2018
 #'
 #' A list of datasets containing diving parameters for:
 #' * 6 individuals in 2016
@@ -30,7 +30,6 @@
 #' \describe{
 #' \item{.id}{individual ID}
 #' \item{date}{date and time of the dive}
-#' \item{phase}{phase of the day (day or night)}
 #' \item{divenumber}{# of dive}
 #' \item{year}{year of the dive}
 #' \item{month}{month of the dive}
@@ -75,6 +74,14 @@
 #' \item{lat}{last latitude received}
 #' \item{lon}{last longitude received}
 #' \item{dist_dep}{distance from departure (m)}
+#' \item{sp}{Acronym for the species}
+#' \item{dist_dep}{Distance from the first data location point (m?)}
+#' \item{temp}{Sea surface temperature from Copernicus data (data_cop)}
+#' \item{ssh}{Sea surface height from Copernicus data (data_cop)}
+#' \item{psu}{Practical Salinity Unit from Copernicus data (data_cop)}
+#' \item{vel}{Current velocity in m/s derived from Copernicus data (data_cop)}
+#' \item{bathy}{Bathymetry from marmap package}
+#' \item{phase}{phase of the day (day or night)}
 #' }
 #' \item \strong{2016 Dataset}
 #' \describe{
