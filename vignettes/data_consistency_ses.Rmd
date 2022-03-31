@@ -1,5 +1,5 @@
 ---
-title: "Data Management - CEBC"
+title: "Data Consistency SES - 2014"
 author: "Joffrey JOUMAA"
 date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
 output:
@@ -15,7 +15,7 @@ output:
       collapsed: yes
       smooth_scroll: no
 vignette: >
-  %\VignetteIndexEntry{Data Management - CEBC}
+  %\VignetteIndexEntry{Data Consistency SES - 2014}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
