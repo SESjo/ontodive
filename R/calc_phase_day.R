@@ -106,7 +106,7 @@ calc_phase_day <- function(dataset,
     ]
 
     # let's first average `light` by individuals, day since departure and hour
-    data_inter <- dataset[, .(lightatsurf = median(lightatsurf)),
+    data_inter <- dataset[, .(lightatsurf = median(lightatsurf, na.rm = T)),
       by = .(.id,
         day_departure,
         date = as.Date(date),
@@ -123,8 +123,8 @@ calc_phase_day <- function(dataset,
 
     # DBSCAN clustering
     res_dbscan <- dbscan(df_clust,
-      eps = 8,
-      MinPts = nrow(data_inter) * 0.001,
+      eps = 21,
+      MinPts = nrow(data_inter) * 0.01,
       method = "raw"
     )
 
