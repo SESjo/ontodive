@@ -1,11 +1,19 @@
-#' Oceanographic information from North East Pacific
+#' @title Oceanographic information from North East Pacific
 #'
-#' This data where retrieve from \href{copernicus}{https://resources.marine.copernicus.eu/}
-#' using the product \strong{GLOBAL_MULTIYEAR_PHY_001_030}.
+#' @description This data where retrieve from
+#' \href{https://resources.marine.copernicus.eu/}{Copernicus} using the product
+#' \strong{GLOBAL_MULTIYEAR_PHY_001_030} and the dataset
+#' \strong{cmems_mod_glo_phy_my_0.083_P1D-m}.
 #'
 #' @md
 #'
-#' @format A data table with one row = one cell for a specific time and location
+#' @format A list of two data tables, one for northern elephant seals and
+#' the other for southern elephant seals, where each row correspond to a
+#' cell of 0.083° × 0.083° for a specific time and location.
+#'
+#' * $northen: [lat=c(25, 55); lon=c(-165, -115); time c("2018-05-01", "2019-05-01")]
+#' * $southern: [lat=c(-65, -40); lon=c(35, 115); time c("2015-01-01", "2015-11-30")]
+#'
 #' \describe{
 #' \item{time}{date}
 #' \item{latitude}{latitude}
