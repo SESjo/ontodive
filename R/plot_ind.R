@@ -1,18 +1,14 @@
-#' Display summary information for a seal
+#' @title Display summary information for a seal
 #'
 #' This function displays several key information regarding a seal.
 #'
-#'
+#' @details
 #' * A map of the seal's trip at sea with a color code based on the number of days since departure
-#'
 #' * The max depth reached for each dives across time
-#'
 #' * The evolution of their daily median drift rate across time
-#'
 #' * the evolution of their ADL across time
 #'
-#' @param data_seal A dataset containing information on the dives (maxdepth, lat, lon, date, driftrate)
-#' @param ind The name of the individual considered
+#' @param data_seal A dataset containing information dive information on one animal (maxdepth, lat, lon, date, driftrate)
 #' @param col_text The color of the text
 #' @param col_back The color of the background
 #'
@@ -23,38 +19,51 @@
 #' @import data.table
 #' @import magrittr
 #' @import scales
-#' @importFrom cowplot ggdraw draw_plot
+#' @importFrom cowplot ggdraw draw_plot plot_grid
 #' @import ggplot2
 #' @import ggOceanMaps
 #' @import ggOceanMapsData
 #' @import ggpubr
+#' @import ggspatial
 #'
 #' @examples
 #' # load data
 #' data("data_nes")
 #'
 #' # plot result
-#' plot_ind(data_nes$year_2018$ind_2018070, ind = "ind_2018070")
+#' plot_ind(data_nes$year_2018$ind_2018070)
 plot_ind <- function(data_seal,
-                     ind,
                      col_text = "black",
                      col_back = "transparent") {
-  # require package
-  require(data.table)
-  require(magrittr)
-  require(scales)
-  require(ggplot2)
-  require(ggpubr)
-  require(ggOceanMaps)
-  require(cowplot)
+  # to avoid warnings when checking the package
+  # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
+  . <-
+    lat <-
+    lon <-
+    day_departure <-
+    sp <-
+    long <-
+    region <-
+    nb_dives <-
+    maxdepth <-
+    divetype <-
+    median <-
+    quantile <-
+    dduration <-
+    value <-
+    botttime <-
+    pdi <-
+    .id <-
+    driftrate <-
+    NULL
 
-  # remove some warnings
-  suppressWarnings(library(ggplot2))
+  # get warning status
+  oldw <- getOption("warn")
+
+  # remove warnings
+  options(warn = -1)
 
   # check variables
-  if (!is.character(ind)) {
-    warning("The seal ID has to be a character")
-  }
   if (!is.character(col_text)) {
     warning(paste0(
       "Color has to be a character, please change col_text=",
@@ -68,9 +77,9 @@ plot_ind <- function(data_seal,
     ))
   }
 
-  # make sure the individual is in the dataset
-  if (data_seal[.id == ind, .N] == 0) {
-    warning(paste0("The seal ", ind, " is not present in the data"))
+  # recursive function if several individuals
+  if (data_seal[, uniqueN(.id)] > 1) {
+    return(lapply(split(data_seal, by = ".id"), plot_ind))
   }
 
   # transparent = element_blank
@@ -97,36 +106,47 @@ plot_ind <- function(data_seal,
   }
 
   # color palette creation
-  colPal <- col_numeric(
-    palette = "RdYlGn",
-    domain = data_seal[
-      .id == ind &
-        !is.na(lat),
-      day_departure
-    ]
-  )
+  colPal <- col_numeric(palette = "RdYlGn",
+                        domain = data_seal[!is.na(lat), day_departure])
 
   # plot the trip at sea
-  trip <- basemap(limits = c(-165, -120, 35, 59), bathymetry = TRUE) +
-    geom_path(
-      data = data_seal[.id == ind &
-        !is.na(lat), ],
-      aes(x = lon, y = lat),
-      col = data_seal[
-        .id == ind &
-          !is.na(lat),
-        colPal(day_departure)
-      ],
-      size = 1
-    ) +
-    theme_plot_ind()
+  if (data_seal[, unique(sp)] == "nes") {
+    trip <- basemap(limits = c(-165, -120, 35, 59),
+                    bathymetry = TRUE) +
+      geom_path(
+        data = data_seal[!is.na(lat), ],
+        aes(x = lon, y = lat),
+        col = data_seal[!is.na(lat), colPal(day_departure)],
+        size = 1
+      ) +
+      theme_plot_ind()
+    # set the number of dives to have a complete day
+    nb_dives_to_complete_day = 50
+  } else {
+    trip <-
+      basemap(
+        limits = c(35, 115, -65, -40),
+        bathymetry = TRUE,
+        rotate = TRUE
+      ) +
+      # geom_spatial_path instead of geom_point because rotate = T
+      ggspatial::geom_spatial_path(
+        data = data_seal[!is.na(lat), ],
+        aes(x = lon, y = lat),
+        crs = 4326,
+        col = data_seal[!is.na(lat), colPal(day_departure)],
+        size = 1
+      ) +
+      theme_plot_ind()
+    # set the number of dives to have a complete day
+    nb_dives_to_complete_day = 8
+  }
 
   # download a map world
   world <- map_data("world")
 
   # plot the map world
-  worldmap <-
-    ggplot() +
+  worldmap <- ggplot() +
     geom_map(
       data = world,
       map = world,
@@ -136,14 +156,19 @@ plot_ind <- function(data_seal,
     ) +
     scale_y_continuous(breaks = (-2:2) * 30) +
     scale_x_continuous(breaks = (-4:4) * 45) +
-    coord_map("ortho", orientation = c(31, -120, 0)) +
+    coord_map("ortho",
+              orientation = c(
+                ifelse(data_seal[, unique(sp)] == "nes", 31,-30),
+                ifelse(data_seal[, unique(sp)] == "nes", -120, 70),
+                0
+              )) +
     geom_rect(
       data = data.frame(),
       aes(
-        xmin = -165,
-        xmax = -120,
-        ymin = 35,
-        ymax = 59
+        xmin = fifelse(data_seal[, unique(sp)] == "nes", -165, 35),
+        xmax = fifelse(data_seal[, unique(sp)] == "nes", -120, 115),
+        ymin = fifelse(data_seal[, unique(sp)] == "nes", 35, -65),
+        ymax = fifelse(data_seal[, unique(sp)] == "nes", 59, -40)
       ),
       color = "red",
       fill = NA
@@ -164,59 +189,51 @@ plot_ind <- function(data_seal,
       halign = 0,
       valign = 0,
       x = .07,
-      y = .17,
+      y = ifelse(data_seal[, unique(sp)] == "nes", .17, .3),
       scale = .2
     )
 
   # select day that have at least 50 dives
   days_to_keep <- data_seal[, .(nb_dives = .N),
-    by = .(.id, day_departure)
-  ] %>%
-    .[nb_dives >= 50, ]
+                            by = .(.id, day_departure)] %>%
+    .[nb_dives >= nb_dives_to_complete_day, ]
 
   # keep only those days
   data_seal_complete_day <- merge(data_seal,
-    days_to_keep,
-    by = c(".id", "day_departure")
-  )
-
+                                  days_to_keep,
+                                  by = c(".id", "day_departure"))
 
   # maxdepth
   dataPlot_1 <- melt(
-    data_seal_complete_day[.id == ind, .(date,
-      "Maximum Depth (m)" = -maxdepth,
-      day_departure
-    )],
+    data_seal_complete_day[, .(date,
+                               "Maximum Depth (m)" = -maxdepth,
+                               day_departure)],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Maximum Depth (m)")
   )
 
   # driftrate
   dataPlot_2 <- melt(
-    data_seal_complete_day[.id == ind &
-      divetype == "2: drift", .(
+    data_seal_complete_day[divetype == "2: drift", .(
       date = first(date),
       "Daily Drift Rate (m/s)" = median(driftrate, na.rm = T),
       day_departure = first(day_departure)
     ),
-    by = as.Date(date)
-    ],
+    by = as.Date(date)],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Daily Drift Rate (m/s)")
   )
 
   # bADL
   dataPlot_3 <- melt(
-    data_seal_complete_day[.id == ind &
-      divetype == "1: foraging",
-    .(
-      date = first(date),
-      "Behavioral ADL (min)" = round(quantile(dduration, 0.95) /
-        60),
-      day_departure = first(day_departure)
-    ),
-    by = as.Date(date)
-    ],
+    data_seal_complete_day[divetype == "1: foraging",
+                           .(
+                             date = first(date),
+                             "Behavioral ADL (min)" = round(quantile(dduration, 0.95) /
+                                                              60),
+                             day_departure = first(day_departure)
+                           ),
+                           by = as.Date(date)],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Behavioral ADL (min)")
   )
@@ -228,10 +245,8 @@ plot_ind <- function(data_seal,
   plot_1 <- ggplot() +
     geom_point(
       data = dataPlot_1,
-      aes(
-        x = as.Date(date),
-        y = value
-      ),
+      aes(x = as.Date(date),
+          y = value),
       col = dataPlot_1[, colPal(day_departure)],
       alpha = 1 / 5,
       size = .5,
@@ -239,10 +254,8 @@ plot_ind <- function(data_seal,
     ) +
     scale_x_date(date_labels = "%m/%Y") +
     labs(x = "Date", y = "") +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      legend.position = "Top"
-    ) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "Top") +
     facet_grid(variable ~ ., scales = "free") +
     theme_bw() +
     theme_plot_ind() +
@@ -254,10 +267,8 @@ plot_ind <- function(data_seal,
   plot_2 <- ggplot() +
     geom_point(
       data = dataPlot_2,
-      aes(
-        x = as.Date(date),
-        y = value
-      ),
+      aes(x = as.Date(date),
+          y = value),
       col = dataPlot_2[, colPal(day_departure)],
       size = 1,
       show.legend = TRUE
@@ -270,10 +281,8 @@ plot_ind <- function(data_seal,
     ) +
     scale_x_date(date_labels = "%m/%Y") +
     labs(x = "Date", y = "") +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      legend.position = "Top"
-    ) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "Top") +
     facet_grid(variable ~ ., scales = "free") +
     theme_bw() +
     theme_plot_ind() +
@@ -286,21 +295,15 @@ plot_ind <- function(data_seal,
   plot_3 <- ggplot() +
     geom_point(
       data = dataPlot_3,
-      aes(
-        x = as.Date(date),
-        y = value
-      ),
+      aes(x = as.Date(date),
+          y = value),
       col = dataPlot_3[, colPal(day_departure)],
       size = 1,
       show.legend = FALSE
     ) +
-    geom_smooth(
-      data = dataPlot_3,
-      aes(
-        x = as.Date(date),
-        y = value
-      )
-    ) +
+    geom_smooth(data = dataPlot_3,
+                aes(x = as.Date(date),
+                    y = value)) +
     scale_x_date(date_labels = "%m/%Y") +
     labs(x = "Date", y = "") +
     theme_bw() +
@@ -308,7 +311,7 @@ plot_ind <- function(data_seal,
     facet_grid(variable ~ ., scales = "free")
 
   # summary table
-  table_1 <- transpose(data_seal[.id == ind, .(
+  table_1 <- transpose(data_seal[, .(
     "Nb of days recorded" = uniqueN(as.Date(date)),
     "Nb of dives" = .N,
     "Average Max Depth (min)" = round(mean(maxdepth) / 60, 1),
@@ -317,24 +320,30 @@ plot_ind <- function(data_seal,
     "Average Post-dive interval Duration (min)" = round(mean(pdi, na.rm = T) / 60, 1)
   ), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
   table_1 <-
-    ggtexttable(
-      table_1,
-      rows = NULL,
-      theme = ttheme(colnames.style = colnames_style(fill = "white"))
-    ) %>% tab_add_hline(at.row = c(1, nrow(table_1) + 1), row.side = c("bottom"))
+    ggtexttable(table_1,
+                rows = NULL,
+                theme = ttheme(colnames.style = colnames_style(fill = "white"))) %>%
+    tab_add_hline(at.row = c(1, nrow(table_1) + 1),
+                  row.side = c("bottom"))
+
+  # set warning status the way it was
+  options(warn = oldw)
 
   # return
   return(
     plot_grid(
-        table_1,
-        main_plot,
+      table_1,
+      main_plot,
       plot_1,
       plot_2,
       plot_3,
       ncol = 1,
       axis = "rl",
       align = "v",
-      rel_heights = c(1, 2, 1, 1, 1, 1)
+      rel_heights = c(1,
+                      # height of the map
+                      fifelse(data_seal[, unique(sp)] == "nes", 2, 1),
+                      1, 1, 1, 1)
     )
   )
 }
