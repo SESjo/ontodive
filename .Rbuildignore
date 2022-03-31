@@ -7,6 +7,10 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-inst\rmd
+inst/rmd
 ^inst/rmd$
+inst/extdata
+^inst/extdata$
+vignettes/tmp
+^vignettes/tmp$
 ^README\.Rmd$
