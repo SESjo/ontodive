@@ -35,12 +35,12 @@
 #' library(data.table)
 #'
 #' # run this function on sese1 dataset included in foieGras package
-#' output <- location_treatment(copy(sese1), with_plot = T)
+#' output <- location_treatment(copy(sese1), with_plot = TRUE)
 location_treatment <- function(data,
                                model = "crw",
                                time.step = 1,
                                vmax = 3,
-                               with_plot = F,
+                               with_plot = FALSE,
                                export = NULL) {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
