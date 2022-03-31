@@ -14,12 +14,14 @@ Sys.setlocale(locale = "C")
 
 # path to dataraw
 path_raw <- system.file("extdata",
-                        package = "weanlingNES")
+  package = "weanlingNES"
+)
 
 # import the nc files
-nc_file = tidync(paste0(path_raw, "/copernicus/cmems_mod_glo_phy_my_0.083_P1D-m_1640718340185.nc"))
+nc_file_northern <- tidync(paste0(path_raw, "/copernicus/cmems_mod_glo_phy_my_0.083_P1D-m_1640718340185.nc"))
+nc_file_southern <- tidync(paste0(path_raw, "/copernicus/cmems_mod_glo_phy_my_0.083_P1D-m_1647669110588.nc"))
 
-# > print(nc_file)
+# > print(nc_file_northern)
 #
 # Data Source (1): cmems_mod_glo_phy_my_0.083_P1D-m_1640718340185.nc ...
 #
@@ -42,13 +44,21 @@ nc_file = tidync(paste0(path_raw, "/copernicus/cmems_mod_glo_phy_my_0.083_P1D-m_
 #   4 D3    longitude    601   -165       -115         1   601   -165       -115     FALSE TRUE
 
 # extract vo, thetao, uo, so
-nc_tbl_1 = nc_file %>%
+nc_tbl_north_1 <- nc_file_northern %>%
+  activate("D3,D2,D1,D0") %>%
+  hyper_tibble(force = TRUE) %>%
+  setDT()
+nc_tbl_south_1 <- nc_file_southern %>%
   activate("D3,D2,D1,D0") %>%
   hyper_tibble(force = TRUE) %>%
   setDT()
 
 # extract zos
-nc_tbl_2 = nc_file %>%
+nc_tbl_north_2 <- nc_file_northern %>%
+  activate("D3,D2,D0") %>%
+  hyper_tibble(force = TRUE) %>%
+  setDT()
+nc_tbl_south_2 <- nc_file_southern %>%
   activate("D3,D2,D0") %>%
   hyper_tibble(force = TRUE) %>%
   setDT()
@@ -57,16 +67,20 @@ nc_tbl_2 = nc_file %>%
 gc()
 
 # remove depth column
-nc_tbl_1[, depth := NULL]
+nc_tbl_north_1[, depth := NULL]
+nc_tbl_south_1[, depth := NULL]
 
 # merge both dataset
-data_cop = nc_tbl_1[nc_tbl_2, on = c("longitude","latitude","time")]
+data_cop_north <- nc_tbl_north_1[nc_tbl_north_2, on = c("longitude", "latitude", "time")]
+data_cop_south <- nc_tbl_south_1[nc_tbl_south_2, on = c("longitude", "latitude", "time")]
 
 # clear memory
+rm(nc_tbl_south_2, nc_tbl_north_2, nc_tbl_south_1, nc_tbl_north_1)
 gc()
 
 # velocity calculation
-data_cop[, vel := sqrt(uo ^ 2 + vo ^ 2)]
+data_cop_north[, vel := sqrt(uo^2 + vo^2)]
+data_cop_south[, vel := sqrt(uo^2 + vo^2)]
 
 # time transformation
 # library(dplyr)
@@ -78,7 +92,13 @@ data_cop[, vel := sqrt(uo ^ 2 + vo ^ 2)]
 #   pull(value)
 # > $units
 # > [1] "hours since 1950-01-01 00:00:00"
-data_cop[, time := as.Date(as.POSIXct("1950-01-01") + time*3600)]
+data_cop_north[, time := as.Date(as.POSIXct("1950-01-01") + time * 3600)]
+data_cop_south[, time := as.Date(as.POSIXct("1950-01-01") + time * 3600)]
 
+# recreate list
+data_cop <- list(
+  northern = data_cop_north,
+  southern = data_cop_south
+)
 # export
 usethis::use_data(data_cop, overwrite = TRUE)
