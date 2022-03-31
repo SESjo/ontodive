@@ -10,6 +10,7 @@ library(magrittr)
 library(geosphere)
 library(here)
 library(weanlingNES)
+library(marmap)
 
 # set the maximum number of threads
 setDTthreads(parallel::detectCores())
@@ -18,7 +19,7 @@ setDTthreads(parallel::detectCores())
 Sys.setlocale(locale = "C")
 
 # path to dataraw folder
-path_raw <- here("inst","extdata")
+path_raw <- here("inst", "extdata")
 
 # list of files for 2016-individuals
 list_file_name_2016 <- list.files(
@@ -47,7 +48,7 @@ col_2016 <- Reduce(intersect, lapply(data_2016, colnames))
 
 # keep only those common columns names
 data_2016 <- lapply(data_2016, function(x) {
-  x[, ..col_2016,]
+  x[, ..col_2016, ]
 })
 
 # test if columns name are all the same across data sets
@@ -94,7 +95,6 @@ name_gps_2018 <-
       tail(x, 1)
     }
   ), "_"), "[[", 1))
-
 
 # import 2018 files
 data_2018 <- lapply(list_file_name_data_2018, fread)
@@ -148,6 +148,9 @@ data_2018 <- lapply(data_2018, function(x) {
     ),
     units = "days"
   )))]
+
+  # add sp column
+  x[, sp := "nes"]
 })
 gps_2018 <- lapply(gps_2018, function(x) {
   # colnames
@@ -193,6 +196,24 @@ gps_2018 <- lapply(gps_2018, function(x) {
 # import the already pre-treated ncdf to add temp, ssh, psu and vel
 data("data_cop", package = "weanlingNES")
 
+# keep northern data
+data_cop$southern = NULL
+
+# clear memory
+gc()
+
+# import the bathymetric data from marmap packages
+north_pacific <- getNOAA.bathy(
+  lon1 = -165,
+  lon2 = -115,
+  lat1 = 55,
+  lat2 = 25,
+  resolution = 1
+)
+
+# convert into data.frame
+north_pacific <- setDT(fortify.bathy(north_pacific))
+
 # let's only add lat and long to data_2018
 data_2018 <- lapply(data_2018, function(x) {
   # check if 2018-ind is also in gps_2018
@@ -223,8 +244,8 @@ data_2018 <- lapply(data_2018, function(x) {
     x[, dist_dep := res_inter]
     # 4. remove lat_dep and lon_dep column
     x[, `:=`(lat_dep = NULL, lon_dep = NULL)]
-    # 5. add oceanographic date based on the nearest set of (date, lon, lat)
-    x[,
+    # 5. add oceanographic data based on the nearest set of (date, lon, lat)
+    x <- x[,
       {
         # number of row from oceanographic date to join
         k <- 1
@@ -232,7 +253,7 @@ data_2018 <- lapply(data_2018, function(x) {
         gg <- as.Date(date)
         # k-nearest neighbor
         kn <- nabor::knn(
-          data_cop[time == gg, .(
+          data_cop$northern[time == gg, .(
             lon = longitude,
             lat = latitude
           )],
@@ -242,8 +263,8 @@ data_2018 <- lapply(data_2018, function(x) {
         # keep all columns from x
         c(
           .SD[rep(seq.int(.N), k)],
-          # add columns found in data_cop
-          data_cop[time == gg][
+          # add columns found in data_cop$northern
+          data_cop$northern[time == gg][
             as.vector(kn$nn.idx),
             .(
               temp = thetao,
@@ -256,21 +277,47 @@ data_2018 <- lapply(data_2018, function(x) {
       },
       by = .(date)
     ]
+    # 6. add bathymetric data based on the nearest set of (lon, lat)
+    x <- x[, {
+      # number of row from oceanographic date to join
+      k <- 1
+      # k-nearest neighbor
+      kn <- nabor::knn(
+        north_pacific[, .(
+          lon = x,
+          lat = y
+        )],
+        matrix(c(lon, lat), ncol = 2),
+        k
+      )
+      # keep all columns from x
+      c(
+        .SD[rep(seq.int(.N), k)],
+        # add columns found in north_pacific
+        north_pacific[
+          as.vector(kn$nn.idx),
+          .(
+            bathy = z
+          )
+        ]
+      )
+    }]
   } else {
-    x[, `:=`(lat = NA, lon = NA, dist_dep = NA)]
+    x
   }
 })
 
 # add phase of the day
-data_2018 <-
-  split(calc_phase_day(rbindlist(
-    data_2018,
-    use.name = TRUE, idcol = TRUE, fill = TRUE
-  )), by = ".id")
+data_2018 <- split(calc_phase_day(rbindlist(
+  data_2018,
+  use.name = TRUE, idcol = TRUE, fill = TRUE
+)), by = ".id")
 
 # merge data sets
-data_nes <- list("year_2016" = data_2016,
-                 "year_2018" = data_2018)
+data_nes <- list(
+  "year_2016" = data_2016,
+  "year_2018" = data_2018
+)
 
 # export
 usethis::use_data(data_nes, overwrite = TRUE)
