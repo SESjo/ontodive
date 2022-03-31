@@ -18,6 +18,8 @@ articles:
       - data_exploration_2016
       - data_exploration_2018
       - data_exploration_2018_map
+      - data_exploration_ses_2014
+      - data_comparison_nes_ses
   - title: Articles
     navbar: Others
     contents:
@@ -25,6 +27,7 @@ articles:
       - phase_of_the_day
       - netcdf_read
       - buoyancy_detect
+      - data_consistency_ses
   - title: Articles
     navbar: Troubleshooting
     contents:
