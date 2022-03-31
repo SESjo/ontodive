@@ -1,5 +1,5 @@
 ---
-title: "Data Exploration - 2018"
+title: "Data Exploration NES - 2018"
 author: "Joffrey JOUMAA"
 date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
 output:
@@ -15,7 +15,7 @@ output:
       collapsed: yes
       smooth_scroll: no
 vignette: >
-  %\VignetteIndexEntry{Data Exploration - 2018}
+  %\VignetteIndexEntry{Data Exploration NES - 2018}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -26,8 +26,8 @@ vignette: >
 # devtools::check(build_args=c("--no-build-vignettes"))
 
 # reduce png size
-knitr::knit_hooks$set(optipng = knitr::hook_optipng)
-knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+# knitr::knit_hooks$set(optipng = knitr::hook_optipng)
+# knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
@@ -70,32 +70,6 @@ sable <- function(x, escape = T, ...) {
     kable_styling(
       bootstrap_options = c("striped", "hover", "responsive"),
       full_width = F
-    )
-}
-
-# theme ggplot
-# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
-theme_jjo <- function(base_size = 12) {
-  theme_bw(base_size = base_size) %+replace%
-    theme(
-      # the whole figure
-      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # figure area
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # axes
-      # axis.title = element_text(size = rel(0.85), face = "bold"),
-      # axis.text = element_text(size = rel(0.70), face = "bold"),
-      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
-      # legend
-      # legend.title = element_text(size = rel(0.85), face = "bold"),
-      # legend.text = element_text(size = rel(0.70), face = "bold"),
-      # legend.key = element_rect(fill = "transparent", colour = NA),
-      # legend.key.size = unit(1.5, "lines"),
-      # legend.background = element_rect(fill = "transparent", colour = NA),
-      # Les <U+00E9>tiquettes dans le cas d'un facetting
-      strip.background = element_rect(fill = "#888888", color = "#888888"),
-      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
     )
 }
 ```
@@ -354,7 +328,7 @@ names_display <- names(data_2018_filter[, -c(
   "phase",
   "lat",
   "lon",
-  "dist_dep"
+  "sp"
 )])
 
 # calulate the median of driftrate for each day
@@ -374,7 +348,7 @@ changes_driftrate <- median_driftrate %>%
 
 ```{r data-exploration-2018-14, eval=FALSE, include=TRUE}
 for (i in names_display) {
-  cat("#####", i, "{.unlisted .unnumbered} \n")
+  cat("####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
     print(
       ggplot() +
@@ -463,7 +437,7 @@ for (i in names_display) {
         ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
-        labs(x = "Date", y = "Drift Rate 'm/s", col = "Dive Type") +
+        labs(x = "Date", y = "Drift Rate (m/s)", col = "Dive Type") +
         theme_jjo() +
         theme(
           axis.text.x = element_text(angle = 45, hjust = 1),
@@ -495,7 +469,6 @@ for (i in names_display) {
           aes(xintercept = date), 
           linetype = 2
         ) +
-        geom_vline(data = dataVline, aes(xintercept = as.Date(date)), colour = "black", linetype=2) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
         labs(x = "Date", y = i) +
@@ -603,7 +576,7 @@ for (i in names_display) {
         ) +
         facet_wrap(. ~ .id, scales = "free") +
         scale_x_date(date_labels = "%m/%Y") +
-        labs(x = "Date", y = "Drift Rate 'm/s", col = "Dive Type") +
+        labs(x = "Date", y = "Drift Rate (m/s)", col = "Dive Type") +
         theme_jjo() +
         theme(
           axis.text.x = element_text(angle = 45, hjust = 1),
@@ -1348,6 +1321,8 @@ dataPlot = merge(dataplot_1,
 ggplot(data = dataPlot, aes(x = badl, y = driftrate, col = .id)) +
   geom_point(show.legend = FALSE) +
   facet_wrap(.id~., scales = "free") +
+  labs(x = "Behavioral Aerobic Dive Limit (s)",
+       y = "Drift rate (m/s)") +
   theme_jjo()
 ```
 
