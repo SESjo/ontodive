@@ -20,19 +20,30 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.2
-Imports: 
+Imports:
+    dplyr,
+    pkgdown,
     fpc,
     stringr,
-    TwGeos,
-    data.table,
     magrittr,
     ggcorrplot,
     ggplot2,
-    cowplot
+    ggOceanMaps,
+    ggOceanMapsData,
+    ggpubr,
+    scales,
+    mgcv,
+    cowplot,
+    data.table,
+    foieGras,
+    lubridate,
+    maptools,
+    ggspatial
 Remotes: 
     SLisovski/TwGeos
-Depends: R (>= 2.10)
+Depends: R (>= 3.5.0)
 Suggests:
+    TwGeos,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
