@@ -39,7 +39,7 @@ Imports:
     maptools,
     ggspatial
 Remotes: 
-    SLisovski/TwGeos
+    SLisovski/TwGeos,
     MikkoVihtakari/ggOceanMapsData
 Depends: R (>= 3.5.0)
 Suggests:
