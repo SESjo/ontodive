@@ -29,6 +29,7 @@ Imports:
     ggcorrplot,
     ggplot2,
     ggOceanMaps,
+    ggOceanMapsData,
     ggpubr,
     scales,
     mgcv,
