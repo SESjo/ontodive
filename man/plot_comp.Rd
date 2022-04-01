@@ -79,5 +79,5 @@ James Grecian. (2022). jamesgrecian/harpPup: v1.0 (v1.0). Zenodo. \href{https://
 \seealso{
 \code{\link[mgcv]{smooth.terms}}
 
-\code{\link[mgcv]}
+\code{\link[mgcv]{gam}}
 }

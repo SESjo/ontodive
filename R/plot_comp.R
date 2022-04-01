@@ -21,7 +21,7 @@
 #' @param alpha_point The transparency of the point
 #'
 #' @seealso \code{\link[mgcv]{smooth.terms}}
-#' @seealso \code{\link[mgcv]}
+#' @seealso \code{\link[mgcv]{gam}}
 #'
 #' @return Return a ggplot
 #'
