@@ -26,7 +26,7 @@
 #'
 #' @importFrom fpc dbscan
 #'
-#' @import data.table
+#' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import maptools
 #'

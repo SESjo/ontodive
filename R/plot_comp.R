@@ -27,7 +27,7 @@
 #'
 #' @export
 #'
-#' @import data.table
+#' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import ggplot2
 #' @import mgcv

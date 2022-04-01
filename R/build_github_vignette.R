@@ -11,7 +11,7 @@
 #' first converts README.Rmd file to README.md file, and then calls
 #' pkgdown::build_site() since this function only take into account *.md.
 #'
-#' @import dplyr
+#' @rawNamespace import(dplyr, except = c(between))
 #' @import pkgdown
 #'
 #' @param article The name or the path to the .Rmd file to be compiled

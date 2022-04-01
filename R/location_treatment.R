@@ -21,7 +21,7 @@
 #'
 #' \href{https://ianjonsen.github.io/foieGras/}{https://ianjonsen.github.io/foieGras/}
 #'
-#' @import data.table
+#' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import ggplot2
 #' @import foieGras

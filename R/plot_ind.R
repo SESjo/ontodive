@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-#' @import data.table
+#' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import scales
 #' @importFrom cowplot ggdraw draw_plot plot_grid
