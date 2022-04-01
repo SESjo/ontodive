@@ -19,7 +19,6 @@ Small function to convert Matlab datenum to POSIX time
 }
 \examples{
 matlab_to_posix(c(737182.4))
-
 }
 \references{
 \href{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}

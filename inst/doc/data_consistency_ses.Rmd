@@ -1,5 +1,5 @@
 ---
-title: "Data Management - CEBC"
+title: "Data Consistency SES - 2014"
 author: "Joffrey JOUMAA"
 date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
 output:
@@ -15,7 +15,7 @@ output:
       collapsed: yes
       smooth_scroll: no
 vignette: >
-  %\VignetteIndexEntry{Data Management - CEBC}
+  %\VignetteIndexEntry{Data Consistency SES - 2014}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -215,3 +215,12 @@ data_plot[datetime %between% c(as.POSIXct("2015-03-01 16:07:00"), as.POSIXct("20
 Well, there is clearly a pattern, I suspect the tag was programmed to be turned off every 2.2 hours?
 
 > Confirmed in [Cox *et al.*, 2017](https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12845), the tag was programmed to record one complete dive every 2 hours!
+
+```{r fig.cap="TDR over 6 hours of data recorded"}
+# zoom over two days
+ind_140075[!is.na(V2), datetime := as.POSIXct(V1, format = "%m/%d/%Y %T", tz = "GMT")] %>%
+  .[datetime %between% c(as.POSIXct("2015-03-02 12:00:00", tz = "GMT"), as.POSIXct("2015-03-02 18:00:00", tz = "GMT")),] %>%
+  ggplot(aes(x = datetime, y = -V6)) +
+  geom_point() +
+  labs(x = "Date", y = "Depth (m)")
+```

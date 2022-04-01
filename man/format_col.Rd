@@ -2,7 +2,7 @@
 % Please edit documentation in R/format_col.R
 \name{format_col}
 \alias{format_col}
-\title{Format}
+\title{Format columns}
 \usage{
 format_col(col_names)
 }
@@ -19,6 +19,5 @@ transform white space as underscore
 }
 \examples{
 # format several vectors of characters
-format_col(c("lkjez alzkj","kjfe[lkjz]","lkjee [lkj]"))
-
+format_col(c("lkjez alzkj", "kjfe[lkjz]", "lkjee [lkj]"))
 }

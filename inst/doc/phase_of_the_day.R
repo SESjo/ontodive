@@ -1,4 +1,4 @@
-## ----setup, include=FALSE--------------------
+## ----setup, include=FALSE-------------------------------------------------------------------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -17,33 +17,10 @@ library(TwGeos)
 library(fpc)
 library(lubridate)
 
-# theme ggplot
-# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
-theme_jjo <- function(base_size = 12) {
-  theme_bw(base_size = base_size) %+replace%
-    theme(
-      # the whole figure
-      #plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # figure area
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # axes
-      #axis.title = element_text(size = rel(0.85), face = "bold"),
-      #axis.text = element_text(size = rel(0.70), face = "bold"),
-      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
-      # legend
-      # legend.title = element_text(size = rel(0.85), face = "bold"),
-      # legend.text = element_text(size = rel(0.70), face = "bold"),
-      # legend.key = element_rect(fill = "transparent", colour = NA),
-      # legend.key.size = unit(1.5, "lines"),
-      # legend.background = element_rect(fill = "transparent", colour = NA),
-      # Les étiquettes dans le cas d'un facetting
-      strip.background = element_rect(fill = "#888888", color = "#888888"),
-      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5,0,5,0))
-    )
-}
+# remove some warnings
+suppressWarnings(library(ggplot2))
 
-## ----phase-of-the-day-1----------------------
+## ----phase-of-the-day-1---------------------------------------------------------------------------------------------------------------------------
 # load library
 library(weanlingNES)
 
@@ -56,9 +33,9 @@ data_2018 = rbindlist(data_nes$year_2018, use.name = TRUE, idcol = TRUE)
 # remove phase column for the purpose of this document
 data_2018[, phase := NULL]
 
-## ----phase-of-the-day-2, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6----
+## ----phase-of-the-day-2, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6-------------------------
 # let's first average `lightatsurf` by individuals, day since departure and hour
-dataPlot = data_2018[,.(lightatsurf = median(lightatsurf)), 
+dataPlot = data_2018[,.(lightatsurf = median(lightatsurf, na.rm = T)), 
                      by=.(.id,day_departure,date = as.Date(date),hour)]
 
 # display the result
@@ -69,7 +46,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = lightatsurf)) +
   labs(x = "# of days since departure", y = "Hour", fill = "Light level at the surface") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-3, fig.cap="Distribution of `lightatsurf` with a threshold at 110."----
+## ----phase-of-the-day-3, fig.cap="Distribution of `lightatsurf` with a threshold at 110."---------------------------------------------------------
 # display the result
 ggplot(dataPlot, aes(x = lightatsurf, fill = .id)) +
   geom_histogram(show.legend = FALSE) + 
@@ -103,7 +80,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-5----------------------
+## ----phase-of-the-day-5---------------------------------------------------------------------------------------------------------------------------
 # calculate the period of time between a sunrise and a sunset (i.e. two consecutive rows)
 res_twi[, period_time := c(0,as.numeric(diff(Twilight,units="hours"), units="mins")), 
         by= .(.id, as.Date(Twilight))]
@@ -142,14 +119,14 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("top"))
 
-## ----phase-of-the-day-7, fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"----
+## ----phase-of-the-day-7, fig.cap="Distributions of the time difference between two rows identified as sunrise and sunset"-------------------------
 # display
 ggplot(res_twi_inter, aes(x=period_time, fill=.id)) + 
   geom_histogram() + 
   facet_grid(.id~.) + 
   theme_jjo()
 
-## ----phase-of-the-day-8----------------------
+## ----phase-of-the-day-8---------------------------------------------------------------------------------------------------------------------------
 # remove outlier (but keep the 0)
 res_twi_out = res_twi[period_time==0 | period_time %between% c(300,900)]
 
@@ -175,7 +152,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-10---------------------
+## ----phase-of-the-day-10--------------------------------------------------------------------------------------------------------------------------
 # # let's first split our dataset by individual
 # split_inter = split(data_2018, data_2018$.id)
 # 
@@ -218,8 +195,8 @@ ggplot() +
 ## ----dbscan_first_test, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=45`, `MinPts=nrow(dataPlot)*0.06`)", fig.height=6----
 # determine the right values by testing several of them...
 res_dbscan = dbscan(df_clust,
-            eps = 45,
-            MinPts = nrow(dataPlot) * 0.06,
+            eps = 21,
+            MinPts = nrow(dataPlot) * 0.01,
             method = "raw")
 
 # display the result
@@ -235,43 +212,7 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 
-## ----phase-of-the-day-12, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)", fig.height=6----
-# let's try other parameters
-res_dbscan = dbscan(df_clust, 
-                  eps = 8, 
-                  MinPts = nrow(dataPlot)*0.001, 
-                  method = "raw")
-
-# display the result
-ggplot() +
-  geom_tile(data = dataPlot[!is.na(lightatsurf),
-                            ][,cluster:=res_dbscan$cluster], 
-            aes(x = day_departure, y = hour, fill = factor(cluster))) + 
-  theme_jjo() +
-  facet_grid(.id ~ .)+
-  labs(x = "# of days since departure", 
-       y = "Hour", 
-       fill = "cluster", 
-       col = "Sunrise") +
-  theme(legend.position = c("bottom"))
-
-
-## ----phase-of-the-day-13, fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6----
-# display the result
-ggplot() +
-  geom_tile(data = dataPlot[!is.na(lightatsurf),
-                            ][,cluster:=res_dbscan$cluster
-                              ][,cluster:=fifelse(cluster==1,1,2)], 
-            aes(x = day_departure, y = hour, fill = factor(cluster))) + 
-  theme_jjo() +
-  facet_grid(.id ~ .)+
-  labs(x = "# of days since departure", 
-       y = "Hour", 
-       fill = "cluster", 
-       col = "Sunrise") +
-  theme(legend.position = c("bottom"))
-
-## ----phase-of-the-day-14---------------------
+## ----phase-of-the-day-14--------------------------------------------------------------------------------------------------------------------------
 # referential creation
 ref_phase_day = dataPlot[!is.na(lightatsurf),
          ][, cluster := res_dbscan$cluster
@@ -291,7 +232,7 @@ ref_phase_day[, `:=` (date = date + hours(hour),
 # rolling join
 data_2018 = ref_phase_day[data_2018, roll=T, on = .(.id, date)]
 
-## ----phase-of-the-day-15, eval=FALSE---------
+## ----phase-of-the-day-15, eval=FALSE--------------------------------------------------------------------------------------------------------------
 #  # identification of transition
 #  ref_phase_day[,transition := c(1,abs(diff(as.numeric(as.factor(phase)))))]
 #  

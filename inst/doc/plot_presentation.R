@@ -1,11 +1,10 @@
-## ---- include = FALSE----------------------------------------------------------------------------------------------------------------------------
+## ---- include = FALSE-----------------------------------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
   message = FALSE,
   warning = FALSE,
-  # tidy = TRUE,
   cache.lazy = FALSE,
   optipng = "-o7 -quiet",
   pngquant = "--speed=1"
@@ -30,16 +29,26 @@ library(gridExtra)
 # remove some warnings
 suppressWarnings(library(ggplot2))
 
-## ----echo=FALSE----------------------------------------------------------------------------------------------------------------------------------
+## ----echo=FALSE-----------------------------------------------------------------------------------------------------------------------------------
 # read the processed data
-data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+# data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+library(weanlingNES)
+data("data_nes")
+data("data_ses")
+data_2018_nes <- rbindlist(data_nes$year_2018)
+data_2014_ses <- rbindlist(data_ses$year_2014)
 
-## ----plot_ind, results='asis', cache=TRUE, echo=FALSE, fig.asp=1.7-------------------------------------------------------------------------------
-for (i in data_2018_filter[!is.na(lat),unique(.id)]) {
+## ----plot_ind_nes, results='asis', cache=TRUE, echo=FALSE, fig.asp=1.7----------------------------------------------------------------------------
+for (i in data_2018_nes[!is.na(lat), unique(.id)]) {
   cat("###", i, "{.unlisted .unnumbered} \n")
-    print(
-      plot_ind(data_2018_filter, ind = i)
-    )
+  print(plot_ind(data_2018_nes[.id == i,]))
+  cat("\n \n")
+}
+
+## ----plot_ind_ses, results='asis', cache=TRUE, echo=FALSE, fig.asp=1.7----------------------------------------------------------------------------
+for (i in data_2014_ses[!is.na(lat), unique(.id)]) {
+  cat("###", i, "{.unlisted .unnumbered} \n")
+  print(plot_ind(data_2014_ses[.id == i,]))
   cat("\n \n")
 }
 

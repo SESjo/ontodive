@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------------------------
+## ---- include = FALSE-----------------------------------------------------------------------------------------------------------------------------
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -32,7 +32,7 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## -----------------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------------------------------------------------------
 # summarize data
 summary_data = rbindlist(lapply(list.dirs("../inst/extdata/cebc/", full.names = T, recursive = F), function(x){
   # list files
@@ -48,7 +48,7 @@ summary_data = rbindlist(lapply(list.dirs("../inst/extdata/cebc/", full.names = 
 # print
 summary_data %>% sable(caption = "Summary information regarding datasets on southern elephant seals")
 
-## ----cache = T----------------------------------------------------------------------------------
+## ----cache = T------------------------------------------------------------------------------------------------------------------------------------
 # calculate start and end of each file
 summary_files = rbindlist(lapply(list.dirs(
   "../inst/extdata/cebc",
@@ -113,7 +113,7 @@ col_labs <- lapply(colnames(summary_files), function(x) {
 })
 names(col_labs) = colnames(summary_files)
 
-## -----------------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------------------------------------------------------
 # print
 summary_files %>%
   gt() %>%
@@ -130,7 +130,7 @@ summary_files %>%
   time_style = 2
 )
 
-## -----------------------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------------------------------------------------------
 # load the data
 ind_140075 = readRDS("../inst/extdata/cebc/Ind_140075/DSA_HauteRes/Pup_140075.rds")
 
@@ -152,7 +152,7 @@ data_plot[, diff_time := c(NA, diff(datetime))] %>%
   coord_cartesian(ylim = c(0, 10000)) +
   labs(x = "Date", y = "Time difference between two rows (s)")
 
-## ----fig.cap="Same graph, with a zoom over two days"--------------------------------------------
+## ----fig.cap="Same graph, with a zoom over two days"----------------------------------------------------------------------------------------------
 # zoom over two days
 data_plot[datetime %between% c(as.POSIXct("2015-03-01 16:07:00"), as.POSIXct("2015-03-03 16:07:00")),] %>%
   ggplot(aes(x = datetime, y = diff_time)) +
@@ -160,4 +160,12 @@ data_plot[datetime %between% c(as.POSIXct("2015-03-01 16:07:00"), as.POSIXct("20
   geom_point() +
   coord_cartesian(ylim = c(0, 10000)) +
   labs(x = "Date", y = "Time difference between two rows (s)")
+
+## ----fig.cap="TDR over 6 hours of data recorded"--------------------------------------------------------------------------------------------------
+# zoom over two days
+ind_140075[!is.na(V2), datetime := as.POSIXct(V1, format = "%m/%d/%Y %T", tz = "GMT")] %>%
+  .[datetime %between% c(as.POSIXct("2015-03-02 12:00:00", tz = "GMT"), as.POSIXct("2015-03-02 18:00:00", tz = "GMT")),] %>%
+  ggplot(aes(x = datetime, y = -V6)) +
+  geom_point() +
+  labs(x = "Date", y = "Depth (m)")
 

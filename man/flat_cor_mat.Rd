@@ -19,17 +19,16 @@ Flatten a correlation matrix into a 2D dataframe.
 }
 \examples{
 # Dataset generation
-data_test = data.frame(sapply(c(1:10),function(x) rnorm(10)))
+data_test <- data.frame(sapply(c(1:10), function(x) rnorm(10)))
 
 # Correlation matrix calculation
-cor_test = cor(data_test)
+cor_test <- cor(data_test)
 
 # Associated p-values
-cor_test_p = ggcorrplot::cor_pmat(data_test)
+cor_test_p <- ggcorrplot::cor_pmat(data_test)
 
 # Flatten the correlation matrix
 flat_cor_mat(cor_test, cor_test_p)
-
 }
 \references{
 \href{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}{http://www.sthda.com/french/wiki/matrice-de-correlation-formattage-et-visualisation}

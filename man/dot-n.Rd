@@ -14,11 +14,10 @@ This small function should be used within an `apply` function when retrieving th
 }
 \examples{
 # list creation
-A = list(name_1 = NULL, name_2 = NULL)
+A <- list(name_1 = NULL, name_2 = NULL)
 
 # print name of each element using .n()
-sapply(A,function(x) .n())
-
+sapply(A, function(x) .n())
 }
 \references{
 \href{https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun}{https://stackoverflow.com/questions/9950144/access-lapply-index-names-inside-fun}

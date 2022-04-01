@@ -41,31 +41,8 @@ library(TwGeos)
 library(fpc)
 library(lubridate)
 
-# theme ggplot
-# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
-theme_jjo <- function(base_size = 12) {
-  theme_bw(base_size = base_size) %+replace%
-    theme(
-      # the whole figure
-      #plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # figure area
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # axes
-      #axis.title = element_text(size = rel(0.85), face = "bold"),
-      #axis.text = element_text(size = rel(0.70), face = "bold"),
-      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
-      # legend
-      # legend.title = element_text(size = rel(0.85), face = "bold"),
-      # legend.text = element_text(size = rel(0.70), face = "bold"),
-      # legend.key = element_rect(fill = "transparent", colour = NA),
-      # legend.key.size = unit(1.5, "lines"),
-      # legend.background = element_rect(fill = "transparent", colour = NA),
-      # Les étiquettes dans le cas d'un facetting
-      strip.background = element_rect(fill = "#888888", color = "#888888"),
-      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5,0,5,0))
-    )
-}
+# remove some warnings
+suppressWarnings(library(ggplot2))
 ```
 
 We'll like to find something similar to what was done for the individual `2004023`, that is to say find the different phase of the day: day and night, by identifying the sunrise and the sunset. For that we'll try the function previously used in `2004023` and apply it to 2018 individuals. Then we'll try other methods and decide which method fit the most our needs. Our ultimate goal is to be able to plot this kind of figure:
@@ -94,7 +71,7 @@ To visualize the data, we summarize each point on the plot as the median of the 
 
 ```{r phase-of-the-day-2, fig.cap="Visualization of light level at the surface along 2018-individuals' trip", fig.height=6}
 # let's first average `lightatsurf` by individuals, day since departure and hour
-dataPlot = data_2018[,.(lightatsurf = median(lightatsurf)), 
+dataPlot = data_2018[,.(lightatsurf = median(lightatsurf, na.rm = T)), 
                      by=.(.id,day_departure,date = as.Date(date),hour)]
 
 # display the result
@@ -312,8 +289,8 @@ Which might be tricky!
 ```{r dbscan_first_test, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=45`, `MinPts=nrow(dataPlot)*0.06`)", fig.height=6}
 # determine the right values by testing several of them...
 res_dbscan = dbscan(df_clust,
-            eps = 45,
-            MinPts = nrow(dataPlot) * 0.06,
+            eps = 21,
+            MinPts = nrow(dataPlot) * 0.01,
             method = "raw")
 
 # display the result
@@ -329,47 +306,8 @@ ggplot() +
        col = "Sunrise") +
   theme(legend.position = c("bottom"))
 ```
-Well that's quite nice :) There are still few outliers (especially for individual `ind_201874`) identify as cluster 1 whereas we would like to see them in cluster 2. Let's try using other parameters.
 
-```{r phase-of-the-day-12, fig.cap="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)", fig.height=6}
-# let's try other parameters
-res_dbscan = dbscan(df_clust, 
-                  eps = 8, 
-                  MinPts = nrow(dataPlot)*0.001, 
-                  method = "raw")
-
-# display the result
-ggplot() +
-  geom_tile(data = dataPlot[!is.na(lightatsurf),
-                            ][,cluster:=res_dbscan$cluster], 
-            aes(x = day_departure, y = hour, fill = factor(cluster))) + 
-  theme_jjo() +
-  facet_grid(.id ~ .)+
-  labs(x = "# of days since departure", 
-       y = "Hour", 
-       fill = "cluster", 
-       col = "Sunrise") +
-  theme(legend.position = c("bottom"))
-
-```
-
-Here, the algorithm find several clusters, but it is the cluster `1` that has our attention. It seems better defined than the previous figure \@ref(fig:dbscan_first_test), but there are still few rows (for `ind_2018074`) that have been mislabelled.
-
-```{r phase-of-the-day-13, fig.cap="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`", fig.height=6}
-# display the result
-ggplot() +
-  geom_tile(data = dataPlot[!is.na(lightatsurf),
-                            ][,cluster:=res_dbscan$cluster
-                              ][,cluster:=fifelse(cluster==1,1,2)], 
-            aes(x = day_departure, y = hour, fill = factor(cluster))) + 
-  theme_jjo() +
-  facet_grid(.id ~ .)+
-  labs(x = "# of days since departure", 
-       y = "Hour", 
-       fill = "cluster", 
-       col = "Sunrise") +
-  theme(legend.position = c("bottom"))
-```
+Well that's quite nice :) There are still few outliers (especially for individual `ind_2018074`) identify as cluster 1 whereas we would like to see them in cluster 2. 
 
 ## Conclusion
 

@@ -23,10 +23,12 @@ Allow to quickly check if an object is a `data.table`
 This function checks if the class `data.table` is among the considered object's classes.
 }
 \examples{
+# load data.table
+library(data.table)
+
 # data.table creation
 dt <- data.table()
 
 # check if `dt` is a data.table
 check_dt(dt)
-
 }

@@ -4,15 +4,18 @@ pkgdown_sha: 25a1ab2d04c2b8251214b5189fa6735896468cd7
 articles:
   buoyancy_detect: buoyancy_detect.html
   create_logo: create_logo.html
+  data_comparison_nes_ses: data_comparison_nes_ses.html
+  data_consistency_ses: data_consistency_ses.html
   data_exploration_2016: data_exploration_2016.html
   data_exploration_2018: data_exploration_2018.html
   data_exploration_2018_map: data_exploration_2018_map.html
+  data_exploration_ses_2014: data_exploration_ses_2014.html
   netcdf_read: netcdf_read.html
   phase_of_the_day: phase_of_the_day.html
   plot_presentation: plot_presentation.html
   session_info: session_info.html
   test: test.html
-last_built: 2022-01-29T23:51Z
+last_built: 2022-03-27T22:51Z
 urls:
   reference: jjoumaa.ddns.net/weanlingNES/reference
   article: jjoumaa.ddns.net/weanlingNES/articles

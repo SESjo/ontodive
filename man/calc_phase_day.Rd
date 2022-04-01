@@ -4,10 +4,28 @@
 \alias{calc_phase_day}
 \title{Determine the different phases of the day}
 \usage{
-calc_phase_day(dataset, method = "dbscan")
+calc_phase_day(
+  dataset,
+  light = "lightatsurf",
+  date = "date",
+  id = ".id",
+  lon = "lon",
+  lat = "lat",
+  method = "noaa"
+)
 }
 \arguments{
 \item{dataset}{A dataset containing the light level per individual per time}
+
+\item{light}{Name of the light-level column}
+
+\item{date}{Name of the datetime column}
+
+\item{id}{Name of the individual ID column}
+
+\item{lon}{Name of the Longitude column}
+
+\item{lat}{Name of the Latitude column}
 
 \item{method}{Method used to identify phases of day}
 }
@@ -15,28 +33,32 @@ calc_phase_day(dataset, method = "dbscan")
 Return the same data.table with an additional "phase" columns
 }
 \description{
-This function can estimate daytime and nightime based on light level using several different methods.
+This function can estimate day-time and night-time based on
+light level (`dbscan`) or using the location and time data (`noaa`).
 }
 \details{
-Methods
+Methods:
 
 * DBSCAN: use the dbscan clustering algorithm to identify night time and so daytime.
-
+* NOAA: using the algorithms provided by the Notional Oceanic & Atmospheric Administration (NOAA)
 * ...: to be implemented
 }
 \examples{
 \dontrun{
 # load data
- data("data_nes")
+data("data_nes")
 
- # night and day calculation
- result <- calc_phase_day(rbindlist(data_nes$year_2018,
-                                    use.name = TRUE,
-                                    idcol = TRUE
- ))
+# night and day calculation
+result <- calc_phase_day(rbindlist(data_nes$year_2018,
+  use.name = TRUE,
+  idcol = TRUE
+))
 }
 
 }
 \references{
 `vignette("phase_of_the_day")`
+}
+\seealso{
+\code{\link[maptools]{crepuscule}}
 }

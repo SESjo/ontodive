@@ -14,7 +14,6 @@
 
 <title>R Session Info</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -24,6 +23,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -144,7 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This page runs the <code>sessionInfo()</code> function and prints the results. The output can be used to check the dependency versions that were used to run tests.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(weanlingNES)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; R version 4.1.2 (2021-11-01)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; R version 4.2.0 alpha (2022-03-24 r81978)</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Running under: Debian GNU/Linux bookworm/sid</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -153,116 +153,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; locale:</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] LC_CTYPE=C                </span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [2] LC_NUMERIC=C              </span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [3] LC_TIME=C                 </span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [4] LC_COLLATE=C              </span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] LC_MONETARY=C             </span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [6] LC_MESSAGES=en_US.UTF-8   </span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8      </span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [8] LC_NAME=C                 </span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] LC_ADDRESS=C              </span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [10] LC_TELEPHONE=C            </span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [12] LC_IDENTIFICATION=C       </span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] stats     graphics  grDevices datasets </span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] utils     methods   base     </span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] ncmeta_0.3.0        dplyr_1.0.7        </span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [3] knitr_1.37          gridExtra_2.3      </span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] sf_1.0-5            scales_1.1.1       </span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] cowplot_1.1.1       maps_3.4.0         </span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] ggOceanMapsData_1.2 ggOceanMaps_1.2.6  </span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] ggspatial_1.1.5     lubridate_1.8.0    </span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] fpc_2.2-9           TwGeos_0.1.2       </span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [15] showtext_0.9-4      showtextdb_3.0     </span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] sysfonts_0.8.5      hexSticker_0.4.9   </span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [19] weanlingNES_0.1.0   gifski_1.4.3-1     </span></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] magick_2.7.3        transformr_0.1.3   </span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [23] gganimate_1.0.7     tidync_0.2.4       </span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] geosphere_1.5-14    plotly_4.10.0      </span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [27] DT_0.20             magrittr_2.0.2     </span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [29] ggnewscale_0.4.5    ggcorrplot_0.1.3   </span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [31] corrplot_0.92       gtsummary_1.5.1    </span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [33] leafgl_0.1.1        kableExtra_1.3.4   </span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [35] ggplot2_3.3.5       data.table_1.14.2  </span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [37] leaflet_2.0.4.1    </span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [1] utf8_1.2.2           tidyselect_1.1.1    </span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [3] htmlwidgets_1.5.4    FactoMineR_2.4      </span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [5] grid_4.1.2           lpSolve_5.6.15      </span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [7] munsell_0.5.0        codetools_0.2-18    </span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [9] ragg_1.2.1           units_0.7-2         </span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [11] withr_2.4.3          colorspace_2.0-2    </span></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [13] highr_0.9            leaps_3.1           </span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [15] rstudioapi_0.13      stats4_4.1.2        </span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [17] wk_0.6.0             robustbase_0.93-9   </span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [19] labeling_0.4.2       farver_2.1.0        </span></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [21] rprojroot_2.0.2      coda_0.19-4         </span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [23] vctrs_0.3.8          generics_0.1.1      </span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [25] xfun_0.29            diptest_0.76-0      </span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [27] R6_2.5.1             SGAT_0.1.3          </span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [29] flexmix_2.3-17       cachem_1.0.6        </span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [31] gridGraphics_0.5-1   nnet_7.3-17         </span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [33] rgeos_0.5-9          gtable_0.3.0        </span></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [35] downlit_0.4.0        processx_3.5.2      </span></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [37] oce_1.5-0            rlang_1.0.0         </span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [39] systemfonts_1.0.3    scatterplot3d_0.3-41</span></span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [41] splines_4.1.2        rgdal_1.5-28        </span></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [43] lazyeval_0.2.2       hexbin_1.28.2       </span></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [45] checkmate_2.0.0      s2_1.0.7            </span></span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [47] reshape2_1.4.4       yaml_2.2.2          </span></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [49] ggimage_0.3.0        crosstalk_1.2.0     </span></span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [51] backports_1.4.1      tools_4.1.2         </span></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [53] jsonify_1.2.1        bookdown_0.24       </span></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [55] spData_2.0.1         ggplotify_0.1.0     </span></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [57] ellipsis_0.3.2       raster_3.5-15       </span></span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [59] jquerylib_0.1.4      RColorBrewer_1.1-2  </span></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [61] proxy_0.4-26         plyr_1.8.6          </span></span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [63] Rcpp_1.0.8           progress_1.2.2      </span></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [65] classInt_0.4-3       purrr_0.3.4         </span></span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [67] ps_1.6.0             prettyunits_1.1.1   </span></span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [69] openssl_1.4.6        zoo_1.8-9           </span></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [71] ggrepel_0.9.1        cluster_2.1.2       </span></span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [73] fs_1.5.2             whisker_0.4         </span></span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [75] pkgload_1.2.4        hms_1.1.1           </span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [77] evaluate_0.14        mclust_5.4.9        </span></span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [79] testthat_3.1.2       compiler_4.1.2      </span></span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [81] tibble_3.1.6         KernSmooth_2.23-20  </span></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [83] gt_0.3.1             ncdf4_1.19          </span></span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [85] crayon_1.4.2         htmltools_0.5.2     </span></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [87] ggfun_0.0.5          mgcv_1.8-38         </span></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [89] gsw_1.0-6            tidyr_1.1.4         </span></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [91] DBI_1.1.2            tweenr_1.0.2        </span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [93] MASS_7.3-55          broom.helpers_1.6.0 </span></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [95] Matrix_1.4-0         brio_1.1.3          </span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [97] cli_3.1.1            parallel_4.1.2      </span></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [99] forcats_0.5.1        pkgconfig_2.0.3     </span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [101] flashClust_1.01-2    pkgdown_2.0.2.9000  </span></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [103] sp_1.4-6             terra_1.5-12        </span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [105] xml2_1.3.3           svglite_2.0.0       </span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [107] bslib_0.3.1          webshot_0.5.2       </span></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [109] rvest_1.0.2          yulab.utils_0.0.4   </span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [111] stringr_1.4.0        callr_3.7.0         </span></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [113] digest_0.6.29        rmarkdown_2.11      </span></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [115] curl_4.3.2           kernlab_0.9-29      </span></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [117] commonmark_1.7       modeltools_0.2-23   </span></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [119] RNetCDF_2.5-2        lifecycle_1.0.1     </span></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [121] nlme_3.1-155         jsonlite_1.7.3      </span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [123] mapproj_1.2.8        desc_1.4.0          </span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [125] viridisLite_0.4.0    askpass_1.1         </span></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [127] fansi_1.0.2          pillar_1.6.5        </span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [129] lattice_0.20-45      fastmap_1.1.0       </span></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [131] httr_1.4.2           DEoptimR_1.0-10     </span></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [133] glue_1.6.1           prabclus_2.3-2      </span></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [135] class_7.3-20         stringi_1.7.6       </span></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [137] sass_0.4.0           textshaping_0.3.6   </span></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [139] memoise_2.0.1        renv_0.15.1         </span></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [141] e1071_1.7-9</span></span></code></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] LC_CTYPE=C                 LC_NUMERIC=C               LC_TIME=C                  LC_COLLATE=C               LC_MONETARY=C             </span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [6] LC_MESSAGES=en_US.UTF-8    LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] stats     graphics  grDevices datasets  utils     methods   base     </span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] ncmeta_0.3.0        knitr_1.37          leafgl_0.1.1        showtext_0.9-5      showtextdb_3.0      sysfonts_0.8.8      hexSticker_0.4.9   </span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [8] gifski_1.4.3-1      magick_2.7.3        transformr_0.1.3    gganimate_1.0.7     tidync_0.2.4        geosphere_1.5-14    plotly_4.10.0      </span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [15] DT_0.21             ggcorrplot_0.1.3    corrplot_0.92       gtsummary_1.5.2     leaflet_2.1.1       gridExtra_2.3       ggpubr_0.4.0       </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [22] sf_1.0-7            scales_1.1.1        cowplot_1.1.1       maps_3.4.0          ggOceanMapsData_1.2 ggOceanMaps_1.2.6   ggspatial_1.1.5    </span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [29] ggnewscale_0.4.6    lubridate_1.8.0     fpc_2.2-9           TwGeos_0.1.2        janitor_2.1.0       forcats_0.5.1       stringr_1.4.0      </span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [36] dplyr_1.0.8         purrr_0.3.4         readr_2.1.2         tidyr_1.2.0         tibble_3.1.6        tidyverse_1.3.1     gt_0.4.0           </span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [43] magrittr_2.0.2      kableExtra_1.3.4    ggplot2_3.3.5       data.table_1.14.2   weanlingNES_0.1.0  </span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [1] downlit_0.4.0         foieGras_1.0.0        prabclus_2.3-2        coda_0.19-4           rpart_4.1.16          generics_0.1.2       </span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   [7] callr_3.7.0           terra_1.5-21          usethis_2.1.5         proxy_0.4-26          tzdb_0.2.0            wk_0.6.0             </span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [13] spatstat.data_2.1-2   webshot_0.5.2         xml2_1.3.3            assertthat_0.2.1      xfun_0.30             hms_1.1.1            </span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [19] jquerylib_0.1.4       evaluate_0.15         DEoptimR_1.0-10       fansi_1.0.3           progress_1.2.2        dbplyr_2.1.1         </span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [25] readxl_1.3.1          DBI_1.1.2             htmlwidgets_1.5.4     spatstat.geom_2.3-2   reproj_0.4.2          stats4_4.2.0         </span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [31] ellipsis_0.3.2        crosstalk_1.2.0       backports_1.4.1       FactoMineR_2.4        bookdown_0.25         deldir_1.0-6         </span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [37] vctrs_0.3.8           rnaturalearth_0.1.0   abind_1.4-5           cachem_1.0.6          withr_2.5.0           robustbase_0.93-9    </span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [43] checkmate_2.0.0       rgdal_1.5-29          oce_1.7-2             trip_1.8.5            prettyunits_1.1.1     mclust_5.4.9         </span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [49] goftest_1.2-3         svglite_2.1.0         cluster_2.1.2         lazyeval_0.2.2        crayon_1.5.0          pkgconfig_2.0.3      </span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [55] labeling_0.4.2        units_0.8-0           tweenr_1.0.2          nlme_3.1-155          nnet_7.3-17           rlang_1.0.2          </span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [61] diptest_0.76-0        lifecycle_1.0.1       gsw_1.0-6             sandwich_3.0-1        SGAT_0.1.3            traipse_0.2.5        </span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [67] modelr_0.1.8          cellranger_1.1.0      rprojroot_2.0.2       polyclip_1.10-0       Matrix_1.4-0          raster_3.5-15        </span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [73] carData_3.0-5         boot_1.3-28           zoo_1.8-9             reprex_2.0.1          whisker_0.4           processx_3.5.2       </span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [79] viridisLite_0.4.0     KernSmooth_2.23-20    classInt_0.4-3        maptools_1.1-3        s2_1.0.7              spatstat.random_2.1-0</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [85] gridGraphics_0.5-1    rstatix_0.7.0         tmvtnorm_1.5          ggsignif_0.6.3        leaps_3.1             lpSolve_5.6.15       </span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [91] hexbin_1.28.2         memoise_2.0.1         compiler_4.2.0        RColorBrewer_1.1-2    snakecase_0.11.0      cli_3.2.0            </span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [97] patchwork_1.1.1       ps_1.6.0              TMB_1.8.1             MASS_7.3-56           mgcv_1.8-39           tidyselect_1.1.2     </span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [103] stringi_1.7.6         proj4_1.0-11          highr_0.9             yaml_2.3.5            ggrepel_0.9.1         crsmeta_0.3.0        </span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [109] grid_4.2.0            sass_0.4.1            tools_4.2.0           CircStats_0.2-6       parallel_4.2.0        rstudioapi_0.13      </span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [115] foreign_0.8-82        scatterplot3d_0.3-41  farver_2.1.0          digest_0.6.29         rgeos_0.5-9           Rcpp_1.0.8.3         </span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [121] car_3.0-12            broom_0.7.12          ncdf4_1.19            httr_1.4.2            kernlab_0.9-29        colorspace_2.0-3     </span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [127] rvest_1.0.2           fs_1.5.2              tensor_1.5            splines_4.2.0         yulab.utils_0.0.4     spatstat.utils_2.3-0 </span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [133] pkgdown_2.0.2.9000    sp_1.4-6              gmm_1.6-6             mapproj_1.2.8         renv_0.15.4           ggplotify_0.1.0      </span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [139] flexmix_2.3-17        systemfonts_1.0.4     jsonlite_1.8.0        flashClust_1.01-2     modeltools_0.2-23     ggfun_0.0.5          </span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [145] ggimage_0.3.0         R6_2.5.1              pillar_1.7.0          htmltools_0.5.2       glue_1.6.2            fastmap_1.1.0        </span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [151] RNetCDF_2.5-2         class_7.3-20          codetools_0.2-18      mvtnorm_1.1-3         utf8_1.2.2            lattice_0.20-45      </span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [157] bslib_0.3.1           spatstat.sparse_2.1-0 rmarkdown_2.13        desc_1.4.1            munsell_0.5.0         e1071_1.7-9          </span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [163] broom.helpers_1.6.0   haven_2.4.3           gtable_0.3.0          spatstat.core_2.4-0</span></span></code></pre></div>
 
 
 

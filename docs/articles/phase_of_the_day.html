@@ -52,15 +52,18 @@
     <a class="dropdown-item" href="../articles/plot_presentation.html">Individuals Info</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Analyses</h6>
-    <a class="dropdown-item" href="../articles/data_exploration_2016.html">Data Exploration - 2016</a>
-    <a class="dropdown-item" href="../articles/data_exploration_2018.html">Data Exploration - 2018</a>
-    <a class="dropdown-item" href="../articles/data_exploration_2018_map.html">Data Exploration Map - 2018</a>
+    <a class="dropdown-item" href="../articles/data_exploration_2016.html">Data Exploration NES - 2016</a>
+    <a class="dropdown-item" href="../articles/data_exploration_2018.html">Data Exploration NES - 2018</a>
+    <a class="dropdown-item" href="../articles/data_exploration_2018_map.html">Data Exploration NES Map - 2018</a>
+    <a class="dropdown-item" href="../articles/data_exploration_ses_2014.html">Data Exploration SES - 2014</a>
+    <a class="dropdown-item" href="../articles/data_comparison_nes_ses.html">Data Comparison - NES vs SES (WIP)</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Others</h6>
     <a class="dropdown-item" href="../articles/create_logo.html">Logo Design</a>
     <a class="dropdown-item" href="../articles/phase_of_the_day.html">Detect phases of the day</a>
     <a class="dropdown-item" href="../articles/netcdf_read.html">How to deal with netCDF files?</a>
     <a class="dropdown-item" href="../articles/buoyancy_detect.html">Changes in Buoyancy Detection</a>
+    <a class="dropdown-item" href="../articles/data_consistency_ses.html">Data Consistency SES - 2014</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Troubleshooting</h6>
     <a class="dropdown-item" href="../articles/session_info.html">R Session Info</a>
@@ -87,7 +90,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Detect phases of the day</h1>
                         <h4 data-toc-skip class="author">Joffrey JOUMAA</h4>
             
-            <h4 data-toc-skip class="date">January 29, 2022</h4>
+            <h4 data-toc-skip class="date">March 27, 2022</h4>
       
       
       <div class="d-none name"><code>phase_of_the_day.Rmd</code></div>
@@ -116,14 +119,14 @@
 <p>To visualize the data, we summarize each point on the plot as the median of the light level during one hour of one day.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># let's first average `lightatsurf` by individuals, day since departure and hour</span>
-<span class="va">dataPlot</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>lightatsurf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span>, 
+<span class="va">dataPlot</span> <span class="op">=</span> <span class="va">data_2018</span><span class="op">[</span>,<span class="fu">.</span><span class="op">(</span>lightatsurf <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">lightatsurf</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span>, 
                      by<span class="op">=</span><span class="fu">.</span><span class="op">(</span><span class="va">.id</span>,<span class="va">day_departure</span>,date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,<span class="va">hour</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, y <span class="op">=</span> <span class="st">"Hour"</span>, fill <span class="op">=</span> <span class="st">"Light level at the surface"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -137,11 +140,11 @@ Visualization of light level at the surface along 2018-individuals’ trip
 <p>Well, the good news is that we can clearly see the same pattern we saw in <code>2004023</code>. Let’s look at the distribution</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">lightatsurf</span>, fill <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">lightatsurf</span>, fill <span class="op">=</span> <span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_histogram</span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">110</span>, linetype <span class="op">=</span> <span class="st">"longdash"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_wrap</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/phase-of-the-day-3-1.png" alt="Distribution of `lightatsurf` with a threshold at 110." width="100%"><p class="caption">
 Distribution of <code>lightatsurf</code> with a threshold at 110.
@@ -168,11 +171,11 @@ Distribution of <code>lightatsurf</code> with a threshold at 110.
 <span class="va">res_twi</span><span class="op">[</span>, <span class="va">hour</span> <span class="op">:=</span> <span class="fu">hour</span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
@@ -199,11 +202,11 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
   <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi_inter</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
@@ -217,10 +220,10 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 <p>That’s definitely better, but there are few remaining outliers (especially for the individual <code>ind_2018074</code>). Let’s zoom in the first days since departure for this individual, to see what’s going on.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="va">.id</span> <span class="op">==</span> <span class="st">"ind_2018074"</span> <span class="op">&amp;</span> <span class="va">day_departure</span> <span class="op">&lt;</span> <span class="fl">100</span>,<span class="op">]</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi_inter</span><span class="op">[</span><span class="va">.id</span> <span class="op">==</span> <span class="st">"ind_2018074"</span> <span class="op">&amp;</span> <span class="va">day_departure</span> <span class="op">&lt;</span> <span class="fl">100</span><span class="op">]</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
@@ -247,10 +250,10 @@ Visualization of light level at the surface for the first 100 days of <code>ind_
 <p>Since some of the outliers observed Figure @ref(fig:zoom_2010074) are during daytime, it means that <code>period_time</code> should be longer than usual for these days. Considering this, we could impose condition on this variable to make sure it is neither too long either too short.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">res_twi_inter</span>, <span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">period_time</span>, fill<span class="op">=</span><span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">res_twi_inter</span>, <span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">period_time</span>, fill<span class="op">=</span><span class="va">.id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_histogram</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="phase_of_the_day_files/figure-html/phase-of-the-day-7-1.png" alt="Distributions of the time difference between two rows identified as sunrise and sunset" width="100%"><p class="caption">
 Distributions of the time difference between two rows identified as sunrise and sunset
@@ -271,11 +274,11 @@ Distributions of the time difference between two rows identified as sunrise and 
   <span class="op">]</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Twilight</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="va">lightatsurf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu">geom_point</span><span class="op">(</span>data <span class="op">=</span> <span class="va">res_twi_out_inter</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, col <span class="op">=</span> <span class="va">Rise</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
        fill <span class="op">=</span> <span class="st">"Light level at the surface"</span>, 
@@ -334,11 +337,11 @@ Visualization of light level at the surface along 2018-individuals’ trip, with
 <span class="va">res_hcpc</span> <span class="op">=</span> <span class="fu">FactoMineR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/FactoMineR/man/HCPC.html" class="external-link">HCPC</a></span><span class="op">(</span><span class="va">df_clust</span>, nb.clust <span class="op">=</span> <span class="fl">2</span>, graph <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_hcpc</span><span class="op">$</span><span class="va">data.clust</span><span class="op">$</span><span class="va">clust</span><span class="op">]</span>, 
             <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
        y <span class="op">=</span> <span class="st">"Hour"</span>, 
@@ -365,16 +368,16 @@ Visualization of the moment where the light was measured at the surface colored 
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># determine the right values by testing several of them...</span>
 <span class="va">res_dbscan</span> <span class="op">=</span> <span class="fu">dbscan</span><span class="op">(</span><span class="va">df_clust</span>,
-            eps <span class="op">=</span> <span class="fl">45</span>,
-            MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.06</span>,
+            eps <span class="op">=</span> <span class="fl">21</span>,
+            MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.01</span>,
             method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
 
 <span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
                             <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">]</span>,
             <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/theme_jjo.html">theme_jjo</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>,
        y <span class="op">=</span> <span class="st">"Hour"</span>,
@@ -386,58 +389,14 @@ Visualization of the moment where the light was measured at the surface colored 
 Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, <code>eps=45</code>, <code>MinPts=nrow(dataPlot)*0.06</code>)
 </p>
 </div>
-<p>Well that’s quite nice :) There are still few outliers (especially for individual <code>ind_201874</code>) identify as cluster 1 whereas we would like to see them in cluster 2. Let’s try using other parameters.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># let's try other parameters</span>
-<span class="va">res_dbscan</span> <span class="op">=</span> <span class="fu">dbscan</span><span class="op">(</span><span class="va">df_clust</span>, 
-                  eps <span class="op">=</span> <span class="fl">8</span>, 
-                  MinPts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dataPlot</span><span class="op">)</span><span class="op">*</span><span class="fl">0.001</span>, 
-                  method <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span>
-
-<span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
-                            <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span><span class="op">]</span>, 
-            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
-       y <span class="op">=</span> <span class="st">"Hour"</span>, 
-       fill <span class="op">=</span> <span class="st">"cluster"</span>, 
-       col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/phase-of-the-day-12-1.png" alt="Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, `eps=8`, `MinPts=nrow(dataPlot)*0.0001`)" width="100%"><p class="caption">
-Visualization of the moment where the light was measured at the surface colored with the associated cluster (DBSCAN, <code>eps=8</code>, <code>MinPts=nrow(dataPlot)*0.0001</code>)
-</p>
-</div>
-<p>Here, the algorithm find several clusters, but it is the cluster <code>1</code> that has our attention. It seems better defined than the previous figure @ref(fig:dbscan_first_test), but there are still few rows (for <code>ind_2018074</code>) that have been mislabelled.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># display the result</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
-                            <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span>
-                              <span class="op">]</span><span class="op">[</span>,<span class="va">cluster</span><span class="op">:=</span><span class="fu">fifelse</span><span class="op">(</span><span class="va">cluster</span><span class="op">==</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">]</span>, 
-            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">day_departure</span>, y <span class="op">=</span> <span class="va">hour</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu">theme_jjo</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">.id</span> <span class="op">~</span> <span class="va">.</span><span class="op">)</span><span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"# of days since departure"</span>, 
-       y <span class="op">=</span> <span class="st">"Hour"</span>, 
-       fill <span class="op">=</span> <span class="st">"cluster"</span>, 
-       col <span class="op">=</span> <span class="st">"Sunrise"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<div class="figure" style="text-align: center">
-<img src="phase_of_the_day_files/figure-html/phase-of-the-day-13-1.png" alt="Same as above, but `cluster 1 = cluster 1`, `cluster 2 = all the others`" width="100%"><p class="caption">
-Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the others</code>
-</p>
-</div>
+<p>Well that’s quite nice :) There are still few outliers (especially for individual <code>ind_2018074</code>) identify as cluster 1 whereas we would like to see them in cluster 2.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
 </h2>
 <p>For now we will used the result from the <code>DBSCAN</code> algorithm, since results seem to be better!</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># referential creation</span>
 <span class="va">ref_phase_day</span> <span class="op">=</span> <span class="va">dataPlot</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lightatsurf</span><span class="op">)</span>,
          <span class="op">]</span><span class="op">[</span>, <span class="va">cluster</span> <span class="op">:=</span> <span class="va">res_dbscan</span><span class="op">$</span><span class="va">cluster</span>
@@ -465,7 +424,7 @@ Same as above, but <code>cluster 1 = cluster 1</code>, <code>cluster 2 = all the
 <li>sunset: plus or minus 30 min from the transition night to day</li>
 <li>sunrise: plus or minus 30 min from the transition day to night</li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># identification of transition</span>
 <span class="va">ref_phase_day</span><span class="op">[</span>,<span class="va">transition</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">phase</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>
 

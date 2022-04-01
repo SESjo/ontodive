@@ -2,28 +2,39 @@
 % Please edit documentation in R/build_github_vignette.R
 \name{build_github_vignette}
 \alias{build_github_vignette}
-\title{Build Vignette for Github}
+\title{Build Vignettes for Github}
 \usage{
-build_github_vignette(vignette = NULL, website = TRUE, vignettes = TRUE)
+build_github_vignette(article = NULL, website = NULL, vignette = NULL)
 }
 \arguments{
-\item{website}{A boolean to compile the website associated with weanlingNES package}
+\item{article}{The name or the path to the .Rmd file to be compiled}
+
+\item{website}{A boolean to compile the website associated with the article}
+
+\item{vignette}{A boolean to compile the vignette associated with the article}
 }
 \value{
-A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignettes
+A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignette
 }
 \description{
-This function aims at processing vignettes (building, organizing) before pushing on Github so that user can download a package with pre-compiled vignettes. Using the website argument allow to build the associated website.
+function aims at processing vignette (building, organizing)
+before pushing on Github so that user can download a package with
+pre-compiled vignette. Using the website argument allow to build the
+associated website.
 }
 \details{
-To make sure pre-compiled vignettes are enclosed within the package downloaded from Github, vignettes are (i) compiled with tools::buildVignettes, (ii) then copy-paste to `inst\\doc`. To build the website, this function first converts README.Rmd file to README.md file, and then calls pkgdown::build_site() since this function only take into account *.md.
+To make sure pre-compiled vignette are enclosed within the package
+downloaded from Github, vignette are (i) compiled with tools::buildVignettes,
+(ii) then copy-paste to `inst\\doc`. To build the website, this function
+first converts README.Rmd file to README.md file, and then calls
+pkgdown::build_site() since this function only take into account *.md.
 }
 \examples{
 \dontrun{
-# compile vignettes
+# compile all articles into vignette and website
 build_github_vignette()
 }
 }
 \references{
-\href{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}{https://community.rstudio.com/t/how-to-add-vignette-html-or-r-files-to-a-github-rep/45905/7}
+\href{https://community.rstudio.com/t/how-to-add-article-html-or-r-files-to-a-github-rep/45905/7}{https://community.rstudio.com/t/how-to-add-article-html-or-r-files-to-a-github-rep/45905/7}
 }
