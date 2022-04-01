@@ -29,7 +29,6 @@ Imports:
     ggcorrplot,
     ggplot2,
     ggOceanMaps,
-    ggOceanMapsData,
     ggpubr,
     scales,
     mgcv,
@@ -41,6 +40,7 @@ Imports:
     ggspatial
 Remotes: 
     SLisovski/TwGeos
+    MikkoVihtakari/ggOceanMapsData
 Depends: R (>= 3.5.0)
 Suggests:
     stats,
