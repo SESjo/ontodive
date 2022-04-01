@@ -16,6 +16,10 @@ a ggplot theme
 A personnalised ggplot theme
 }
 \examples{
+# load package
+library(ggplot2)
+
+# plot
 ggplot(cars) +
   geom_point(aes(x = speed, y = dist)) +
   theme_jjo()

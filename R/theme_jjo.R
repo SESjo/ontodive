@@ -11,6 +11,10 @@
 #' \href{https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/}{https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/}
 #'
 #' @examples
+#' # load package
+#' library(ggplot2)
+#'
+#' # plot
 #' ggplot(cars) +
 #'   geom_point(aes(x = speed, y = dist)) +
 #'   theme_jjo()
