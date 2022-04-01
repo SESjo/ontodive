@@ -39,7 +39,7 @@ build_github_vignette <- function(article = NULL,
 
   # if "article" is not only the name of a file
   # (e.g with extension ".Rmd" or path "/")
-  if (grepl(".Rmd|/", article)) {
+  if (grepl(".Rmd|/", article) && !is.null(article)) {
     # split the character chain with "/"
     article <- strsplit(article,"/") %>%
       # select the last element of the list
