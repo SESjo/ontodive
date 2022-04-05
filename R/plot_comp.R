@@ -19,6 +19,7 @@
 #' @param bs Smooth terms in GAM
 #' @param k The dimension of the basis used to represent the smooth term
 #' @param alpha_point The transparency of the point
+#' @param colours The colours to use
 #'
 #' @seealso \code{\link[mgcv]{smooth.terms}}
 #' @seealso \code{\link[mgcv]{gam}}
@@ -31,6 +32,7 @@
 #' @import magrittr
 #' @import ggplot2
 #' @import mgcv
+#' @import scales
 #'
 #' @references
 #' \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
@@ -65,7 +67,8 @@ plot_comp <- function(data,
                       nb_days = 100,
                       bs = "cs",
                       k = 6,
-                      alpha_point = 0.01) {
+                      alpha_point = 0.01,
+                      colours = NULL) {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <-
@@ -75,7 +78,8 @@ plot_comp <- function(data,
     NULL
 
   # checks data is a data.table, otherwise convert it
-  if (!weanlingNES::check_dt(data)) setDT(data)
+  if (!weanlingNES::check_dt(data))
+    setDT(data)
 
   # make sure a diving_parameter is set up
   if (is.null(diving_parameter)) {
@@ -84,12 +88,14 @@ plot_comp <- function(data,
 
   # make sure the parameter can be associated with columns in data
   if (!all(c(diving_parameter, sp, time, id) %in% colnames(data))) {
-    stop(paste0(
-      "Please make sure the parameters you've entered correspond to ",
-      # https://stackoverflow.com/questions/16742951/print-dataframe-name-in-function-output
-      deparse(substitute(data)),
-      "'s column names"
-    ))
+    stop(
+      paste0(
+        "Please make sure the parameters you've entered correspond to ",
+        # https://stackoverflow.com/questions/16742951/print-dataframe-name-in-function-output
+        deparse(substitute(data)),
+        "'s column names"
+      )
+    )
   }
 
   # rename colnames to match the rest of the function
@@ -97,6 +103,26 @@ plot_comp <- function(data,
   names(data)[names(data) == time] <- "time"
   names(data)[names(data) == id] <- "id"
   names(data)[names(data) == diving_parameter] <- "diving_parameter"
+
+  # if colour is set
+  if (!is.null(colours)) {
+    # and if the number of sp is no equal to the number of colours
+    if (data[, uniqueN(sp)] != length(colours)) {
+      # then stop to enter the proper number of colour
+      stop(paste0("Please enter the same number of colours as the number of `sp`"))
+    }
+    # if not
+  } else {
+    # and if the number of sp is two then
+    if (data[, uniqueN(sp)] == 2) {
+      # use this two colour
+      colours <- c("#e08214", "#8073ac")
+      # otherwise
+    } else {
+      # set the colour based on the number of sp
+      colours <- hue_pal()(data[, uniqueN(sp)])
+    }
+  }
 
   # fit GAM
   # https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred
@@ -212,7 +238,9 @@ plot_comp <- function(data,
       ),
       data = pop_pred,
       size = 1
-    )
+    ) +
+    scale_fill_manual(values = colours) +
+    scale_color_manual(values = colours)
 
   # return
   return(p1)
