@@ -12,7 +12,7 @@
 #'
 #' @param data A dataset containing the required information
 #' @param diving_parameter The colname associated with the diving parameter to represent
-#' @param sp The colname associated with species
+#' @param group_to_compare The colname associated with the groups to compare
 #' @param time The colname associated with time
 #' @param id The colname associated with individual
 #' @param nb_days How many days to represent
@@ -20,6 +20,11 @@
 #' @param k The dimension of the basis used to represent the smooth term
 #' @param alpha_point The transparency of the point
 #' @param colours The colours to use
+#' @param ribbon Should confidence interval be added
+#' @param point Should the points be displayed
+#' @param rows The colname used for a facet in row
+#' @param cols The colname used for a facet in column
+#' @param scales Are scales shared across all facets (the default, "fixed")
 #'
 #' @seealso \code{\link[mgcv]{smooth.terms}}
 #' @seealso \code{\link[mgcv]{gam}}
@@ -33,6 +38,7 @@
 #' @import ggplot2
 #' @import mgcv
 #' @import scales
+#' @rawNamespace import(purrr, except = c(discard,set_names,transpose))
 #'
 #' @references
 #' \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
@@ -61,33 +67,56 @@
 #'
 plot_comp <- function(data,
                       diving_parameter = NULL,
-                      sp = "sp",
+                      group_to_compare = "sp",
                       time = "day_departure",
                       id = ".id",
                       nb_days = 100,
                       bs = "cs",
                       k = 6,
                       alpha_point = 0.01,
-                      colours = NULL) {
+                      colours = NULL,
+                      ribbon = TRUE,
+                      point = TRUE,
+                      rows = NULL,
+                      cols = NULL,
+                      scales = "fixed") {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <-
+    ..col_to_keep <-
     fit_ind <-
     fit_pop <-
     fit_pop_se <-
     NULL
 
-  # checks data is a data.table, otherwise convert it
-  if (!weanlingNES::check_dt(data))
+  # checks if data is a data.table, otherwise convert it
+  if (!weanlingNES::check_dt(data)) {
+    # convert
     setDT(data)
+  }
 
   # make sure a diving_parameter is set up
   if (is.null(diving_parameter)) {
     stop("Please choose the diving parameter you want to represent")
   }
 
+  # make sure "rows" contains only one column name
+  if (length(rows) != 1 & !is.null(rows)) {
+    stop("Please, used only one column name to build the facet in row")
+  }
+
+  # make sure "cols" contains only one column name
+  if (length(rows) != 1 & !is.null(rows)) {
+    stop("Please, used only one column name to build the facet in col")
+  }
+
   # make sure the parameter can be associated with columns in data
-  if (!all(c(diving_parameter, sp, time, id) %in% colnames(data))) {
+  if (!all(c(diving_parameter,
+             group_to_compare,
+             time,
+             id,
+             rows,
+             cols) %in% colnames(data))) {
     stop(
       paste0(
         "Please make sure the parameters you've entered correspond to ",
@@ -98,149 +127,269 @@ plot_comp <- function(data,
     )
   }
 
+  # keep only the relevant columns
+  col_to_keep <-
+    c(group_to_compare, time, id, diving_parameter, rows, cols)
+  data <- data[, ..col_to_keep]
+
   # rename colnames to match the rest of the function
-  names(data)[names(data) == sp] <- "sp"
+  names(data)[names(data) == group_to_compare] <- "group_to_compare"
   names(data)[names(data) == time] <- "time"
   names(data)[names(data) == id] <- "id"
   names(data)[names(data) == diving_parameter] <- "diving_parameter"
 
   # if colour is set
   if (!is.null(colours)) {
-    # and if the number of sp is no equal to the number of colours
-    if (data[, uniqueN(sp)] != length(colours)) {
+    # and if the number of group_to_compare is no equal to the number of colours
+    if (data[, uniqueN(group_to_compare)] != length(colours)) {
       # then stop to enter the proper number of colour
-      stop(paste0("Please enter the same number of colours as the number of `sp`"))
+      stop(
+        paste0(
+          "Please enter the same number of colours as the number of ",
+          group_to_compare
+        )
+      )
     }
     # if not
   } else {
-    # and if the number of sp is two then
-    if (data[, uniqueN(sp)] == 2) {
+    # and if the number of group_to_compare is two then
+    if (data[, uniqueN(group_to_compare)] == 2) {
       # use this two colour
       colours <- c("#e08214", "#8073ac")
       # otherwise
     } else {
-      # set the colour based on the number of sp
-      colours <- hue_pal()(data[, uniqueN(sp)])
+      # set the colour based on the number of group_to_compare
+      colours <- hue_pal()(data[, uniqueN(group_to_compare)])
     }
   }
 
-  # fit GAM
-  # https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred
-  mdl_tot <- gam(diving_parameter ~ sp +
-    s(time, bs = bs, k = k) +
-    s(time, by = sp, m = 1, bs = bs, k = k) +
-    s(id, bs = "re") +
-    s(id, time, bs = "re"),
-  data = data[, .(
-    id = as.factor(id),
-    time,
-    diving_parameter,
-    sp = as.factor(sp)
-  )],
-  family = "gaussian"
-  )
+  # if facet required
+  if (!is.null(rows) | !is.null(cols)) {
+    # split the data set according rows and cols
+    data_split <- split(data, by = c(rows, cols))
+    # otherwise
+  } else {
+    # put data into a list to be able to run the following code
+    data_split <- list(data)
+  }
 
-  # new dataset generation for individual level (column time, id)
-  ind_pred_inter <- expand.grid(
-    time = 0:nb_days,
-    id = unique(data$id)
-  )
+  # apply the gam to each dataset
+  res_pred_list <- lapply(data_split, function(data) {
+    # fit GAM
+    # https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred
+    mdl_tot <- gam(
+      diving_parameter ~ group_to_compare +
+        s(time, bs = bs, k = k) +
+        s(
+          time,
+          by = group_to_compare,
+          m = 1,
+          bs = bs,
+          k = k
+        ) +
+        s(id, bs = "re") +
+        s(id, time, bs = "re"),
+      data = data[, .(
+        id = as.factor(id),
+        time,
+        diving_parameter,
+        group_to_compare = as.factor(group_to_compare)
+      )],
+      family = "gaussian"
+    )
 
-  # add sp column
-  ind_pred <- data[, .(sp = unique(sp)), by = id] %>%
-    # merge to add sp column
-    merge(ind_pred_inter, ., by = c("id")) %>%
-    # convert as data.table
-    setDT(.) %>%
-    # sort by sp, time and id
-    .[order(sp, time, id), ] %>%
-    # add individual prediction
-    .[, fit_ind := predict.gam(mdl_tot,
-      .SD,
-      type = "response"
-    )] %>%
-    # trick to avoid calling twice this object in the console for display
-    .[]
+    # new dataset generation for individual level (column time, id)
+    ind_pred_inter <- expand.grid(time = 0:nb_days,
+                                  id = unique(data$id))
 
-  # new dataset generation for population level (column time)
-  pop_pred <- setDT(expand.grid(
-    time = 0:nb_days,
-    sp = unique(data$sp),
-    id = "population_level"
-  )) %>%
-    # sort by sp, time and id
-    .[order(sp, time, id), ] %>%
-    # retrieve population prediction
-    .[, fit_pop := predict.gam(mdl_tot,
-      # select the first individual by sp
-      ind_pred[id %in% ind_pred[, first(id), by = sp]$V1, ],
-      type = "response",
-      exclude = c(
-        "s(time,id)",
-        "s(id)"
+    # add group_to_compare column
+    ind_pred <-
+      data[, .(group_to_compare = unique(group_to_compare)), by = id] %>%
+      # merge with prediction to add group_to_compare column
+      merge(ind_pred_inter, ., by = c("id")) %>%
+      # convert as data.table
+      setDT(.) %>%
+      # sort by group_to_compare, time and id
+      .[order(group_to_compare, time, id),] %>%
+      # add individual prediction
+      .[, fit_ind := predict.gam(mdl_tot,
+                                 .SD,
+                                 type = "response")] %>%
+      # sort by group_to_compare, time and id
+      .[order(group_to_compare, time, id),] %>%
+      # trick to avoid calling twice this object in the console for display
+      .[]
+
+    # new dataset generation for population level (column time)
+    pop_pred <- setDT(
+      expand.grid(
+        time = 0:nb_days,
+        group_to_compare = unique(data$group_to_compare),
+        id = "population_level",
+        stringsAsFactors = FALSE
       )
-    )] %>%
-    # add standard error at the population level
-    .[, fit_pop_se := predict.gam(mdl_tot,
-      # select the first individual by sp
-      ind_pred[id %in% ind_pred[, first(id), by = sp]$V1, ],
-      type = "response",
-      exclude = c(
-        "s(time,id)",
-        "s(id)"
-      ),
-      se.fit = T
-    )$se.fit] %>%
-    # trick to avoid calling twice this object in the console for display
-    .[]
+    ) %>%
+      # sort by group_to_compare, time and id
+      .[order(group_to_compare, time, id),] %>%
+      # retrieve population prediction
+      .[, fit_pop := predict.gam(mdl_tot,
+                                 # select the first individual by group_to_compare
+                                 ind_pred[id %in% ind_pred[, unique(first(id))],],
+                                 type = "response",
+                                 exclude = c("s(time,id)",
+                                             "s(id)"))] %>%
+      # add standard error at the population level
+      .[, fit_pop_se := predict.gam(
+        mdl_tot,
+        # select the first individual by group_to_compare
+        ind_pred[id %in% ind_pred[, unique(first(id))],],
+        type = "response",
+        exclude = c("s(time,id)",
+                    "s(id)"),
+        se.fit = T
+      )$se.fit] %>%
+      # trick to avoid calling twice this object in the console for display
+      .[]
+
+    # add facet if rows is not NULL
+    if (!is.null(rows)) {
+      # to population level dataset
+      pop_pred[, (rows) := data[, unique(get(rows))]]
+      # and individual level dataset
+      ind_pred[, (rows) := data[, unique(get(rows))]]
+    }
+
+    # add facet if cols is not NULL
+    if (!is.null(cols)) {
+      # to population level dataset
+      pop_pred[, (cols) := data[, unique(get(cols))]]
+      # and individual level dataset
+      ind_pred[, (cols) := data[, unique(get(cols))]]
+    }
+
+    # return
+    return(list(pop_pred, ind_pred))
+  })
+
+  # consolidate result
+  res_pred <- pmap(res_pred_list, rbind)
+
+  # retrieve pop level result
+  pop_pred <- res_pred[[1]]
+
+  # retrieve pop level result
+  ind_pred <- res_pred[[2]]
 
   # plot
-  p1 <- ggplot() +
-    geom_point(aes(x = time, y = diving_parameter, colour = sp),
-      data = data[time <= nb_days, ],
-      alpha = alpha_point
-    ) +
-    theme(legend.position = "none") +
-    scale_x_continuous(
-      limits = c(0, nb_days),
-      oob = scales::squish,
-      expand = c(0, 0)
-    ) +
-    geom_line(aes(
-      x = time,
-      y = fit_ind,
-      group = id,
-      colour = sp
-    ),
-    data = ind_pred,
-    alpha = 0.4
-    ) +
-    geom_ribbon(
-      aes(
-        x = time,
-        # min of confidence interval at 95%
-        ymin = fit_pop - (1.96 * fit_pop_se),
-        # max of confidence interval at 95%
-        ymax = fit_pop + (1.96 * fit_pop_se),
-        group = sp,
-        fill = sp
-      ),
-      # since pop fit is
-      data = pop_pred,
-      alpha = 0.5
-    ) +
+  if (point) {
+    # intiate with geom_point
+    p1 <- ggplot() +
+      # add individuals points
+      geom_point(
+        aes(x = time, y = diving_parameter, colour = group_to_compare),
+        data = data[time <= nb_days,],
+        alpha = alpha_point,
+        # to make sure having a point without border
+        # https://stackoverflow.com/questions/34398418/geom-point-borders-in-ggplot2-2-0-0
+        shape = 16,
+        size = 1
+      ) +
+      theme(legend.position = "none") +
+      scale_x_continuous(
+        limits = c(0, nb_days),
+        oob = scales::squish,
+        expand = c(0, 0)
+      )
+    # otherwise with ggplot
+  } else {
+    p1 <- ggplot()
+  }
+
+  # add individuals lines
+  p1 <- p1 +
     geom_line(
       aes(
         x = time,
-        y = fit_pop,
-        group = sp,
-        colour = sp
+        y = fit_ind,
+        group = interaction(group_to_compare, id),
+        colour = group_to_compare
       ),
-      data = pop_pred,
-      size = 1
-    ) +
-    scale_fill_manual(values = colours) +
-    scale_color_manual(values = colours)
+      data = ind_pred,
+      alpha = 0.4
+    )
+
+  # if ribbon
+  if (ribbon) {
+    p1 <- p1 +
+      # add confidence interval for populational model
+      geom_ribbon(
+        aes(
+          x = time,
+          # min of confidence interval at 95%
+          ymin = fit_pop - (1.96 * fit_pop_se),
+          # max of confidence interval at 95%
+          ymax = fit_pop + (1.96 * fit_pop_se),
+          group = group_to_compare,
+          fill = group_to_compare
+        ),
+        # since pop fit is
+        data = pop_pred,
+        alpha = 0.5
+      ) +
+      # add populational line
+      geom_line(
+        aes(
+          x = time,
+          y = fit_pop,
+          group = group_to_compare,
+          colour = group_to_compare
+        ),
+        data = pop_pred,
+        size = 1
+      ) +
+      scale_fill_manual(values = colours) +
+      scale_color_manual(values = colours) +
+      # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
+      facet_grid(
+        rows = if (is.null(rows))
+          NULL
+        else
+          vars(get(rows)),
+        cols = if (is.null(cols))
+          NULL
+        else
+          vars(get(cols)),
+        scales = scales
+      )
+    # otherwise, without ribbon
+  } else {
+    p1 <- p1 +
+      # add populational line
+      geom_line(
+        aes(
+          x = time,
+          y = fit_pop,
+          group = group_to_compare,
+          colour = group_to_compare
+        ),
+        data = pop_pred,
+        size = 1
+      ) +
+      scale_fill_manual(values = colours) +
+      scale_color_manual(values = colours) +
+      # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
+      facet_grid(
+        rows = if (is.null(rows))
+          NULL
+        else
+          vars(get(rows)),
+        cols = if (is.null(cols))
+          NULL
+        else
+          vars(get(cols)),
+        scales = scales
+      )
+  }
 
   # return
   return(p1)
