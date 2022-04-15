@@ -38,7 +38,8 @@ Imports:
     foieGras,
     lubridate,
     maptools,
-    ggspatial
+    ggspatial,
+    purrr
 Remotes: 
     github::SLisovski/TwGeos,
     github::MikkoVihtakari/ggOceanMapsData
