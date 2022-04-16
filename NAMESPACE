@@ -24,6 +24,8 @@ import(magrittr)
 import(maptools)
 import(mgcv)
 import(pkgdown)
+import(purrr, except = c(discard,set_names,transpose))
+
 import(scales)
 importFrom(cowplot,draw_plot)
 importFrom(cowplot,ggdraw)
