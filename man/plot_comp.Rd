@@ -7,21 +7,25 @@
 plot_comp(
   data,
   diving_parameter = NULL,
-  sp = "sp",
+  group_to_compare = "sp",
   time = "day_departure",
   id = ".id",
   nb_days = 100,
   bs = "cs",
   k = 6,
-  alpha_point = 0.01
+  alpha_point = 0.01,
+  colours = NULL,
+  ribbon = TRUE,
+  point = TRUE,
+  rows = NULL,
+  cols = NULL,
+  scales = "fixed"
 )
 }
 \arguments{
 \item{data}{A dataset containing the required information}
 
 \item{diving_parameter}{The colname associated with the diving parameter to represent}
-
-\item{sp}{The colname associated with species}
 
 \item{time}{The colname associated with time}
 
@@ -34,6 +38,20 @@ plot_comp(
 \item{k}{The dimension of the basis used to represent the smooth term}
 
 \item{alpha_point}{The transparency of the point}
+
+\item{colours}{The colours to use}
+
+\item{ribbon}{Should confidence interval be added}
+
+\item{point}{Should the points be displayed}
+
+\item{rows}{The colname used for a facet in row}
+
+\item{cols}{The colname used for a facet in column}
+
+\item{scales}{Are scales shared across all facets (the default, "fixed")}
+
+\item{sp}{The colname associated with species}
 }
 \value{
 Return a ggplot
