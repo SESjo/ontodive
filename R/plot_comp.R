@@ -53,10 +53,8 @@
 #'
 #' # combine
 #' data_comp <- rbind(
-#'   rbindlist(data_nes$year_2018) %>%
-#'     .[, sp := "nes"],
-#'   rbindlist(data_ses$year_2014) %>%
-#'     .[, sp := "ses"],
+#'   rbindlist(data_nes$year_2018),
+#'   rbindlist(data_ses$year_2014),
 #'   use.names = T,
 #'   fill = T
 #' )
@@ -83,7 +81,6 @@ plot_comp <- function(data,
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <-
-    ..col_to_keep <-
     fit_ind <-
     fit_pop <-
     fit_pop_se <-
@@ -234,7 +231,7 @@ plot_comp <- function(data,
       # retrieve population prediction
       .[, fit_pop := predict.gam(mdl_tot,
                                  # select the first individual by group_to_compare
-                                 ind_pred[id %in% ind_pred[, unique(first(id))],],
+                                 ind_pred[, .SD[id == first(id)], by=group_to_compare],
                                  type = "response",
                                  exclude = c("s(time,id)",
                                              "s(id)"))] %>%
@@ -242,7 +239,7 @@ plot_comp <- function(data,
       .[, fit_pop_se := predict.gam(
         mdl_tot,
         # select the first individual by group_to_compare
-        ind_pred[id %in% ind_pred[, unique(first(id))],],
+        ind_pred[, .SD[id == first(id)], by=group_to_compare],
         type = "response",
         exclude = c("s(time,id)",
                     "s(id)"),
