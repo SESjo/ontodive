@@ -19,12 +19,12 @@
 #' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import scales
-#' @importFrom cowplot ggdraw draw_plot plot_grid
 #' @import ggplot2
 #' @import ggOceanMaps
 #' @import ggOceanMapsData
 #' @import ggpubr
 #' @import ggspatial
+#' @import patchwork
 #'
 #' @examples
 #' # load data
@@ -100,8 +100,11 @@ plot_ind <- function(data_seal,
       panel.border = col_back,
       axis.text = element_text(colour = col_text),
       axis.title = element_text(colour = col_text),
-      axis.line = element_line(colour = col_text),
-      axis.ticks = col_back
+      axis.ticks = col_back,
+      axis.line = element_line(
+        color = col_text,
+        arrow = arrow(length = unit(0.2, "lines"), type = "closed")
+      )
     )
   }
 
@@ -125,7 +128,7 @@ plot_ind <- function(data_seal,
   } else {
     trip <-
       basemap(
-        limits = c(35, 115, -65, -40),
+        limits = c(45, 110, -65, -40),
         bathymetry = TRUE,
         rotate = TRUE
       ) +
@@ -137,6 +140,8 @@ plot_ind <- function(data_seal,
         col = data_seal[!is.na(lat), colPal(day_departure)],
         size = 1
       ) +
+      annotation_scale(location = "br") +
+      annotation_north_arrow(location = "tr", which_north = "true") +
       theme_plot_ind()
     # set the number of dives to have a complete day
     nb_dives_to_complete_day = 8
@@ -146,7 +151,7 @@ plot_ind <- function(data_seal,
   world <- map_data("world")
 
   # plot the map world
-  worldmap <- ggplot() +
+  worldmap_inter <- ggplot() +
     geom_map(
       data = world,
       map = world,
@@ -175,23 +180,56 @@ plot_ind <- function(data_seal,
     ) +
     theme_bw() +
     theme(
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      axis.ticks = element_blank(),
+      axis.line = element_blank(),
       panel.border = col_back,
-      axis.title = col_back,
-      axis.text = col_back,
-      axis.ticks = col_back,
-      plot.background = element_rect(fill = "transparent", color = NA)
+      plot.background = element_rect(fill = "transparent",
+                                     color = NA),
+      panel.background = element_rect(fill = "transparent")
     )
 
+  # # create a background plot
+  # background_plot <- ggplot(data = data.frame(x=1,y=1),
+  #                           aes(x=x,y=y)) +
+  #   geom_point(size = 48, color = "blue") +
+  #   theme(
+  #     axis.title = element_blank(),
+  #     axis.text = element_blank(),
+  #     axis.ticks = element_blank(),
+  #     axis.line = element_blank(),
+  #     panel.grid.major = element_blank(), #remove major gridlines
+  #     panel.grid.minor = element_blank(), #remove minor gridline
+  #     plot.background = element_rect(fill = "transparent",
+  #                                    color = NA),
+  #     panel.background = element_rect(fill = "transparent")
+  #   )
+  #
+  # # add white background
+  # worldmap <-
+  #   background_plot +
+  #   worldmap_inter +
+  #   plot_layout(design =  c(
+  #     area(t = 1, l = 1, b = 1, r = 1),
+  #     area(t = 1, l = 1, b = 1, r = 1)
+  #   ))
+
   # add the map world on the trip plot
-  main_plot <- ggdraw(trip) +
-    draw_plot(
-      plot = worldmap,
-      halign = 0,
-      valign = 0,
-      x = .07,
-      y = ifelse(data_seal[, unique(sp)] == "nes", .17, .3),
-      scale = .2
-    )
+  main_plot <- trip +
+    inset_element(worldmap_inter,
+                  left = -0.05, bottom = 0, right = 0.2, top = 0.2)
+
+  # # add the map world on the trip plot
+  # main_plot <- cowplot::ggdraw(trip) +
+  #   cowplot::draw_plot(
+  #     plot = worldmap,
+  #     halign = 0,
+  #     valign = 0,
+  #     x = .07,
+  #     y = ifelse(data_seal[, unique(sp)] == "nes", .17, .3),
+  #     scale = .2
+  #   )
 
   # select day that have at least 50 dives
   days_to_keep <- data_seal[, .(nb_dives = .N),
@@ -206,7 +244,7 @@ plot_ind <- function(data_seal,
   # maxdepth
   dataPlot_1 <- melt(
     data_seal_complete_day[, .(date,
-                               "Maximum Depth (m)" = -maxdepth,
+                               "Maximum Depth (m)" = maxdepth,
                                day_departure)],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Maximum Depth (m)")
@@ -248,11 +286,12 @@ plot_ind <- function(data_seal,
       aes(x = as.Date(date),
           y = value),
       col = dataPlot_1[, colPal(day_departure)],
-      alpha = 1 / 5,
+      alpha = fifelse(data_seal[, unique(sp)] == "nes", 0.2, 0.6),
       size = .5,
       show.legend = FALSE
     ) +
     scale_x_date(date_labels = "%m/%Y") +
+    scale_y_reverse() +
     labs(x = "Date", y = "") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "Top") +
@@ -313,11 +352,11 @@ plot_ind <- function(data_seal,
   # summary table
   table_1 <- transpose(data_seal[, .(
     "Nb of days recorded" = uniqueN(as.Date(date)),
+    "Duty cycle" = if(data_seal[,unique(sp)=="nes"]) "All dives" else {"1 dive every ~2.25 hr"},
     "Nb of dives" = .N,
-    "Average Max Depth (min)" = round(mean(maxdepth) / 60, 1),
-    "Average Dive Duration (min)" = round(mean(dduration) / 60, 1),
-    "Average Bottom Duration (min)" = round(mean(botttime) / 60, 1),
-    "Average Post-dive interval Duration (min)" = round(mean(pdi, na.rm = T) / 60, 1)
+    "Median Max Depth (m)" = round(quantile(maxdepth, 0.5), 1),
+    "Median Dive Duration (min)" = round(quantile(dduration, 0.5) / 60, 1),
+    "Median Bottom Duration (min)" = round(quantile(botttime, 0.5) / 60, 1)
   ), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
   table_1 <-
     ggtexttable(table_1,
@@ -329,21 +368,10 @@ plot_ind <- function(data_seal,
   # set warning status the way it was
   options(warn = oldw)
 
+  # final plot
+  final_plot = table_1 / main_plot / plot_1 / plot_2 / plot_3 +
+    plot_layout(heights = c(1,2,1,1,1))
+
   # return
-  return(
-    plot_grid(
-      table_1,
-      main_plot,
-      plot_1,
-      plot_2,
-      plot_3,
-      ncol = 1,
-      axis = "rl",
-      align = "v",
-      rel_heights = c(1,
-                      # height of the map
-                      fifelse(data_seal[, unique(sp)] == "nes", 2, 1),
-                      1, 1, 1, 1)
-    )
-  )
+  return(final_plot)
 }
