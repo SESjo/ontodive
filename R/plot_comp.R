@@ -19,12 +19,15 @@
 #' @param bs Smooth terms in GAM
 #' @param k The dimension of the basis used to represent the smooth term
 #' @param alpha_point The transparency of the point
+#' @param alpha_ribbon The transparency of the ribbon
+#' @param linetype_ribbon Line type for ribbon border
 #' @param colours The colours to use
 #' @param ribbon Should confidence interval be added
 #' @param point Should the points be displayed
 #' @param rows The colname used for a facet in row
 #' @param cols The colname used for a facet in column
 #' @param scales Are scales shared across all facets (the default, "fixed")
+#' @param method 	The smoothing parameter estimation method for the GAM (default `REML`)
 #'
 #' @seealso \code{\link[mgcv]{smooth.terms}}
 #' @seealso \code{\link[mgcv]{gam}}
@@ -38,12 +41,12 @@
 #' @import ggplot2
 #' @import mgcv
 #' @import scales
+#' @import ggh4x
 #' @rawNamespace import(purrr, except = c(discard,set_names,transpose))
 #'
-#' @references
-#' \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
-#'
-#' James Grecian. (2022). jamesgrecian/harpPup: v1.0 (v1.0). Zenodo. \href{https://doi.org/10.5281/zenodo.5901391}{https://doi.org/10.5281/zenodo.5901391}
+#' @references \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
+#' @references \url{https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-\%22REML\%22-rather-than-\%22GCV.Cp\%22\%3F}
+#' @references James Grecian. (2022). jamesgrecian/harpPup: v1.0 (v1.0). Zenodo. \href{https://doi.org/10.5281/zenodo.5901391}{https://doi.org/10.5281/zenodo.5901391}
 #'
 #' @examples
 #' \dontrun{
@@ -72,12 +75,15 @@ plot_comp <- function(data,
                       bs = "cs",
                       k = 6,
                       alpha_point = 0.01,
+                      alpha_ribbon = 0.4,
+                      linetype_ribbon = 2,
                       colours = NULL,
                       ribbon = TRUE,
                       point = TRUE,
                       rows = NULL,
                       cols = NULL,
-                      scales = "fixed") {
+                      scales = "fixed",
+                      method = "REML") {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <-
@@ -185,14 +191,18 @@ plot_comp <- function(data,
           k = k
         ) +
         s(id, bs = "re") +
-        s(id, time, bs = "re"),
+        s(time, id, bs = "re"),
       data = data[, .(
         id = as.factor(id),
         time,
         diving_parameter,
         group_to_compare = as.factor(group_to_compare)
       )],
-      family = "gaussian"
+      family = "gaussian",
+      # default "GCV.Cp" was faster but didn't make sense for some specific case
+      # group_to_compare "maxdepth", diving_parameter "maxdepth", cols "sp"
+      # https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-%22REML%22-rather-than-%22GCV.Cp%22%3F
+      method=method
     )
 
     # new dataset generation for individual level (column time, id)
@@ -233,8 +243,8 @@ plot_comp <- function(data,
                                  # select the first individual by group_to_compare
                                  ind_pred[, .SD[id == first(id)], by=group_to_compare],
                                  type = "response",
-                                 exclude = c("s(time,id)",
-                                             "s(id)"))] %>%
+                                 exclude = c("s(id)",
+                                             "s(time,id)"))] %>%
       # add standard error at the population level
       .[, fit_pop_se := predict.gam(
         mdl_tot,
@@ -278,9 +288,12 @@ plot_comp <- function(data,
   ind_pred <- res_pred[[2]]
 
   # plot
+  p1 <- ggplot()
+
+  # if point
   if (point) {
     # intiate with geom_point
-    p1 <- ggplot() +
+    p1 <- p1 +
       # add individuals points
       geom_point(
         aes(x = time, y = diving_parameter, colour = group_to_compare),
@@ -297,23 +310,7 @@ plot_comp <- function(data,
         oob = scales::squish,
         expand = c(0, 0)
       )
-    # otherwise with ggplot
-  } else {
-    p1 <- ggplot()
   }
-
-  # add individuals lines
-  p1 <- p1 +
-    geom_line(
-      aes(
-        x = time,
-        y = fit_ind,
-        group = interaction(group_to_compare, id),
-        colour = group_to_compare
-      ),
-      data = ind_pred,
-      alpha = 0.4
-    )
 
   # if ribbon
   if (ribbon) {
@@ -331,62 +328,54 @@ plot_comp <- function(data,
         ),
         # since pop fit is
         data = pop_pred,
-        alpha = 0.5
-      ) +
-      # add populational line
-      geom_line(
-        aes(
-          x = time,
-          y = fit_pop,
-          group = group_to_compare,
-          colour = group_to_compare
-        ),
-        data = pop_pred,
-        size = 1
-      ) +
-      scale_fill_manual(values = colours) +
-      scale_color_manual(values = colours) +
-      # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
-      facet_grid(
-        rows = if (is.null(rows))
-          NULL
-        else
-          vars(get(rows)),
-        cols = if (is.null(cols))
-          NULL
-        else
-          vars(get(cols)),
-        scales = scales
-      )
-    # otherwise, without ribbon
-  } else {
-    p1 <- p1 +
-      # add populational line
-      geom_line(
-        aes(
-          x = time,
-          y = fit_pop,
-          group = group_to_compare,
-          colour = group_to_compare
-        ),
-        data = pop_pred,
-        size = 1
-      ) +
-      scale_fill_manual(values = colours) +
-      scale_color_manual(values = colours) +
-      # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
-      facet_grid(
-        rows = if (is.null(rows))
-          NULL
-        else
-          vars(get(rows)),
-        cols = if (is.null(cols))
-          NULL
-        else
-          vars(get(cols)),
-        scales = scales
+        alpha = alpha_ribbon,
+        color = "darkgrey",
+        linetype = linetype_ribbon,
+        outline.type = "both"
       )
   }
+
+  # add individuals lines
+  p1 <- p1 +
+    geom_line(
+      aes(
+        x = time,
+        y = fit_ind,
+        group = interaction(group_to_compare, id),
+        colour = group_to_compare
+      ),
+      data = ind_pred,
+      alpha = 0.4
+    ) +
+    # add populational line
+    geom_line(
+      aes(
+        x = time,
+        y = fit_pop,
+        group = group_to_compare,
+        colour = group_to_compare
+      ),
+      data = pop_pred,
+      size = 1
+    ) +
+    scale_fill_manual(values = colours) +
+    scale_color_manual(values = colours) +
+    # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
+    facet_grid2(
+      rows = if (is.null(rows))
+        NULL
+      else
+        vars(get(rows)),
+      cols = if (is.null(cols))
+        NULL
+      else
+        vars(get(cols)),
+      scales = scales,
+      # Horizontal strips
+      strip = strip_themed(
+        background_x = elem_list_rect(fill = "grey")
+      )
+    )
 
   # return
   return(p1)
