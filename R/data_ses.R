@@ -74,4 +74,7 @@
 #' }
 #'
 #' @source \email{baptiste.picard@@cebc.cnrs.fr}
+#'
+#' @usage data(data_ses)
+#'
 "data_ses"

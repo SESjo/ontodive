@@ -28,5 +28,8 @@
 #'
 #' @source
 #' \href{https://resources.marine.copernicus.eu/product-detail/GLOBAL_MULTIYEAR_PHY_001_030/INFORMATION}{https://resources.marine.copernicus.eu/product-detail/GLOBAL_MULTIYEAR_PHY_001_030/INFORMATION}
+#'
+#' @usage data(data_cop)
+#'
 
 "data_cop"

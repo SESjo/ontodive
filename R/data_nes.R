@@ -1,10 +1,10 @@
-#' Diving parameters of weanling Northern Elephant Seals in 2016 and 2018
+#' @title Diving parameters of weanling Northern Elephant Seals in 2016 and 2018
 #'
-#' A list of datasets containing diving parameters for:
+#' @description A list of datasets containing diving parameters for:
 #' * 6 individuals in 2016
 #' * 4 individuals in 2018
 #'
-#' These datasets have been processed using the following files:
+#' @details These datasets have been processed using the following files:
 #' * 2018070_nese0000annu_1790212_SubSample_iknos_DiveStat_RSB.csv
 #' * 2018070_results-2-GPE3.csv
 #' * 2018072_BothTrips_1790214_SubSample_iknos_DiveStat_RSB.csv
@@ -111,4 +111,7 @@
 #' }
 #' }
 #' @source \email{roxanne@@ucsc.edu}
+#'
+#' @usage data(data_nes)
+#'
 "data_nes"
