@@ -122,6 +122,8 @@ plot_ind <- function(data_seal,
         col = data_seal[!is.na(lat), colPal(day_departure)],
         size = 1
       ) +
+      annotation_scale(location = "br") +
+      annotation_north_arrow(location = "tr", which_north = "true") +
       theme_plot_ind()
     # set the number of dives to have a complete day
     nb_dives_to_complete_day = 50
@@ -353,7 +355,7 @@ plot_ind <- function(data_seal,
   table_1 <- transpose(data_seal[, .(
     "Nb of days recorded" = uniqueN(as.Date(date)),
     "Duty cycle" = if(data_seal[,unique(sp)=="nes"]) "All dives" else {"1 dive every ~2.25 hr"},
-    "Nb of dives" = .N,
+    "Nb of dives recorded" = .N,
     "Median Max Depth (m)" = round(quantile(maxdepth, 0.5), 1),
     "Median Dive Duration (min)" = round(quantile(dduration, 0.5) / 60, 1),
     "Median Bottom Duration (min)" = round(quantile(botttime, 0.5) / 60, 1)
