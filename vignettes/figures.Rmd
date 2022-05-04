@@ -1,0 +1,653 @@
+---
+title: "Figures"
+author: "Joffrey JOUMAA"
+date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    css: cosmo_custom.css
+    number_sections: yes
+    code_folding: show
+    df_print: default
+    fig_caption: yes
+    code_download: yes
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+vignette: >
+  %\VignetteIndexEntry{Figures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r, include = FALSE}
+# # reduce png size
+# knitr::knit_hooks$set(optipng = knitr::hook_optipng)
+# knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+
+# global option relative to rmarkdown
+knitr::opts_chunk$set(
+  echo = TRUE,
+  fig.align = "center",
+  out.width = "100%",
+  message = FALSE,
+  warning = FALSE,
+  cache.lazy = FALSE,
+  optipng = "-o7 -quiet",
+  pngquant = "--speed=1"
+)
+
+# library
+library(data.table)
+library(ggplot2)
+library(ggpubr)
+library(kableExtra)
+library(magrittr)
+library(patchwork)
+library(scales)
+library(ggplotify)
+library(Hmisc)
+library(stringr)
+library(ggOceanMaps)
+library(ggOceanMapsData)
+library(ggh4x)
+library(gridExtra)
+library(glue)
+library(dplyr)
+library(gt)
+library(purrr)
+
+# remove some warnings
+suppressWarnings(library(ggplot2))
+
+# define my own table format: https://github.com/haozhu233/kableExtra/issues/374
+sable <- function(x, escape = T, ...) {
+  knitr::kable(x, escape = escape, ...) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "responsive"),
+      full_width = F
+    )
+}
+
+# make sure we are in UTF8, to correctly display ±
+Sys.setlocale("LC_ALL","en_US.UTF-8")
+```
+
+## Import Data
+
+```{r}
+# load wealingNES package
+library(weanlingNES)
+
+# load dataset
+data("data_nes")
+data("data_ses")
+
+# merge into one dataset
+data_comp <- rbind(
+  rbindlist(data_nes$year_2018),
+  rbindlist(data_ses$year_2014),
+  use.names = T,
+  fill = T
+)
+
+# remove outlier (i.e. dive duration > 5000 s)
+data_comp <- data_comp[dduration < 5000, ]
+data_comp[, diff_days := c(0, diff(day_departure)), by = .id]
+
+# keep the first trip
+data_comp_split <- split(data_comp, by = c(".id"))
+data_comp_split_list <- lapply(data_comp_split, function(x) {
+  # find the rows after 100 day_departure where diff_days > 5
+  second_trip <- x[day_departure > 100 & diff_days > 1, ]
+  # if there is a second trip
+  if (nrow(second_trip) != 0) {
+    # get the first date of this second trip
+    date_cut <- second_trip[, min(date)]
+    # return only the first trip
+    return(x[date < date_cut, ])
+    # if no second trip
+  } else {
+    # return the full dataset
+    return(x)
+  }
+})
+
+# rebuilt the dataset
+data_comp <- rbindlist(data_comp_split_list)
+
+# set up colours
+colours <- c("#e08214", "#8073ac")
+```
+
+## Figures
+
+### Figure 1
+
+```{r}
+# datasets
+data_fig_sum <- data_comp[!is.na(lat) & .id %in% c("ind_2018070",
+                                                   "ind_140072"),] %>%
+  .[.id == "ind_2018070", .id := "ID 2018070 (NES)"] %>%
+  .[.id == "ind_140072", .id := "ID 140072 (SES)"] %>%
+  .[, .id := ordered(.id, levels = c("ID 2018070 (NES)", "ID 140072 (SES)"))]
+
+# maxdepth
+data_fig_sum_maxdepth <- melt(
+  data_fig_sum[, .(date,
+                   maxdepth,
+                   day_departure,
+                   .id)],
+  id.vars = c("date", "day_departure", ".id"),
+  measure.vars = c("maxdepth")
+)
+
+# duration
+data_fig_sum_dduration <- melt(
+  data_fig_sum[, .(date,
+                   dduration,
+                   day_departure,
+                   .id)],
+  id.vars = c("date", "day_departure", ".id"),
+  measure.vars = c("dduration")
+)
+
+# driftrate
+data_fig_sum_driftrate <- melt(
+  data_fig_sum[divetype == "2: drift", .(
+    driftrate = median(driftrate, na.rm = T),
+    day_departure = first(day_departure)
+  ),
+  by = .(date = as.Date(date), .id)],
+  id.vars = c("date", "day_departure", ".id"),
+  measure.vars = c("driftrate")
+)
+
+# bADL
+data_fig_sum_adl <- melt(
+  data_fig_sum[divetype == "1: foraging",
+               .(adl = round(quantile(dduration, 0.95) /
+                               60),
+                 day_departure = first(day_departure)),
+               by = .(date = as.Date(date), .id)],
+  id.vars = c("date", "day_departure", ".id"),
+  measure.vars = c("adl")
+)
+
+# configure theme (to get gradient https://encycolorpedia.com/)
+nes_theme = ttheme(
+  colnames.style = colnames_style(color = "white", fill = colours[1]),
+  tbody.style = tbody_style(color = "black", fill = c("#fed4b3", "#f3ab69"))
+)
+ses_theme = ttheme(
+  colnames.style = colnames_style(color = "white", fill = colours[2]),
+  tbody.style = tbody_style(color = "black", fill = c("#d4cee3", "#bfb7d5"))
+)
+```
+
+```{r}
+# map
+trip <- basemap(shapefiles = "Decimal",
+                bathymetry = TRUE) +
+  geom_path(
+    data = data_fig_sum,
+    aes(x = lon, y = lat, group = .id),
+    size = 2,
+    colour = "white",
+    show.legend = F
+  ) +
+  scale_fill_manual(
+    name = "Depth (m)",
+    values = colorRampPalette(c(
+      "#F7FBFF", "#DEEBF7", "#9ECAE1", "#4292C6", "#08306B"
+    ))(10),
+    labels =
+      c(
+        "0-50",
+        "50-300",
+        "300-500",
+        "500-1000",
+        "1000-1500",
+        "1500-2000",
+        "2000-4000",
+        "4000-6000",
+        "6000-10000",
+        ">10000"
+      )
+  ) +
+  geom_path(
+    data = data_fig_sum,
+    aes(x = lon, y = lat, col = .id),
+    size = 1.5,
+    show.legend = F
+  ) +
+  scale_color_manual(values = colours, guide = "none") +
+  theme_void() +
+  theme(legend.position = "top")
+
+# maxdepth
+fig_sum_maxdepth <-
+  ggplot(data_fig_sum_maxdepth, aes(x = day_departure, y = value, col = .id)) +
+  geom_point(
+    show.legend = F,
+    shape = 16,
+    size = 1,
+    alpha = 0.5
+  ) +
+  labs(y = "Maximum depth (m)") +
+  scale_y_reverse() +
+  scale_colour_manual(values = colours) +
+  facet_grid2(. ~ .id,
+              strip = strip_themed(background_x = elem_list_rect(fill = colours))) +
+  theme_jjo() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    strip.background = element_blank(),
+    strip.text.x = element_blank()
+  )
+
+# driftrate
+fig_sum_dduration <-
+  ggplot(data_fig_sum_dduration,
+         aes(x = day_departure, y = value, col = .id)) +
+  geom_point(
+    show.legend = F,
+    shape = 16,
+    size = 1,
+    alpha = 0.5
+  ) +
+  labs(y = "Dive duration (s)") +
+  scale_colour_manual(values = colours) +
+  facet_grid2(. ~ .id,
+              strip = strip_themed(background_x = elem_list_rect(fill = colours))) +
+  theme_jjo() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    strip.background = element_blank(),
+    strip.text.x = element_blank()
+  )
+
+# driftrate
+fig_sum_driftrate <-
+  ggplot(data_fig_sum_driftrate,
+         aes(x = day_departure, y = value, col = .id)) +
+  geom_point(show.legend = F) +
+  geom_hline(yintercept = 0,
+             linetype = "dashed",
+             size = 1) +
+  labs(y = "Daily median drift rate (m/s)",
+       x = "Number of days since departure") +
+  scale_colour_manual(values = colours) +
+  facet_grid2(. ~ .id,
+              strip = strip_themed(background_x = elem_list_rect(fill = colours))) +
+  theme_jjo() +
+  theme(strip.background = element_blank(),
+        strip.text.x = element_blank())
+
+```
+
+```{r}
+# summary table for nes
+table_sum_nes <- transpose(data_fig_sum[sp == "nes", .(
+  "Nb of days recorded" = uniqueN(as.Date(date)),
+  "Duty cycle" = "All dives",
+  "Nb of dives recorded" = .N,
+  "Median max depth (m)" = round(quantile(maxdepth, 0.5), 1),
+  "Median dive duration (min)" = round(quantile(dduration, 0.5) / 60, 1),
+  "Median bottom duration (min)" = round(quantile(botttime, 0.5) / 60, 1)
+), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
+
+# summary table for ses
+table_sum_ses <- transpose(data_fig_sum[sp == "ses", .(
+  "Nb of days recorded" = uniqueN(as.Date(date)),
+  "Duty cycle" = "1 dive every ~2.25 hr",
+  "Nb of dives recorded" = .N,
+  "Median max depth (m)" = round(quantile(maxdepth, 0.5), 1),
+  "Median dive duration (min)" = round(quantile(dduration, 0.5) / 60, 1),
+  "Median bottom duration (min)" = round(quantile(botttime, 0.5) / 60, 1)
+), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
+
+# format tables
+table_sum_nes <-  tableGrob(table_sum_nes,
+                            rows = NULL,
+                            cols = NULL,
+                            theme = nes_theme)
+header_sum_nes <- tableGrob(mtcars[1, 1], 
+                            rows=NULL, 
+                            cols=c(data_fig_sum[sp=="nes",unique(.id)]),
+                            theme = nes_theme)
+table_sum_nes <- gtable_combine(header_sum_nes[1,], table_sum_nes, along=2)
+table_sum_nes$layout[1:2,c("r")] = 2
+table_sum_nes$widths <- unit(c(0.6, 0.4), "npc")
+
+table_sum_ses <-  tableGrob(table_sum_ses,
+                            rows = NULL,
+                            cols = NULL,
+                            theme = ses_theme)
+header_sum_ses <- tableGrob(mtcars[1, 1], 
+                            rows=NULL, 
+                            cols=c(data_fig_sum[sp=="ses",unique(.id)]),
+                            theme = ses_theme)
+table_sum_ses <- gtable_combine(header_sum_ses[1,], table_sum_ses, along=2)
+table_sum_ses$layout[1:2,c("r")] = 2
+table_sum_ses$widths <- unit(c(0.6, 0.4), "npc")
+```
+
+```{r fig.width=10.5, fig.asp=1.4}
+trip / (as_ggplot(table_sum_nes) + as_ggplot(table_sum_ses)) / fig_sum_maxdepth / fig_sum_dduration / fig_sum_driftrate +
+  plot_layout(heights = c(2, 1, 1, 1, 1))
+```
+
+> 1. Is it really important to get Longitude and Latitude legend on this kind of map (it's just that there is a bug when displaying the Longitude axis that may be a pain to work on :)
+>
+> 2. Should the units (m, min) be placed in the second column?
+
+### Figure 2
+
+```{r cache=T}
+# initial plots
+fig_maxdepth_ini <- plot_comp(
+  data_comp,
+  "maxdepth",
+  group_to_compare = "divetype",
+  nb_days = 200,
+  cols = "sp",
+  ribbon = T,
+  point = F,
+  # method = "GCV.Cp",
+  scales = "free_y"
+)
+fig_dduration_ini <- plot_comp(
+  data_comp,
+  "dduration",
+  group_to_compare = "divetype",
+  nb_days = 200,
+  cols = "sp",
+  ribbon = T,
+  point = F,
+  # method = "GCV.Cp",
+  scales = "free_y"
+)
+```
+
+
+```{r}
+# get limits
+maxdepth_limits <- ggplot_build(fig_maxdepth_ini)$layout$panel_params[[1]]$y.range
+dduration_limits <- ggplot_build(fig_dduration_ini)$layout$panel_params[[1]]$y.range
+
+# update initial plots
+fig_maxdepth <- fig_maxdepth_ini +
+  labs(
+    y = "Maximum depth (m)",
+    colour = "Dive types",
+    fill = "Dive types"
+  ) +
+  coord_cartesian(ylim = rev(maxdepth_limits)) +
+  scale_colour_discrete(labels = data_comp[, sort(unique(divetype))] %>%
+                          word(2) %>%
+                          str_to_title()) +
+  scale_fill_discrete(labels = data_comp[, sort(unique(divetype))] %>%
+                        word(2) %>%
+                        str_to_title()) +
+  theme_jjo() +
+  theme(
+    legend.position = "top",
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+fig_dduration <- fig_dduration_ini +
+  labs(
+    x = "Number of days since departure",
+    y = "Dive duration (s)"
+  ) +
+  coord_cartesian(ylim = dduration_limits) +
+  theme_jjo() +
+  theme(
+    legend.position = "none",
+    strip.text.x = element_blank()
+  )
+
+# tweak facet color
+fig_maxdepth$facet$strip$given_elements$background_x[[2]] <- fig_maxdepth$facet$strip$given_elements$background_x[[1]]
+fig_maxdepth$facet$strip$given_elements$background_x[[1]]$fill <- colours[1]
+fig_maxdepth$facet$strip$given_elements$background_x[[2]]$fill <- colours[2]
+
+# density plots
+fig_dens_maxdepth <-
+  ggplot(data_comp, aes(y = maxdepth, fill = sp)) +
+  geom_density(show.legend = F, col = "black", alpha = 0.4) +
+  coord_cartesian(ylim = rev(maxdepth_limits)) +
+  scale_fill_manual(values = colours) +
+  theme_void()
+fig_dens_dduration <-
+  ggplot(data_comp, aes(y = dduration, fill = sp)) +
+  geom_density(show.legend = F, col = "black", alpha = 0.4) +
+  coord_cartesian(ylim = dduration_limits) +
+  scale_fill_manual(values = colours) +
+  theme_void()
+```
+
+```{r fig.height=5}
+((fig_maxdepth | fig_dens_maxdepth) + plot_layout(ncol = 2, widths = c(5, 1))) /
+  ((fig_dduration | fig_dens_dduration) + plot_layout(ncol = 2, widths = c(5, 1)))
+```
+
+### Figure 3
+
+```{r}
+# calculate the proportion of dive for each divetype, phase, sp, .id
+prop_dive_id_phase_divetype_sp <- data_comp[, table(divetype, sp, phase, .id)] %>%
+  # the calculate the proportion of dive in each divetype, per sp and phases
+  prop.table(., c(".id")) %>%
+  # convert into a data.table
+  as.data.table(.)
+
+# merge this table to add the number of dives, per divetype, phase, sp, .id
+dataPlot <- merge(prop_dive_id_phase_divetype_sp,
+                  data_comp[, .(nb_dives = uniqueN(divenumber)),
+                            by = .(divetype, sp, phase, .id)
+                  ],
+                  by = c("divetype", "sp", "phase", ".id")
+) %>%
+  # mean + standard deviation
+  .[, .(
+    N = wtd.mean(N, nb_dives),
+    N_sd = sqrt(wtd.var(N, nb_dives))
+  ), by = .(divetype, sp, phase)]
+```
+
+```{r}
+fig_nes_prop <- ggplot(copy(dataPlot)[sp == "nes", N := -(1 * N)][sp == "nes"], aes(x = divetype, y = N, fill = phase)) +
+  geom_bar(stat = "identity", position = "dodge", color = "grey30") +
+  scale_y_continuous(labels = function(x) {
+    percent(abs(x), 1)
+  }) +
+  geom_errorbar(aes(ymin = N - N_sd, ymax = N + N_sd),
+                width = .2,
+                position = position_dodge(.9)
+  ) +
+  coord_flip() +
+  facet_grid(. ~ sp, scales = "free_x") +
+  theme_jjo() +
+  # day first, and night
+  scale_fill_manual(values = c("white", "grey"), labels = c("Daytime", "Night-time")) +
+  labs(fill = "Dayparts") +
+  theme(
+    legend.position = "top",
+    axis.line.y = element_blank(),
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.line = element_line(arrow = arrow(length = unit(0.2, "lines"), type = "closed", ends = "first")),
+    strip.background = element_rect(fill = "#e08214")
+  )
+fig_ses_prop <- ggplot(copy(dataPlot)[sp == "ses"], aes(x = divetype, y = N, fill = phase)) +
+  geom_bar(stat = "identity", position = "dodge", color = "grey30") +
+  scale_y_continuous(labels = function(x) {
+    percent(abs(x), 1)
+  }) +
+  geom_errorbar(aes(ymin = N - N_sd, ymax = N + N_sd),
+                width = .2,
+                position = position_dodge(.9)
+  ) +
+  coord_flip() +
+  facet_grid(. ~ sp, scales = "free_x") +
+  theme_jjo() +
+  # day first, and night
+  scale_fill_manual(values = c("white", "grey"), labels = c("Daytime", "Night-time")) +
+  labs(fill = "Dayparts") +
+  theme(
+    legend.position = "none",
+    axis.line.y = element_blank(),
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.line.x = element_line(arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
+    strip.background = element_rect(fill = "#8073ac")
+  )
+
+df_text <- data.table(
+  x = rep(0, data_comp[, uniqueN(divetype)]),
+  label_to_order = data_comp[, sort(unique(divetype))],
+  label_to_display = data_comp[, sort(unique(divetype))] %>%
+    word(2) %>%
+    str_to_title()
+)
+fig_text <- ggplot(df_text, aes(x = x, y = label_to_order, label = label_to_display)) +
+  geom_text() +
+  theme_void()
+
+fig_label_1 <- ggplot(data.frame(l = "Proportion of dives", x = 1, y = 1)) +
+  geom_text(aes(x, y, label = l)) +
+  theme_void() +
+  coord_cartesian(clip = "off")
+```
+
+
+```{r}
+((fig_nes_prop | fig_text | fig_ses_prop) +
+   plot_layout(
+     widths = c(4, 1, 4),
+     guides = "collect"
+   ) &
+   theme(legend.position = "top")) / fig_label_1 +
+  plot_layout(heights = c(6, 1))
+```
+
+### Figure 4
+
+```{r cache=T}
+# calculate the median of driftrate for each day
+median_driftrate <- data_comp[divetype == "2: drift",
+                              .(driftrate = quantile(driftrate, 0.5)),
+                              by = .(day_departure, .id, sp)
+]
+
+# initial plots
+fig_driftrate_ini <- plot_comp(
+  median_driftrate,
+  "driftrate",
+  group_to_compare = "sp",
+  nb_days = 200,
+  ribbon = T,
+  point = F
+)
+```
+
+```{r}
+# get limits
+driftrate_limits <- ggplot_build(fig_driftrate_ini)$layout$panel_params[[1]]$y.range
+
+# update initial plots
+fig_driftrate <- fig_driftrate_ini +
+  labs(
+    y = "Daily median drift rate (m/s)",
+    x = "Number of days since departure",
+    colour = "Species",
+    fill = "Species"
+  ) +
+  geom_hline(
+    yintercept = 0,
+    linetype = 2,
+    size = 1.5,
+    col = "black"
+  ) +
+  coord_cartesian(ylim = driftrate_limits) +
+  theme_jjo() +
+  theme(
+    legend.position = "top"
+  )
+# density plots
+fig_dens_driftrate <-
+  ggplot(data_comp[divetype == "2: drift", ], aes(y = driftrate, fill = sp)) +
+  geom_density(show.legend = F, col = "black", alpha = 0.4) +
+  coord_cartesian(ylim = driftrate_limits) +
+  scale_fill_manual(values = colours) +
+  theme_void()
+```
+
+
+```{r}
+(fig_driftrate | fig_dens_driftrate) + plot_layout(widths = c(5, 1))
+```
+
+### Figure 5
+
+## Tables
+
+### Table 1
+
+```{r}
+data_comp %>%
+  as_tibble() %>%
+  group_by(sp, .id) %>%
+  summarize(
+    N = n(),
+    nb_days = round(as.numeric(difftime(
+      last(date), first(date), units = "days"
+    )), 1),
+    Maxdepth = glue("{round(mean(maxdepth),1)} ± {round(sd(maxdepth),1)}"),
+    Dduration = glue("{round(mean(dduration),1)} ± {round(sd(dduration),1)}"),
+    sparkline_maxdepth = list(maxdepth),
+    boxplot_maxdepth = list(maxdepth),
+    .groups = "drop"
+  ) %>% 
+  gt(    groupname_col = "sp",
+    rowname_col = ".id") %>% 
+  opt_row_striping() %>% 
+    tab_options(
+    data_row.padding = px(3)
+  ) %>% 
+  gt_plot(sparkline_maxdepth, "sparkline_maxdepth", plot_fun = spec_plot) %>% 
+  gt_plot(boxplot_maxdepth, "boxplot_maxdepth", plot_fun = spec_boxplot)
+```
+
+```{r}
+# https://themockup.blog/posts/2020-10-31-embedding-custom-features-in-gt-tables/
+gt_plot <- function(table_data, plot_col, data_col, plot_fun, ...){
+  # save the data extract ahead of time 
+  # to be used in our anonymous function below
+  data_in = pluck(table_data, "_data", data_col)
+
+  text_transform(
+    table_data,
+    # note the use of {{}} here - this is tidy eval
+    # that allows you to indicate specific columns
+    locations = cells_body(columns = vars({{plot_col}})),
+    fn = function(x){
+      plot <- map(data_in, plot_fun, width = 300, height = 70, same_lim = FALSE, ...)
+      plot_svg <- map(plot, "svg_text")
+      map(plot_svg, gt::html)
+    }
+  )
+}
+```
+
