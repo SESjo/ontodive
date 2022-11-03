@@ -21,6 +21,10 @@ articles:
       - data_exploration_ses_2014
       - data_comparison_nes_ses
   - title: Articles
+    navbar: Paper (WIP)
+    contents:
+      - figures
+  - title: Articles
     navbar: Others
     contents:
       - create_logo
