@@ -1,6 +1,6 @@
 #' @title Display summary information for a seal
 #'
-#' This function displays several key information regarding a seal.
+#' @description This function displays several key information regarding a seal.
 #'
 #' @details
 #' * A map of the seal's trip at sea with a color code based on the number of days since departure
@@ -21,17 +21,21 @@
 #' @import scales
 #' @import ggplot2
 #' @import ggOceanMaps
-#' @import ggOceanMapsData
 #' @import ggpubr
 #' @import ggspatial
 #' @import patchwork
+#' @import cli
 #'
 #' @examples
+#' \dontrun{
 #' # load data
 #' data("data_nes")
 #'
 #' # plot result
 #' plot_ind(data_nes$year_2018$ind_2018070)
+#' }
+#'
+
 plot_ind <- function(data_seal,
                      col_text = "black",
                      col_back = "transparent") {
@@ -62,6 +66,39 @@ plot_ind <- function(data_seal,
 
   # remove warnings
   options(warn = -1)
+
+  # install ggOceanMapsData if not install
+  if (suppressMessages(!require(ggOceanMapsData))){
+    # message
+    cli_h1("Package Requirement Check")
+    # set up color for emph
+    cli_div(theme = list(span.emph = list(color = "orange")))
+    # question
+    cli_alert_danger("{.emph ggOceanMapsData} package cannot be found. Would you like to install it?")
+    # if answer is yes
+    if (isTRUE(askYesNo("",prompts = getOption("askYesNo", gettext(c("Y", "n", "c")))))){
+      # then install package
+      install.packages(
+        "ggOceanMapsData",
+        repos = c("https://mikkovihtakari.github.io/drat",
+                  "https://cloud.r-project.org")
+      )
+      # and if loading package was successfull
+      if (suppressMessages(require(ggOceanMapsData))){
+        # display successful message
+        cli_alert_success("{.emph ggOceanMapsData} has been installed!")
+      } else {
+        # otherwise display error message
+        return(cli_alert_danger("Something went wrong..."))
+      }
+      # if the answer is not yes
+    } else {
+      # set warning status the way it was
+      options(warn = oldw)
+      # return a warning message
+      return(cli_alert_info("Without {.emph ggOceanMapsData} you cannot run `plot_ind` function"))
+    }
+  }
 
   # check variables
   if (!is.character(col_text)) {
