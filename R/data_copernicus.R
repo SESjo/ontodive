@@ -11,8 +11,8 @@
 #' the other for southern elephant seals, where each row correspond to a
 #' cell of 0.083° × 0.083° for a specific time and location.
 #'
-#' * $northen: [lat=c(25, 55); lon=c(-165, -115); time c("2018-05-01", "2019-05-01")]
-#' * $southern: [lat=c(-65, -40); lon=c(35, 115); time c("2015-01-01", "2015-11-30")]
+#' * $northen: \[lat=c(25, 55); lon=c(-165, -115); time c("2018-05-01", "2019-05-01")\]
+#' * $southern: \[lat=c(-65, -40); lon=c(35, 115); time c("2015-01-01", "2015-11-30")\]
 #'
 #' \describe{
 #' \item{time}{date}
