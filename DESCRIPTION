@@ -19,28 +19,32 @@ Description: The purpose of this package is to encompass datasets,
 License: file LICENSE
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Imports:
     dplyr,
-    pkgdown,
-    fpc,
-    stringr,
-    magrittr,
-    ggcorrplot,
-    ggplot2,
-    ggOceanMaps,
-    ggOceanMapsData,
-    ggpubr,
-    scales,
-    mgcv,
-    ggh4x,
-    patchwork,
-    data.table,
     foieGras,
-    lubridate,
-    maptools,
+    ggOceanMaps,
+    ggh4x,
+    ggplot2,
+    ggpubr,
     ggspatial,
-    purrr
+    glue,
+    gt,
+    gtExtras,
+    magrittr,
+    maptools,
+    mgcv,
+    patchwork,
+    pkgdown,
+    scales,
+    data.table,
+    fpc,
+    ggcorrplot,
+    lubridate,
+    purrr,
+    rlang,
+    stringr,
+    cli
 Remotes: 
     github::SLisovski/TwGeos,
     github::MikkoVihtakari/ggOceanMapsData
@@ -49,5 +53,6 @@ Suggests:
     stats,
     TwGeos,
     knitr,
+    ggOceanMapsData,
     rmarkdown
 VignetteBuilder: knitr
