@@ -56,7 +56,7 @@ build_github_vignette <- function(article = NULL,
     vignette <- TRUE
   }
 
-  # check is their is a name in the article argument
+  # check if article argument is null
   if (is.null(article)) {
     # we rebuild the all documentation (vignette + website)
     if (!is.null(website) && website == TRUE) {
@@ -78,6 +78,8 @@ build_github_vignette <- function(article = NULL,
       "docs/articles",
       overwrite = TRUE
       )
+      # make sure image/gif generated within rmarkdown would be found on website
+      system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
     }
     if (!is.null(vignette) && vignette == TRUE) {
       # build vignette
@@ -97,11 +99,15 @@ build_github_vignette <- function(article = NULL,
       "inst/doc",
       overwrite = TRUE
       )
+      # make sure image/gif generated within rmarkdown would be found on website
+      system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
     }
   } else {
     if (!is.null(website) && website == TRUE) {
       # update the article
       pkgdown::build_article(article)
+      # make sure image/gif generated within rmarkdown would be found on website
+      system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
     }
 
     if (!is.null(vignette) && vignette == TRUE) {
@@ -135,6 +141,8 @@ build_github_vignette <- function(article = NULL,
       "inst/doc",
       overwrite = TRUE
       )
+      # make sure image/gif generated within rmarkdown would be found on website
+      system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
     }
   }
 }
