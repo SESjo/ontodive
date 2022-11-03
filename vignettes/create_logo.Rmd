@@ -14,6 +14,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Logo Design}
   %\VignetteEngine{knitr::rmarkdown}
@@ -23,6 +26,7 @@ vignette: >
 ```{r setup, include=FALSE}
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   message = FALSE,

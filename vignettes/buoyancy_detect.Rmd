@@ -14,6 +14,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Changes in Buoyancy Detection}
   %\VignetteEngine{knitr::rmarkdown}
@@ -23,6 +26,7 @@ vignette: >
 ```{r, include = FALSE}
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -82,7 +86,7 @@ Here, the first thing to do is to retrieve the data processed at the end of `vig
 data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
 ```
 
-# Daily median drift rate calculation
+## Daily median drift rate calculation
 
 We then summarize the data by calculating the median of `driftrate` for each day.
 
@@ -110,7 +114,7 @@ ggplot(
   theme(legend.position = "top")
 ```
 
-# Model daily median drift rate using a [LOESS](https://en.wikipedia.org/wiki/Local_regression)
+## Model daily median drift rate using a [LOESS](https://en.wikipedia.org/wiki/Local_regression)
 
 For each seal, we model the daily median drift rate using a [local polynomial regression](https://en.wikipedia.org/wiki/Local_regression).
 
@@ -131,7 +135,7 @@ ggplot(
   facet_wrap(. ~ .id, scales = "free")
 ```
 
-# Detection of changes in buoyancy
+## Detection of changes in buoyancy
 
 We finally had to identify when the smooth function change sign.
 

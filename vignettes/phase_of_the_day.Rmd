@@ -16,6 +16,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Detect phases of the day}
   %\VignetteEngine{knitr::rmarkdown}
@@ -28,14 +31,17 @@ vignette: >
 # devtools::check(build_args=c("--no-build-vignettes"))
 
 # global option relative to rmarkdown
-knitr::opts_chunk$set(echo = TRUE,
-                      fig.align = 'center',
-                      out.width = "100%",
-                      message = FALSE,
-                      warning=FALSE)
+knitr::opts_chunk$set(
+  cache = TRUE,
+  echo = TRUE,
+  fig.align = 'center',
+  out.width = "100%",
+  message = FALSE,
+  warning=FALSE)
 
 # library
 library(data.table)
+library(magrittr)
 library(ggplot2)
 library(TwGeos)
 library(fpc)
@@ -315,9 +321,10 @@ For now we will used the result from the `DBSCAN` algorithm, since results seem 
 
 ```{r phase-of-the-day-14}
 # referential creation
-ref_phase_day = dataPlot[!is.na(lightatsurf),
-         ][, cluster := res_dbscan$cluster
-           ][, cluster := fifelse(cluster == 1, "night", "day")][]
+ref_phase_day = dataPlot[!is.na(lightatsurf),] %>% 
+  .[, cluster := res_dbscan$cluster] %>% 
+  .[, cluster := fifelse(cluster == 1, "night", "day")] %>% 
+  .[]
 
 # reshape
 ref_phase_day = melt(ref_phase_day, 

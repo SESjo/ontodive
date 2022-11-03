@@ -14,6 +14,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Data Consistency SES - 2014}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,6 +27,7 @@ vignette: >
 ```{r, include = FALSE}
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -56,7 +60,7 @@ sable <- function(x, escape = T, ...) {
 }
 ```
 
-# Summary information
+## Summary information
 
 Let's try to grab information regarding the data available for all individuals.
 
@@ -79,7 +83,7 @@ summary_data %>% sable(caption = "Summary information regarding datasets on sout
 
 > We have high resolution data (`r summary_data[high_res == T, uniqueN(.id)]` seals) for most of the seals that survived, but not all of them. I'm especially wondering why we do not have high resolution for `ind_14066` and `ind_14077`?
 
-# Consistency across `*.wch` files
+## Consistency across `*.wch` files
 
 It seems for each high-resolution individuals, data have been split into several files (`...wch000...`, `...wch001...`, `...wch002...`, ...). I'm wondering why, and if we can append each files without having a gap in our data. 
 

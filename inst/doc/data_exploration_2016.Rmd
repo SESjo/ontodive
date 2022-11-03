@@ -14,6 +14,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Data Exploration NES - 2016}
   %\VignetteEngine{knitr::rmarkdown}
@@ -31,6 +34,7 @@ knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -107,7 +111,7 @@ cat("<table style='width: 50%'>", paste0("<caption>", "(#tab:myDThtmltools)", "S
 DT::datatable(data_2016[sample.int(.N, 100), ], options = list(scrollX = T))
 ```
 
-## Summary
+# Summary
 
 ```{r data-exploration-2016-5}
 # raw_data
@@ -172,7 +176,7 @@ Let's see if we can double check that, using a map.
 
 ```{r data-exploration-2016-10, fig.cap="It is supposed to be the track of `ind_3449`... (red dots are the location of removed rows)", fig.width=8}
 # interactive map
-htmltools::tagList(list(
+# htmltools::tagList(list(
   leaflet() %>%
     setView(lng = -122, lat = 38, zoom = 2) %>%
     addTiles() %>%
@@ -190,7 +194,7 @@ htmltools::tagList(list(
       color = "red",
       fillOpacity = 1
     )
-))
+# ))
 ```
 
 ... these coordinates seem weird !
@@ -243,7 +247,7 @@ htmltools::tagList(list(
 
 > I'll better ask Roxanne!
   
-## Missing values
+# Missing values
   
 ```{r data-exploration-2016-14, fig.cap="Check for missing value in 2016-individuals", out.width="100%"}
 # build dataset to check for missing values

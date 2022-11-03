@@ -1,4 +1,4 @@
-## ----setup, include=FALSE--------------------------------------------------------------------------------------------------------------
+## ----setup, include=FALSE-------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -9,6 +9,7 @@ knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -45,25 +46,25 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## ----data-exploration-2016-1-----------------------------------------------------------------------------------------------------------
+## ----data-exploration-2016-1----------------------------------------------------
 # load library
 library(weanlingNES)
 
 # load data
 data("data_nes", package = "weanlingNES")
 
-## ----data-exploration-2016-2-----------------------------------------------------------------------------------------------------------
+## ----data-exploration-2016-2----------------------------------------------------
 # list structure
 str(data_nes$year_2016, max.level = 1, give.attr = F, no.list = T)
 
-## ----data-exploration-2016-3, eval=FALSE-----------------------------------------------------------------------------------------------
+## ----data-exploration-2016-3, eval=FALSE----------------------------------------
 #  # combine all individuals
 #  data_2016 <- rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
 #  
 #  # display
 #  DT::datatable(data_2016[sample.int(.N, 100), ], options = list(scrollX = T))
 
-## ----data-exploration-2016-4, echo=FALSE, results='asis'-------------------------------------------------------------------------------
+## ----data-exploration-2016-4, echo=FALSE, results='asis'------------------------
 # combine all individuals
 data_2016 <- rbindlist(data_nes$year_2016, use.name = TRUE, idcol = TRUE)
 
@@ -73,7 +74,7 @@ cat("<table style='width: 50%'>", paste0("<caption>", "(#tab:myDThtmltools)", "S
 # display
 DT::datatable(data_2016[sample.int(.N, 100), ], options = list(scrollX = T))
 
-## ----data-exploration-2016-5-----------------------------------------------------------------------------------------------------------
+## ----data-exploration-2016-5----------------------------------------------------
 # raw_data
 data_2016[, .(
   nb_days_recorded = uniqueN(as.Date(date)),
@@ -86,25 +87,25 @@ data_2016[, .(
     digits = 2
   )
 
-## ----data-exploration-2016-6, fig.cap="Distribution of raw `sst2` for the four individuals in 2016"------------------------------------
+## ----data-exploration-2016-6, fig.cap="Distribution of raw `sst2` for the four individuals in 2016"----
 ggplot(data_2016, aes(x = sst2_c, fill = .id)) +
   geom_histogram(show.legend = FALSE) +
   facet_wrap(.id ~ .) +
   theme_jjo()
 
-## ----data-exploration-2016-7, fig.cap="Distribution of filtered `sst2` for the four individuals in 2016"-------------------------------
+## ----data-exploration-2016-7, fig.cap="Distribution of filtered `sst2` for the four individuals in 2016"----
 data_2016_filter <- data_2016[sst2_c < 500, ]
 ggplot(data_2016_filter, aes(x = sst2_c, fill = .id)) +
   geom_histogram(show.legend = FALSE) +
   facet_wrap(.id ~ .) +
   theme_jjo()
 
-## ----data-exploration-2016-8-----------------------------------------------------------------------------------------------------------
+## ----data-exploration-2016-8----------------------------------------------------
 # nbrow removed
 data_2016[sst2_c > 500, .(nb_row_removed = .N), by = .id] %>%
   sable(caption = "# of rows removed by 2016-individuals")
 
-## ----data-exploration-2016-9, fig.cap="Where and when the `sst2` outliers occured", fig.width=9----------------------------------------
+## ----data-exploration-2016-9, fig.cap="Where and when the `sst2` outliers occured", fig.width=9----
 # max depth
 ggplot(
   data_2016,
@@ -120,7 +121,7 @@ ggplot(
 
 ## ----data-exploration-2016-10, fig.cap="It is supposed to be the track of `ind_3449`... (red dots are the location of removed rows)", fig.width=8----
 # interactive map
-htmltools::tagList(list(
+# htmltools::tagList(list(
   leaflet() %>%
     setView(lng = -122, lat = 38, zoom = 2) %>%
     addTiles() %>%
@@ -138,15 +139,15 @@ htmltools::tagList(list(
       color = "red",
       fillOpacity = 1
     )
-))
+# ))
 
-## ----data-exploration-2016-11----------------------------------------------------------------------------------------------------------
+## ----data-exploration-2016-11---------------------------------------------------
 # summary of the coordinates by individuals
 data_2016[, .(.id, longitude_degs, latitude_degs)] %>%
   tbl_summary(by = .id) %>%
   modify_caption("Summary of `longitude_degree` and `latitude_degree`")
 
-## ----data-exploration-2016-12, fig.width=9, fig.cap="Distribution of coordinates per seal"---------------------------------------------
+## ----data-exploration-2016-12, fig.width=9, fig.cap="Distribution of coordinates per seal"----
 # distribution coordinates
 ggplot(
   data = melt(data_2016[, .(
@@ -163,7 +164,7 @@ ggplot(
   facet_grid(variable ~ .id) +
   theme_jjo()
 
-## ----data-exploration-2016-13, fig.cap="An attempt to display the `ind_3449`'s track", fig.width=8-------------------------------------
+## ----data-exploration-2016-13, fig.cap="An attempt to display the `ind_3449`'s track", fig.width=8----
 # interactive map
 htmltools::tagList(list(
   leaflet() %>%
@@ -176,7 +177,7 @@ htmltools::tagList(list(
     )
 ))
 
-## ----data-exploration-2016-14, fig.cap="Check for missing value in 2016-individuals", out.width="100%"---------------------------------
+## ----data-exploration-2016-14, fig.cap="Check for missing value in 2016-individuals", out.width="100%"----
 # build dataset to check for missing values
 dataPlot <- melt(data_2016_filter[, .(.id, is.na(.SD)), .SDcol = -c(
   ".id",

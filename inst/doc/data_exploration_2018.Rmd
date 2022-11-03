@@ -14,6 +14,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Data Exploration - 2018}
   %\VignetteEngine{knitr::rmarkdown}
@@ -31,6 +34,7 @@ knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -354,7 +358,8 @@ names_display <- names(data_2018_filter[, -c(
   "phase",
   "lat",
   "lon",
-  "dist_dep"
+  "dist_dep",
+  "sp"
 )])
 
 # calulate the median of driftrate for each day
@@ -374,7 +379,7 @@ changes_driftrate <- median_driftrate %>%
 
 ```{r data-exploration-2018-14, eval=FALSE, include=TRUE}
 for (i in names_display) {
-  cat("#####", i, "{.unlisted .unnumbered} \n")
+  cat("####", i, "{.unlisted .unnumbered} \n")
   if (i == "maxdepth") {
     print(
       ggplot() +

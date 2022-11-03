@@ -1,4 +1,4 @@
-## ----setup, include=FALSE--------------------------------------------------------
+## ----setup, include=FALSE----------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -9,6 +9,7 @@ knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = FALSE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -37,52 +38,26 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-# theme ggplot
-# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
-theme_jjo <- function(base_size = 12) {
-  theme_bw(base_size = base_size) %+replace%
-    theme(
-      # the whole figure
-      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # figure area
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # axes
-      # axis.title = element_text(size = rel(0.85), face = "bold"),
-      # axis.text = element_text(size = rel(0.70), face = "bold"),
-      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
-      # legend
-      # legend.title = element_text(size = rel(0.85), face = "bold"),
-      # legend.text = element_text(size = rel(0.70), face = "bold"),
-      # legend.key = element_rect(fill = "transparent", colour = NA),
-      # legend.key.size = unit(1.5, "lines"),
-      # legend.background = element_rect(fill = "transparent", colour = NA),
-      # Les <U+00E9>tiquettes dans le cas d'un facetting
-      strip.background = element_rect(fill = "#888888", color = "#888888"),
-      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
-    )
-}
-
-## ----data-exploration-2018-1-----------------------------------------------------
+## ----data-exploration-2018-1-------------------------------------------------------------
 # load library
 library(weanlingNES)
 
 # load data
-# data("data_ses", package = "weanlingNES")
-load("../data/data_ses.rda")
+data("data_ses", package = "weanlingNES")
+# load("../data/data_ses.rda")
 
-## ----data-exploration-2018-2-----------------------------------------------------
+## ----data-exploration-2018-2-------------------------------------------------------------
 # list structure
 str(data_ses$year_2014, max.level = 1, give.attr = F, no.list = T)
 
-## ----data-exploration-2018-3, eval=FALSE-----------------------------------------
+## ----data-exploration-2018-3, eval=FALSE-------------------------------------------------
 #  # combine all individuals
 #  data_2014 <- rbindlist(data_ses$year_2014)
 #  
 #  # display
 #  DT::datatable(data_2014[sample.int(.N, 10), ], options = list(scrollX = T))
 
-## ----data-exploration-2018-4, echo=FALSE, results='asis'-------------------------
+## ----data-exploration-2018-4, echo=FALSE, results='asis'---------------------------------
 # combine all individuals
 data_2014 <- rbindlist(data_ses$year_2014)
 
@@ -101,7 +76,7 @@ cat("<table style='width: 50%'>",
 # display
 DT::datatable(data_2014[sample.int(.N, 10), ], options = list(scrollX = T))
 
-## ----data-exploration-2018-5-----------------------------------------------------
+## ----data-exploration-2018-5-------------------------------------------------------------
 # raw_data
 data_2014[, .(
   nb_days_recorded = uniqueN(as.Date(date)),
@@ -153,7 +128,7 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
     legend.key = element_rect(colour = "black")
   )
 
-## --------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------
 # table with percent
 table_inter <- data_2014[, lapply(.SD, function(x) {
   round(length(x[is.na(x)]) * 100 / length(x), 1)
@@ -226,6 +201,7 @@ ggplot(
   facet_grid(variable ~ .id,
     scales = "free"
   ) +
+  scale_y_reverse() +
   labs(y = "# of dives") +
   theme_jjo() +
   theme(
@@ -251,7 +227,7 @@ ggplot(
     text = element_text(size = 8)
   )
 
-## --------------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------
 names_display <- names(data_2014[, -c(
   ".id",
   "date",
@@ -264,13 +240,11 @@ names_display <- names(data_2014[, -c(
   "sec",
   "juldate",
   "divetype",
-  # "euphoticdepth",
-  # "thermoclinedepth",
-  "day_departure" # ,
-  # "phase",
-  # "lat",
-  # "lon",
-  # "dist_dep"
+  "day_departure",
+  "phase",
+  "lat",
+  "lon",
+  "sp"
 )])
 
 # calulate the median of driftrate for each day
@@ -287,7 +261,7 @@ changes_driftrate <- median_driftrate %>%
   ), by = .id] %>%
   .[c(FALSE, diff(sign(y_smooth)) != 0), ]
 
-## ----eval=FALSE, include=TRUE----------------------------------------------------
+## ----eval=FALSE, include=TRUE------------------------------------------------------------
 #  for (i in names_display) {
 #    cat("#####", i, "{.unlisted .unnumbered} \n")
 #    if (i == "driftrate") {
@@ -357,7 +331,7 @@ changes_driftrate <- median_driftrate %>%
 #    cat("\n \n")
 #  }
 
-## ----results='asis', cache=TRUE, echo=FALSE, fig.height=7------------------------
+## ----results='asis', cache=TRUE, echo=FALSE, fig.height=7--------------------------------
 for (i in names_display) {
   cat("#####", i, "{.unlisted .unnumbered} \n")
   if (i == "driftrate") {
@@ -427,7 +401,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-18, eval=FALSE, include=TRUE--------------------------
+## ----data-exploration-2018-18, eval=FALSE, include=TRUE----------------------------------
 #  for (i in names_display) {
 #    # subtitle
 #    cat("#####", i, "{.unlisted .unnumbered} \n")
@@ -457,7 +431,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-19, results='asis', cache=TRUE, echo=FALSE------------
+## ----data-exploration-2018-19, results='asis', cache=TRUE, echo=FALSE--------------------
 for (i in names_display) {
   # subtitle
   cat("#####", i, "{.unlisted .unnumbered} \n")
@@ -487,7 +461,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----fig.cap = "Evolution of dive type proportion"-------------------------------
+## ----fig.cap = "Evolution of dive type proportion"---------------------------------------
 # dataset to plot proportional area plot
 data_2014[, sum_id := .N, by = .(.id, day_departure)] %>%
   .[, sum_id_days := .N, by = .(.id, day_departure, divetype)] %>%
@@ -508,7 +482,7 @@ ggplot(dataPlot, aes(
        y = "Proportion of dives", 
        fill = "Dive types")
 
-## ----data-exploration-2018-29----------------------------------------------------
+## ----data-exploration-2018-29------------------------------------------------------------
 # build dataset
 dataPlot <- data_2014[divetype == "2: drift" &
                         driftrate < 0,
@@ -528,7 +502,7 @@ dataPlot <- data_2014[divetype == "2: drift" &
               by = .(.id, day_departure)],
     on = c(".id", "day_departure")]
 
-## ----data-exploration-2018-30, fig.cap="Drift rate vs. Bottom time"--------------
+## ----data-exploration-2018-30, fig.cap="Drift rate vs. Bottom time"----------------------
 # plot
 ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -540,18 +514,19 @@ ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
        y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
 
-## ----data-exploration-2018-31, fig.cap="Drift rate vs. Maximum depth"------------
+## ----data-exploration-2018-31, fig.cap="Drift rate vs. Maximum depth"--------------------
 # plot
 ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
   geom_smooth(method = "lm") +
   guides(color = "none") +
+  scale_y_reverse() +
   facet_wrap(.id ~ .) +
   labs(x = "Daily median Maximum depth (m)", 
        y = "Daily median drift rate (m.s-1)") +
   theme_jjo()
 
-## ----data-exploration-2018-32, fig.cap="Drift rate vs. Dive duration"------------
+## ----data-exploration-2018-32, fig.cap="Drift rate vs. Dive duration"--------------------
 # plot
 ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -628,7 +603,7 @@ ggplot() +
   facet_wrap(w ~ .) +
   theme_jjo()
 
-## ----data-exploration-2018-38----------------------------------------------------
+## ----data-exploration-2018-38------------------------------------------------------------
 # get badl
 dataplot_1 = data_2014_complete_day[,
                               .(badl = quantile(dduration, 0.95)),

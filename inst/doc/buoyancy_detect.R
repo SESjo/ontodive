@@ -1,4 +1,4 @@
-## ---- include = FALSE------------------------
+## ---- include = FALSE--------------------------------------------------------
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
   echo = TRUE,
@@ -52,11 +52,11 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## --------------------------------------------
+## ----------------------------------------------------------------------------
 # read the processed data
 data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
 
-## --------------------------------------------
+## ----------------------------------------------------------------------------
 # calulate the median of driftrate for each day
 median_driftrate <- data_2018_filter[divetype == "2: drift",
   .(driftrate = quantile(driftrate, 0.5)),

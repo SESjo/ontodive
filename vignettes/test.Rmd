@@ -1,22 +1,59 @@
 ---
 title: "test"
-output: rmarkdown::html_vignette
+author: "Joffrey JOUMAA"
+date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
+output:
+  bookdown::html_document2:
+    css: cosmo_custom.css
+    number_sections: yes
+    code_folding: show
+    df_print: default
+    fig_caption: yes
+    code_download: yes
+    toc: yes
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{test}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+  
+```{r setup, include=FALSE}
+# command to build package without getting vignette error
+# https://github.com/rstudio/renv/issues/833
+# devtools::check(build_args=c("--no-build-vignettes"))
 
-```{r test-1, include = FALSE}
+# reduce png size
+# knitr::knit_hooks$set(optipng = knitr::hook_optipng)
+# knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
+
+# global option relative to rmarkdown
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+  cache = TRUE,
+  echo = TRUE,
+  fig.align = "center",
+  out.width = "100%",
+  message = FALSE,
+  warning = FALSE,
+  # tidy = TRUE,
+  cache.lazy = FALSE,
+  optipng = "-o7 -quiet",
+  pngquant = "--speed=1"
 )
 ```
 
-> This is a test:
->
-> * bullet 1
-> * bullet 2
+# Just to make sure
 
-![](video.mp4)
+## It works 
+
+### This is a test {.tabset}
+
+#### Tabset 1
+#### Tabset 2
+
+### No tabset

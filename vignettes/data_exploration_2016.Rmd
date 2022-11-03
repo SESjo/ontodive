@@ -14,6 +14,9 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: no
+link-citations: yes
+pkgdown:
+  as_is: false
 vignette: >
   %\VignetteIndexEntry{Data Exploration NES - 2016}
   %\VignetteEngine{knitr::rmarkdown}
@@ -31,6 +34,7 @@ knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = TRUE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",

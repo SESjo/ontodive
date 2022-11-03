@@ -1,4 +1,4 @@
-## ----setup, include=FALSE--------------------
+## ----setup, include=FALSE----------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -27,6 +27,7 @@ library(kableExtra)
 library(dplyr)
 library(magrittr)
 library(gganimate)
+library(weanlingNES)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -40,33 +41,7 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-# theme ggplot
-# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
-theme_jjo <- function(base_size = 12) {
-  theme_bw(base_size = base_size) %+replace%
-    theme(
-      # the whole figure
-      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # figure area
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # axes
-      # axis.title = element_text(size = rel(0.85), face = "bold"),
-      # axis.text = element_text(size = rel(0.70), face = "bold"),
-      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
-      # legend
-      # legend.title = element_text(size = rel(0.85), face = "bold"),
-      # legend.text = element_text(size = rel(0.70), face = "bold"),
-      # legend.key = element_rect(fill = "transparent", colour = NA),
-      # legend.key.size = unit(1.5, "lines"),
-      # legend.background = element_rect(fill = "transparent", colour = NA),
-      # Les <U+00E9>tiquettes dans le cas d'un facetting
-      strip.background = element_rect(fill = "#888888", color = "#888888"),
-      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
-    )
-}
-
-## ----netcdf-read-1---------------------------
+## ----netcdf-read-1-----------------------------------------------------------
 # first load `tidync` package
 library(tidync)
 
@@ -78,7 +53,7 @@ df = df_nc %>% hyper_tibble() %>%
   # not mandatory, but here is the code to convert to a data.table
   setDT()
 
-## ----netcdf-read-2---------------------------
+## ----netcdf-read-2-----------------------------------------------------------
 # print the first 10 rows
 df[sample(nrow(df), 10),]  %>%
   sable(
@@ -86,7 +61,7 @@ df[sample(nrow(df), 10),]  %>%
     digits = 2
   )
 
-## ----netcdf-read-3---------------------------
+## ----netcdf-read-3-----------------------------------------------------------
 # load ncmeta library
 library(ncmeta)
 
@@ -99,7 +74,7 @@ print(
     pull(value)
 )
 
-## ----netcdf-read-4---------------------------
+## ----netcdf-read-4-----------------------------------------------------------
 # convert time into a readable format
 df[, time := as.Date(time, origin=as.Date("1950-01-01"))]
 
@@ -110,7 +85,7 @@ df[sample(nrow(df), 10),]  %>%
     digits = 2
   )
 
-## ----netcdf-read-5---------------------------
+## ----netcdf-read-5-----------------------------------------------------------
 # first let's calculate the velocity norm
 df[, `:=` (vel_cglo = sqrt(uo_cglo ^ 2 + vo_cglo ^ 2),
            vel_oras = sqrt(uo_oras ^ 2 + vo_oras ^ 2),
@@ -129,7 +104,7 @@ df_summarize = df[, .(vel_cglo = mean(vel_cglo, na.rm = T),
                          latitude)] %>%
   .[, time := .GRP, by = .(date)]
 
-## ----netcdf-read-6, cache=TRUE---------------
+## ----netcdf-read-6, cache=TRUE-----------------------------------------------
 # data wrangling
 dataPlot = melt(df_summarize, 
                 id.vars = c("date", "longitude", "latitude", "time"), 
@@ -157,7 +132,7 @@ res_anim = ggplot() +
 # let's print
 animate(res_anim, height = 500, width = 500)
 
-## ----netcdf-read-8, eval=FALSE, include=FALSE----
+## ----netcdf-read-8, eval=FALSE, include=FALSE--------------------------------
 #  # summarized by week
 #  df_summarize = df[,.(longitude = mean(longitude),
 #                       latitude = mean(latitude),
