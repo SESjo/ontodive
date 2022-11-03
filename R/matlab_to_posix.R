@@ -11,6 +11,7 @@
 #' \href{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}{http://lukemiller.org/index.php/2011/02/converting-matlab-and-r-date-and-time-values/}
 #'
 #' @examples matlab_to_posix(c(737182.4))
+#'
 matlab_to_posix <- function(x, timez = "UTC") {
   days <- x - 719529 # 719529 = days from 1-1-0000 to 1-1-1970
   secs <- days * 86400 # 86400 seconds in a day

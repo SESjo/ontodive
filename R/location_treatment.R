@@ -36,6 +36,7 @@
 #'
 #' # run this function on sese1 dataset included in foieGras package
 #' output <- location_treatment(copy(sese1), with_plot = TRUE)
+#'
 location_treatment <- function(data,
                                model = "crw",
                                time.step = 1,
