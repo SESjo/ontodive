@@ -24,6 +24,8 @@
 #' @param colours The colours to use
 #' @param ribbon Should confidence interval be added
 #' @param point Should the points be displayed
+#' @param individual Should individuals curves be displayed
+#' @param populational Should populational curve be displayed
 #' @param rows The colname used for a facet in row
 #' @param cols The colname used for a facet in column
 #' @param scales Are scales shared across all facets (the default, "fixed")
@@ -42,7 +44,7 @@
 #' @import mgcv
 #' @import scales
 #' @import ggh4x
-#' @rawNamespace import(purrr, except = c(discard,set_names,transpose))
+#' @importFrom purrr pmap
 #'
 #' @references \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
 #' @references \url{https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-\%22REML\%22-rather-than-\%22GCV.Cp\%22\%3F}
@@ -51,6 +53,7 @@
 #' @examples
 #' \dontrun{
 #' # load data
+#'
 #' data("data_nes")
 #' data("data_ses")
 #'
@@ -80,6 +83,8 @@ plot_comp <- function(data,
                       colours = NULL,
                       ribbon = TRUE,
                       point = TRUE,
+                      individual = TRUE,
+                      populational = TRUE,
                       rows = NULL,
                       cols = NULL,
                       scales = "fixed",
@@ -335,29 +340,39 @@ plot_comp <- function(data,
       )
   }
 
-  # add individuals lines
+  # if individual
+  if (individual){
+    p1 <- p1 +
+      # add individuals lines
+      geom_line(
+        aes(
+          x = time,
+          y = fit_ind,
+          group = interaction(group_to_compare, id),
+          colour = group_to_compare
+        ),
+        data = ind_pred,
+        alpha = 0.4
+      )
+  }
+
+  # if populational
+  if (populational){
+    p1 <- p1 +
+      # add populational line
+      geom_line(
+        aes(
+          x = time,
+          y = fit_pop,
+          group = group_to_compare,
+          colour = group_to_compare
+        ),
+        data = pop_pred,
+        size = 1
+      )
+  }
+
   p1 <- p1 +
-    geom_line(
-      aes(
-        x = time,
-        y = fit_ind,
-        group = interaction(group_to_compare, id),
-        colour = group_to_compare
-      ),
-      data = ind_pred,
-      alpha = 0.4
-    ) +
-    # add populational line
-    geom_line(
-      aes(
-        x = time,
-        y = fit_pop,
-        group = group_to_compare,
-        colour = group_to_compare
-      ),
-      data = pop_pred,
-      size = 1
-    ) +
     scale_fill_manual(values = colours) +
     scale_color_manual(values = colours) +
     # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
