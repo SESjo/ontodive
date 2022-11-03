@@ -17,8 +17,10 @@ This function aims at finding outliers in a vector using the interquartile range
 }
 \examples{
 # generate data from gaussian and exponential distribution
+# importFrom stats quantile
 X <- sample(c(rnorm(100), c(rexp(50), -rexp(50))))
 
 # plot data
 plot(X, col = ifelse(is_outlier(X), "red", "black"))
+
 }

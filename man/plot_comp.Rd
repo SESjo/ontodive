@@ -14,18 +14,25 @@ plot_comp(
   bs = "cs",
   k = 6,
   alpha_point = 0.01,
+  alpha_ribbon = 0.4,
+  linetype_ribbon = 2,
   colours = NULL,
   ribbon = TRUE,
   point = TRUE,
+  individual = TRUE,
+  populational = TRUE,
   rows = NULL,
   cols = NULL,
-  scales = "fixed"
+  scales = "fixed",
+  method = "REML"
 )
 }
 \arguments{
 \item{data}{A dataset containing the required information}
 
 \item{diving_parameter}{The colname associated with the diving parameter to represent}
+
+\item{group_to_compare}{The colname associated with the groups to compare}
 
 \item{time}{The colname associated with time}
 
@@ -39,11 +46,19 @@ plot_comp(
 
 \item{alpha_point}{The transparency of the point}
 
+\item{alpha_ribbon}{The transparency of the ribbon}
+
+\item{linetype_ribbon}{Line type for ribbon border}
+
 \item{colours}{The colours to use}
 
 \item{ribbon}{Should confidence interval be added}
 
 \item{point}{Should the points be displayed}
+
+\item{individual}{Should individuals curves be displayed}
+
+\item{populational}{Should populational curve be displayed}
 
 \item{rows}{The colname used for a facet in row}
 
@@ -51,7 +66,7 @@ plot_comp(
 
 \item{scales}{Are scales shared across all facets (the default, "fixed")}
 
-\item{sp}{The colname associated with species}
+\item{method}{The smoothing parameter estimation method for the GAM (default `REML`)}
 }
 \value{
 Return a ggplot
@@ -71,15 +86,14 @@ individual.
 \examples{
 \dontrun{
 # load data
+
 data("data_nes")
 data("data_ses")
 
 # combine
 data_comp <- rbind(
-  rbindlist(data_nes$year_2018) \%>\%
-    .[, sp := "nes"],
-  rbindlist(data_ses$year_2014) \%>\%
-    .[, sp := "ses"],
+  rbindlist(data_nes$year_2018),
+  rbindlist(data_ses$year_2014),
   use.names = T,
   fill = T
 )
@@ -91,6 +105,8 @@ plot_comp(data_comp, "maxdepth")
 }
 \references{
 \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
+
+\url{https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-\%22REML\%22-rather-than-\%22GCV.Cp\%22\%3F}
 
 James Grecian. (2022). jamesgrecian/harpPup: v1.0 (v1.0). Zenodo. \href{https://doi.org/10.5281/zenodo.5901391}{https://doi.org/10.5281/zenodo.5901391}
 }

@@ -43,6 +43,7 @@ library(data.table)
 
 # run this function on sese1 dataset included in foieGras package
 output <- location_treatment(copy(sese1), with_plot = TRUE)
+
 }
 \references{
 run_foieGras_generic.R (\email{tkeates@ucsc.edu})

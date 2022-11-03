@@ -61,7 +61,7 @@ A list containing one list per year, that itself contains one dataset per indivi
 \email{baptiste.picard@cebc.cnrs.fr}
 }
 \usage{
-data_ses
+data(data_ses)
 }
 \description{
 A list of datasets containing diving parameters for:

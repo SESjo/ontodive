@@ -9,8 +9,8 @@ A list of two data tables, one for northern elephant seals and
 the other for southern elephant seals, where each row correspond to a
 cell of 0.083° × 0.083° for a specific time and location.
 \itemize{
-\item $northen: \link{lat=c(25, 55); lon=c(-165, -115); time c("2018-05-01", "2019-05-01")}
-\item $southern: \link{lat=c(-65, -40); lon=c(35, 115); time c("2015-01-01", "2015-11-30")}
+\item $northen: [lat=c(25, 55); lon=c(-165, -115); time c("2018-05-01", "2019-05-01")]
+\item $southern: [lat=c(-65, -40); lon=c(35, 115); time c("2015-01-01", "2015-11-30")]
 }
 
 \describe{
@@ -29,7 +29,7 @@ cell of 0.083° × 0.083° for a specific time and location.
 \href{https://resources.marine.copernicus.eu/product-detail/GLOBAL_MULTIYEAR_PHY_001_030/INFORMATION}{https://resources.marine.copernicus.eu/product-detail/GLOBAL_MULTIYEAR_PHY_001_030/INFORMATION}
 }
 \usage{
-data_cop
+data(data_cop)
 }
 \description{
 This data where retrieve from

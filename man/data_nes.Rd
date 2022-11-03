@@ -99,7 +99,7 @@ A list containing one list per year, that itself contains one dataset per indivi
 \email{roxanne@ucsc.edu}
 }
 \usage{
-data_nes
+data(data_nes)
 }
 \description{
 A list of datasets containing diving parameters for:

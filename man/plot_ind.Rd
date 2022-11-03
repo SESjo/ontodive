@@ -2,9 +2,7 @@
 % Please edit documentation in R/plot_ind.R
 \name{plot_ind}
 \alias{plot_ind}
-\title{Display summary information for a seal
-
-This function displays several key information regarding a seal.}
+\title{Display summary information for a seal}
 \usage{
 plot_ind(data_seal, col_text = "black", col_back = "transparent")
 }
@@ -19,8 +17,6 @@ plot_ind(data_seal, col_text = "black", col_back = "transparent")
 A ggplot object which contains all figures
 }
 \description{
-Display summary information for a seal
-
 This function displays several key information regarding a seal.
 }
 \details{
@@ -30,9 +26,12 @@ This function displays several key information regarding a seal.
 * the evolution of their ADL across time
 }
 \examples{
+\dontrun{
 # load data
 data("data_nes")
 
 # plot result
 plot_ind(data_nes$year_2018$ind_2018070)
+}
+
 }
