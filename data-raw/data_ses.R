@@ -64,15 +64,15 @@ lapply(list.dirs(
                                        tz = "GMT")]
     # create new columns required to run IKNOS program
     data_high[, `:=`(
-      year = year(datetime),
-      month = month(datetime),
-      day = lubridate::day(datetime),
-      hour = hour(datetime),
-      minute = minute(datetime),
-      second = second(datetime)
+      Year = year(datetime),
+      Month = month(datetime),
+      Day = lubridate::day(datetime),
+      Hour = hour(datetime),
+      Minute = minute(datetime),
+      Second = second(datetime)
     )]
     # write data as output
-    fwrite(x = data_high[, .(year, month, day, hour, minute, second, depth)],
+    fwrite(x = data_high[, .(Year, Month, Day, Hour, Minute, Second, depth)],
            file = paste0("./inst/extdata/", seal_id, ".csv"),)
     # list file in Spot folder
     list_files_Spot_folder <- list.files(paste0(x, "/Spot"),
@@ -111,7 +111,10 @@ iknos_matlab_code <- glue::glue(
   addpath('inst/extdata/IKNOS/');
   names = {{{input_data}}};
   for k = 1:length(names)'
-    yt_iknos_da(names{{k}},'year month day hour minute second depth', 10, 2, 20, 'wantfile_yes','is_southern',true);
+    % based on change_format_DA2_RRH_TV4_alpha.m:
+    % 32 = 32/SamplingRate = 32/1
+    % 30 = 15/DepthRes = 15/0.5
+    yt_iknos_da_RRH(names{{k}},'Year Month Day Hour Minute Second depth', 32, 30, 20, 'wantfile_yes','is_southern',true);
   end
 "
 )
@@ -159,14 +162,15 @@ divetype_matlab_code <- glue::glue(
     RawData_name = names_rawdata{{k}};
 
     % detect data format for import
-    RawData_params = detectImportOptions(RawData_name);
+    RawData_params = detectImportOptions(RawData_name, 'Range', [22 1]);
     DiveStat_params = detectImportOptions(DiveStat_name);
 
     % import data
     RawData=readmatrix(RawData_name,RawData_params);
     DiveStat=readmatrix(DiveStat_name,DiveStat_params);
 
-    % run dive typing
+    % run dive typing (1:8:end => to match the subsample done on northern
+    % elephant seal
     Output=pwr_DiveTyperStep1V3(RawData(1:8:end,:),DiveStat);
     DiveType=pwr_DiveTyperV3(Output);
 
