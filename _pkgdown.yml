@@ -37,3 +37,33 @@ articles:
     contents:
       - session_info
       - test
+
+reference:
+  - title: Data
+    contents:
+    - data_cop
+    - data_nes
+    - data_ses
+
+  - title: Advanced tools
+    contents:
+    - calc_phase_day
+    - location_treatment
+    - plot_comp
+    - plot_ind
+
+  - title: Basic Tools
+    contents:
+    - check_dt
+    - .n
+    - flat_cor_mat
+    - format_col
+    - gt_plt_bar_stack_extra
+    - is_outlier
+    - matlab_to_posix
+    - theme_jjo
+
+  - title: Building Documentation
+    contents:
+    - build_github_vignette
+
