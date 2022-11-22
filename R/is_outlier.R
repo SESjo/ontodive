@@ -4,7 +4,7 @@
 #'
 #' @param x A vector in which outliers need to be found
 #'
-#' @return A boolean vector, TRUE for outliers, FALSE when not
+#' @return A boolean vector, \code{TRUE} for outliers, \code{FALSE} when not
 #'
 #' @export
 #'

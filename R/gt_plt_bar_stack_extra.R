@@ -1,23 +1,23 @@
 #' @title Add a percent stacked barchart in place of existing data.
 #'
-#' @description The `gt_plt_bar_stack_extra` is a copy paste of the function
-#' `gt_plt_bar_stack` available in the `gtExtras` package where the limitation
-#' of 3 user-specified has been risen to 4. It takes an existing gt_tbl object
-#' and converts the existing values into a percent stacked barchart. The bar
-#' chart will represent either 2, 3 or 4 user-specified values per row,
-#' and requires a list column ahead of time. The palette and labels need to be
-#' equal length. The values must either add up to 100 ie as percentage points
-#' if using position = 'fill', or can be raw values with position = 'stack'.
-#' Note that the labels can be controlled via the fmt_fn argument and the
-#' ⁠scales::label_???()⁠ family of function.
+#' @description The \code{gt_plt_bar_stack_extra} is a copy paste of the function
+#' \code{gt_plt_bar_stack} available in the \code{gtExtras} package where the
+#' limitation of 3 user-specified has been risen to 4. It takes an existing
+#' \code{gt_tbl} object and converts the existing values into a percent stacked
+#' barchart. The bar chart will represent either 2, 3 or 4 user-specified values
+#' per row, and requires a list column ahead of time. The palette and labels need
+#' to be equal length. The values must either add up to 100 \emph{i.e.} as
+#' percentage points if using \code{position = 'fill'}, or can be raw values
+#' with \code{position = 'stack'}. Note that the labels can be controlled via
+#' the \code{fmt_fn} argument and the \code{⁠scales::lab_xxx} family of function.
 #'
 #' @param gt_object An existing gt table object of class gt_tbl
 #' @param column The column wherein the percent stacked barchart should replace existing data. Note that the data must be represented as a list of numeric values ahead of time.
-#' @param palette A color palette of length 2 or 3, represented either by hex colors ("#ff4343") or named colors ("red").
+#' @param palette A color palette of length 2 or 3, represented either by hex colors (\code{#ff4343}) or named colors (\code{red}).
 #' @param labels A vector of strings of length 2 or 3, representing the labels for the bar chart, will be colored according to the palette as well.
-#' @param position An string indicator passed to ggplot2 indicating if the bar should be a percent of total "fill" or stacked as the raw values "stack".
+#' @param position An string indicator passed to ggplot2 indicating if the bar should be a percent of total \code{fill} or stacked as the raw values \code{stack}.
 #' @param width An integer representing the width of the bar chart in pixels.
-#' @param fmt_fn A specific function from ⁠scales::label_???⁠ family. Defaults to scales::label_number()
+#' @param fmt_fn A specific function from \code{⁠scales::lab_xxx}⁠ family. Defaults to \code{scales::label_number()
 #'
 #' @return An object of class gt_tbl.
 #'

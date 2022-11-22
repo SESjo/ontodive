@@ -1,7 +1,7 @@
 #' @title Determine the different phases of the day
 #'
 #' @description This function can estimate day-time and night-time based on
-#' light level (`dbscan`) or using the location and time data (`noaa`).
+#' light level (\code{dbscan}) or using the location and time data (\code{noaa}).
 #'
 #' @details
 #' Methods:
@@ -18,7 +18,7 @@
 #' @param lat Name of the Latitude column
 #' @param method Method used to identify phases of day
 #'
-#' @return Return the same data.table with an additional "phase" columns
+#' @return Return the same data.table with an additional \code{phase} columns
 #'
 #' @export
 #'

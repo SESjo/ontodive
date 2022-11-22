@@ -66,7 +66,7 @@ plot_comp(
 
 \item{scales}{Are scales shared across all facets (the default, "fixed")}
 
-\item{method}{The smoothing parameter estimation method for the GAM (default `REML`)}
+\item{method}{The smoothing parameter estimation method for the GAM (default \code{REML})}
 }
 \value{
 Return a ggplot
@@ -78,7 +78,7 @@ curve, rather than scatterplot
 }
 \details{
 This function fits a GAM with the species as a grouping factor and a random
-effect (intercept + slope) on the individual (*i.e.* diving parameter ~
+effect (intercept + slope) on the individual (\emph{i.e.} diving parameter ~
 species + s(time) + (1 time | individual). This allows to represent a curve
 for each species, but also to access to the curve associated with each
 individual.

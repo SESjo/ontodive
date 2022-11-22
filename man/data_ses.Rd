@@ -68,7 +68,7 @@ A list of datasets containing diving parameters for:
 \itemize{
 \item 9 individuals in 2014
 These data have been retrieved from the CEBC server
-(ftpmarin.cebc.cnrs.fr/EarlyLife/PostDoc\%20Sam\%20Cox/SES_PupData/RawData_2014-2015,
+(\code{ftpmarin.cebc.cnrs.fr/EarlyLife/PostDoc\%20Sam\%20Cox/SES_PupData/RawData_2014-2015},
 please ask Baptiste Picard \email{baptiste.picard@cebc.cnrs.fr} to get
 access)
 }

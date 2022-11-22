@@ -1,24 +1,24 @@
 #' @title Build Vignettes for Github
 #'
-#' @description  function aims at processing vignette (building, organizing)
+#' @description  This function aims at processing vignette (building, organizing)
 #' before pushing on Github so that user can download a package with
 #' pre-compiled vignette. Using the website argument allow to build the
 #' associated website.
 #'
 #' @details To make sure pre-compiled vignette are enclosed within the package
-#' downloaded from Github, vignette are (i) compiled with tools::buildVignettes,
-#' (ii) then copy-paste to `inst\\doc`. To build the website, this function
-#' first converts README.Rmd file to README.md file, and then calls
-#' pkgdown::build_site() since this function only take into account *.md.
+#' downloaded from Github, vignette are (\emph{i}) compiled with \code{tools::buildVignettes},
+#' (\emph{ii}) then copy-paste to \code{inst\\doc}. To build the website, this function
+#' first converts \code{README.Rmd} file to \code{README.md} file, and then calls
+#' \code{pkgdown::build_site()} since this function only take into account \code{*.md}.
 #'
 #' @rawNamespace import(dplyr, except = c(between))
 #' @import pkgdown
 #'
-#' @param article The name or the path to the .Rmd file to be compiled
+#' @param article The name or the path to the \code{.Rmd} file to be compiled
 #' @param website A boolean to compile the website associated with the article
 #' @param vignette A boolean to compile the vignette associated with the article
 #'
-#' @return A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignette
+#' @return A \code{\\docs} folder containing the website and a \code{inst\\doc} folder containing the vignette
 #'
 #' @export
 #'

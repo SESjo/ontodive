@@ -2,7 +2,7 @@
 % Please edit documentation in R/dot-n.R
 \name{.n}
 \alias{.n}
-\title{Retrieve elements' name of a list within apply function}
+\title{Retrieve elements' name of a list within \code{apply} function}
 \usage{
 .n()
 }
@@ -10,7 +10,7 @@
 The name of the element considered
 }
 \description{
-This small function should be used within an `apply` function when retrieving the element's name is needed.
+This small function should be used within an \code{apply} function when retrieving the element's name is needed.
 }
 \examples{
 # list creation

@@ -10,14 +10,13 @@ is_outlier(x)
 \item{x}{A vector in which outliers need to be found}
 }
 \value{
-A boolean vector, TRUE for outliers, FALSE when not
+A boolean vector, \code{TRUE} for outliers, \code{FALSE} when not
 }
 \description{
 This function aims at finding outliers in a vector using the interquartile range rule
 }
 \examples{
 # generate data from gaussian and exponential distribution
-# importFrom stats quantile
 X <- sample(c(rnorm(100), c(rexp(50), -rexp(50))))
 
 # plot data

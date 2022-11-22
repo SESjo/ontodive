@@ -1,12 +1,12 @@
 #' @title Treat location data with a continuous-time state-space model
 #'
-#' @description Using `fit_ssm` function from `foieGras` package, this function "clean" the
+#' @description Using \code{fit_ssm} function from \code{foieGras} package, this function "clean" the
 #' location data to be used for further analysis at the dive scale.
 #'
 #' @param data Dataset of observation, usually the file \*Argos.csv or
 #' \*Location.csv files
-#' @param model Choose to fit either a simple random walk ("rw") or correlated
-#' random walk ("crw") as a continuous-time process model
+#' @param model Choose to fit either a simple random walk (\code{rw}) or correlated
+#' random walk (\code{crw}) as a continuous-time process model
 #' @param time.step options: 1) the regular time interval, in hours, to predict
 #' to; 2) a vector of prediction times, possibly not regular, must be specified as a data.frame with id and POSIXt dates; 3) NA - turns off prediction and locations are only estimated at observation times.
 #' @param vmax The max travel rate (m/s) passed to sda to identify outlier locations
