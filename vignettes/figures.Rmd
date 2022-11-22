@@ -376,11 +376,6 @@ table_sum_nes <- data.table::transpose(data_fig_sum[sp == "nes", .(
     round(quantile(dduration, 0.5) / 60, 1),
     big.mark = ",",
     scientific = FALSE
-  ), "min"),
-  "Median bottom duration" = paste(prettyNum(
-    round(quantile(botttime, 0.5) / 60, 1),
-    big.mark = ",",
-    scientific = FALSE
   ), "min")
 ), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
 
@@ -391,7 +386,7 @@ table_sum_ses <- data.table::transpose(data_fig_sum[sp == "ses", .(
     big.mark = ",",
     scientific = FALSE
   ),
-  "Recorder settings" = "1 dive every ~2.25 hr",
+  "Recorder settings" = "1 dive every ~2.25 h",
   "# of dives recorded" = prettyNum(.N, big.mark = ",", scientific = FALSE),
   "Median max depth" = paste(prettyNum(
     round(quantile(maxdepth, 0.5), 1),
@@ -400,11 +395,6 @@ table_sum_ses <- data.table::transpose(data_fig_sum[sp == "ses", .(
   ), "m"),
   "Median dive duration" = paste(prettyNum(
     round(quantile(dduration, 0.5) / 60, 1),
-    big.mark = ",",
-    scientific = FALSE
-  ), "min"),
-  "Median bottom duration" = paste(prettyNum(
-    round(quantile(botttime, 0.5) / 60, 1),
     big.mark = ",",
     scientific = FALSE
   ), "min")
@@ -457,22 +447,37 @@ layout = "
 AAAADDD
 AAAADDD
 AAAADDD
+AAAADDD
+AAAADDD
+AAAADDD
+AAAAEEE
+AAAAEEE
+AAAAEEE
 AAAAEEE
 AAAAEEE
 BBBBEEE
+BBBBFFF
+CCCCFFF
+CCCCFFF
 CCCCFFF
 CCCCFFF
 CCCCFFF
 "
 
-trip + guide_area() + (as_ggplot(table_sum_nes) + as_ggplot(table_sum_ses)) + fig_sum_maxdepth + fig_sum_dduration + fig_sum_driftrate +
+trip + 
+  guide_area() + 
+  (as_ggplot(table_sum_nes) + as_ggplot(table_sum_ses)) + 
+  fig_sum_maxdepth + 
+  fig_sum_dduration + 
+  fig_sum_driftrate +
   plot_annotation(tag_levels = list(c("(A)", "(B)", "", "(C)", "(D)", "(E)"))) +
   # layout
   plot_layout(design = layout, guides = 'collect') &
   # annotation in bold
   theme(plot.tag = element_text(face = "bold"))
 
-# export (height 700; width 1450)
+# export (height 785; width 1494)
+# ggsave("test.png", width = 180, height = 90, units = "mm", dpi = 300, scale = 2.5)
 ```
 
 ## Figure 2 {-}
