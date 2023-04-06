@@ -24,7 +24,8 @@ plot_comp(
   rows = NULL,
   cols = NULL,
   scales = "fixed",
-  method = "REML"
+  method = "REML",
+  export_data_model = FALSE
 )
 }
 \arguments{
@@ -67,6 +68,8 @@ plot_comp(
 \item{scales}{Are scales shared across all facets (the default, "fixed")}
 
 \item{method}{The smoothing parameter estimation method for the GAM (default \code{REML})}
+
+\item{export_data_model}{Boolean to export the data of the underlying model}
 }
 \value{
 Return a ggplot

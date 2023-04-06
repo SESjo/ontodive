@@ -30,6 +30,7 @@
 #' @param cols The colname used for a facet in column
 #' @param scales Are scales shared across all facets (the default, "fixed")
 #' @param method 	The smoothing parameter estimation method for the GAM (default \code{REML})
+#' @param export_data_model Boolean to export the data of the underlying model
 #'
 #' @seealso \code{\link[mgcv]{smooth.terms}}
 #' @seealso \code{\link[mgcv]{gam}}
@@ -88,7 +89,8 @@ plot_comp <- function(data,
                       rows = NULL,
                       cols = NULL,
                       scales = "fixed",
-                      method = "REML") {
+                      method = "REML",
+                      export_data_model = FALSE) {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <-
@@ -289,7 +291,7 @@ plot_comp <- function(data,
   # retrieve pop level result
   pop_pred <- res_pred[[1]]
 
-  # retrieve pop level result
+  # retrieve individual level result
   ind_pred <- res_pred[[2]]
 
   # plot
@@ -392,6 +394,11 @@ plot_comp <- function(data,
       )
     )
 
-  # return
-  return(p1)
+  # if we want to export the data from the model
+  if (export_data_model)
+    # return
+    return(list(p1, list(pop_pred, ind_pred)))
+  else
+    # return
+    return(p1)
 }

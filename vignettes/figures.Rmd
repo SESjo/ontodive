@@ -233,9 +233,9 @@ ses_theme <- ttheme(
 ```
 
 ```{r}
-# read image
-nes_image <- image_read("../man/figures/nes_crop.png")
-ses_image <- image_read("../man/figures/ses_crop.png")
+# # read image
+# nes_image <- image_read("../man/figures/nes_crop.png")
+# ses_image <- image_read("../man/figures/ses_crop.png")
 
 # map
 trip <- basemap(
@@ -245,7 +245,7 @@ trip <- basemap(
   geom_path(
     data = data_fig_sum,
     aes(x = lon, y = lat, group = .id),
-    size = 2,
+    linewidth = 2,
     colour = "white",
     show.legend = F
   ) +
@@ -271,12 +271,12 @@ trip <- basemap(
   geom_path(
     data = data_fig_sum,
     aes(x = lon, y = lat, col = .id),
-    size = 1.5,
+    linewidth = 1.5,
     show.legend = F
   ) +
   scale_color_manual(values = colours, guide = "none") +
-  annotation_raster(nes_image, -175, -145, 20, 50) +
-  annotation_raster(ses_image, 75, 105, -50, -20) +
+  # annotation_raster(nes_image, -175, -145, 20, 50) +
+  # annotation_raster(ses_image, 75, 105, -50, -20) +
   theme_void() +
   theme(legend.position = "top")
 
@@ -464,7 +464,8 @@ CCCCFFF
 CCCCFFF
 "
 
-trip + 
+plot_to_save <- 
+  trip + 
   guide_area() + 
   (as_ggplot(table_sum_nes) + as_ggplot(table_sum_ses)) + 
   fig_sum_maxdepth + 
@@ -478,6 +479,14 @@ trip +
 
 # export (height 785; width 1494)
 # ggsave("test.png", width = 180, height = 90, units = "mm", dpi = 300, scale = 2.5)
+# save the plot
+# ggsave("figure_1.png", 
+#        plot_to_save,
+#        width = 180, 
+#        height = 90, 
+#        units = "mm", 
+#        dpi = 300, 
+#        scale = 2.5)
 ```
 
 ## Figure 2 {-}
@@ -547,7 +556,8 @@ fig_maxdepth <- fig_maxdepth_ini +
     axis.text.x = element_blank(),
     axis.line.x = element_blank(),
     axis.ticks.x = element_blank(),
-    strip.text = element_text(colour = 'grey20')
+    strip.text = element_text(colour = 'grey20'),
+    axis.line.y = element_line(color = "black")
   )
 fig_dduration <- fig_dduration_ini +
   labs(
@@ -558,7 +568,8 @@ fig_dduration <- fig_dduration_ini +
   theme_jjo() +
   theme(
     legend.position = "none",
-    strip.text.x = element_blank()
+    strip.text.x = element_blank(),
+    axis.line.y = element_line(color = "black")
   )
 
 # density plots
@@ -577,8 +588,15 @@ fig_dens_dduration <-
 ```
 
 ```{r fig.height=5, fig.cap = "Development of depth and duration across dive types throughout the first trip to sea in northern (n=4) and southern elephant seals (n=9) estimated from generalized additive models. The solid lines represent the means, and the shaded areas represent the 95% confidence intervals. Marginal density plots represent the spread of data across all dive types for each species."}
-((fig_maxdepth | fig_dens_maxdepth) + plot_layout(ncol = 2, widths = c(5, 1))) /
-  ((fig_dduration | fig_dens_dduration) + plot_layout(ncol = 2, widths = c(5, 1)))
+# plot_to_save <-
+  ((fig_maxdepth | fig_dens_maxdepth) + plot_layout(ncol = 2, widths = c(5, 1))) /
+  ((fig_dduration | fig_dens_dduration) + plot_layout(ncol = 2, widths = c(5, 1))) 
+  
+# # save the plot
+# ggsave(filename = "figure_2.png", 
+#        plot = plot_to_save,
+#        width = 9,
+#        height = 6)
 ```
 
 ```{r}
@@ -898,59 +916,154 @@ fig_dens_driftrate <-
 (fig_driftrate | fig_dens_driftrate) + plot_layout(widths = c(5, 1))
 ```
 
-## Extra {-}
+## Appendix {-}
 
-```{r fig.cap="Daily median drift rate vs. daily median of maximum dive depth"}
-data_comp[divetype == "2: drift",
-          .(driftrate = median(driftrate, na.rm = T)),
-          by = .(.id, day_departure, sp_rename)
-] %>%
-  merge(., data_comp[,
-                     .(maxdepth = median(maxdepth, na.rm = T)),
-                     by = .(.id, day_departure, sp_rename)
-  ],
-  by = c(".id", "day_departure", "sp_rename")
-  ) %>%
-  ggplot(aes(y = driftrate, x = maxdepth, col = word(sp_rename, 1))) +
-  geom_point() +
-  scale_color_manual(
-    values = colours,
-    name = "Elephant seals"
-  ) +
-  labs(
-    x = "Daily median dive depth (m)",
-    y = "Daily median drift rate (m/s)"
-  ) +
-  theme_jjo() +
-  theme(legend.position = "top")
+```{r}
+# initial plots
+max_depth_all_res <- plot_comp(
+  data_comp %>%
+  .[, sp := fifelse(sp == "nes", "Northern", "Southern")],
+  "maxdepth",
+  group_to_compare = "sp",
+  nb_days = 200,
+  ribbon = T,
+  linetype_ribbon = 0,
+  point = F,
+  colours = colours,
+  export_data_model = T
+)
+max_depth_all_ini = max_depth_all_res[[1]]
+max_depth_all_data = max_depth_all_res[[2]]
 ```
 
-```{r fig.cap="Daily median drift rate vs. daily maximum of maximum dive depth"}
-data_comp[divetype == "2: drift",
-          .(driftrate = median(driftrate, na.rm = T)),
-          by = .(.id, day_departure, sp_rename)
-] %>%
-  merge(., data_comp[,
-                     .(maxdepth = max(maxdepth, na.rm = T)),
-                     by = .(.id, day_departure, sp_rename)
-  ],
-  by = c(".id", "day_departure", "sp_rename")
-  ) %>%
-  ggplot(aes(y = driftrate, x = maxdepth, col = word(sp_rename, 1))) +
-  geom_point() +
-  scale_color_manual(
-    values = colours,
-    name = "Elephant seals"
-  ) +
-  labs(
-    x = "Daily maximum dive depth (m)",
-    y = "Daily median drift rate (m/s)"
-  ) +
-  theme_jjo() +
-  theme(legend.position = "top")
+
+```{r}
+# https://stackoverflow.com/questions/70420256/how-to-draw-a-horizontal-line-and-a-vertical-line-that-cross-at-the-intersection
+draw_guides<- function(x, y) {
+  list(geom_segment(aes(x = -Inf, xend = x, y = y, yend = y), linetype = "dashed"),
+       geom_segment(aes(x = x, xend = x, y = y, yend = -Inf), linetype = "dashed"))
+}
 ```
 
-> From these two graphs, I don't think it can be said that somehow body condition constrains dive depth, since deep dives occur at positive and negative buoyancies.
+
+```{r}
+# get limits
+max_depth_all_limits <- ggplot_build(max_depth_all_ini)$layout$panel_params[[1]]$y.range
+
+# update initial plots
+max_depth_all <- max_depth_all_ini +
+  labs(
+    y = "Maximum depth (m)",
+    x = "Number of days since departure",
+    colour = "Elephant seal",
+    fill = "Elephant seal"
+  ) +
+  coord_cartesian(ylim = rev(max_depth_all_limits)) +
+  scale_fill_manual(values = colours) +
+  geom_point(data = data.table(x = c(30, 160), y = c(240, 240)), aes(x, y))+ 
+  apply(data.table(x = c(30, 160), y = c(240, 240)), 1, function(dt){
+    draw_guides(dt[1], dt[2]) 
+  }) +
+  scale_x_continuous(position = 'top') +
+  theme_jjo() +
+  theme(
+    legend.position = "bottom",
+    axis.line.y = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), 
+                                                              type = "closed",
+                                                              ends = "first")),
+  )
+
+# density plots
+fig_dens_max_depth_all <-
+  ggplot(
+    data_comp[day_departure <= 200, ],
+    aes(y = maxdepth, fill = sp)
+  ) +
+  geom_density(show.legend = F, col = "black", alpha = 0.4, linewidth = 0.3) +
+  coord_cartesian(ylim = rev(max_depth_all_limits)) +
+  scale_fill_manual(values = colours) +
+  theme_void()
+```
+
+
+```{r}
+# plot
+# plot_to_save <- 
+  (max_depth_all | fig_dens_max_depth_all) + plot_layout(widths = c(5, 1))
+
+# to save
+ggsave("figure_supp_1.png",
+       plot_to_save,
+       width = 6,
+       height = 4)
+```
+```{r}
+# initial plots
+dive_duration_all_res <- plot_comp(
+  copy(data_comp)[, dduration := dduration / 60] %>%
+  .[, sp := fifelse(sp == "nes", "Northern", "Southern")],
+  "dduration",
+  group_to_compare = "sp",
+  nb_days = 200,
+  ribbon = T,
+  linetype_ribbon = 0,
+  point = F,
+  colours = colours,
+  export_data_model = T
+)
+dive_duration_all_ini = dive_duration_all_res[[1]]
+dive_duration_all_data = dive_duration_all_res[[2]]
+```
+
+
+
+```{r}
+# get limits
+dive_duration_all_limits <- ggplot_build(dive_duration_all_ini)$layout$panel_params[[1]]$y.range
+
+# update initial plots
+dive_duration_all <- dive_duration_all_ini +
+  labs(
+    y = "Dive duration (min)",
+    x = "Number of days since departure",
+    colour = "Elephant seal",
+    fill = "Elephant seal"
+  ) +
+  geom_point(data = data.table(x = c(0, 125), y = c(11.15, 11.15)), aes(x, y))+ 
+  apply(data.table(x = c(0, 125), y = c(11.15, 11.15)), 1, function(dt){
+    draw_guides(dt[1], dt[2]) 
+  }) +
+  coord_cartesian(ylim = dive_duration_all_limits) +
+  scale_fill_manual(values = colours) +
+  theme_jjo() +
+  theme(
+    legend.position = "top"
+  )
+
+# density plots
+fig_dens_dive_duration_all <-
+  ggplot(
+    data_comp[day_departure <= 200, ],
+    aes(y = dduration / 60, fill = sp)
+  ) +
+  geom_density(show.legend = F, col = "black", alpha = 0.4, linewidth = 0.3) +
+  coord_cartesian(ylim = dive_duration_all_limits) +
+  scale_fill_manual(values = colours) +
+  theme_void()
+```
+
+
+```{r}
+# # plot
+# plot_to_save <-
+  (dive_duration_all | fig_dens_dive_duration_all) + plot_layout(widths = c(5, 1))
+# 
+# # to save
+# ggsave("figure_supp_2.png",
+#        plot_to_save,
+#        width = 6,
+#        height = 4)
+```
 
 # Tables
 
@@ -1095,7 +1208,7 @@ by = .id
     .groups = "drop"
   ) %>%
   # replace travel_distance = 0 by NA
-  mutate(travel_distance = na_if(travel_distance, 0)) %>%
+  mutate(travel_distance = na_if(travel_distance, "0")) %>%
   # add driftrate from drift dives
   left_join(
     .,
@@ -1163,7 +1276,7 @@ by = .id
         .groups = "drop"
       ) %>%
       group_by(sp_rename, id_rename) %>%
-      summarise(
+      mutate(
         divetype_perc = round(n * 100 / sum(n)),
         divetype,
         .groups = "drop"
@@ -1200,8 +1313,36 @@ by = .id
     ),
     by = c("sp_rename", "id_rename")
   ) %>%
+  # add wean length based on JoffreyMeasurements 2023_02_01.xlsx and 
+  # metadata_pups20142015.xlsx
+  left_join(
+    .,
+    data.table(
+      id_rename = c(
+        "2018070",
+        "2018072",
+        "2018074",
+        "2018080",
+        "140059",
+        "140060",
+        "140062",
+        "140063",
+        "140068",
+        "140069",
+        "140072",
+        "140073",
+        "140075"
+      ),
+      sp_rename = c(
+        rep("Northern elephant seal", 4),
+        rep("Southern elephant seal", 9)
+      ),
+      lenmass = c(144, NA, 131, 142, 141, 141, 118, NA, 136, NA, NA, 134, NA)
+    ),
+    by = c("sp_rename", "id_rename")
+  ) %>%
   # reorder column
-  relocate(nb_days, N, travel_distance, weanmass, divetype_perc,
+  relocate(nb_days, N, travel_distance, weanmass, lenmass, divetype_perc,
            .after = id_rename) %>%
   # setup group row
   gt(groupname_col = "sp_rename") %>%
@@ -1233,8 +1374,12 @@ by = .id
     columns = c(travel_distance)
   ) %>%
   tab_spanner(
-    label = md("Weaning mass"),
+    label = md("Mass"),
     columns = c(weanmass)
+  ) %>%
+  tab_spanner(
+    label = md("Length"),
+    columns = c(lenmass)
   ) %>%
   tab_spanner(
     label = md("Dive type proportions"),
@@ -1260,7 +1405,7 @@ by = .id
     align = "right"
   ) %>%
   cols_align(
-    columns = c(travel_distance, weanmass, Maxdepth_plus_minus, Dduration_plus_minus),
+    columns = c(travel_distance, weanmass, lenmass, Maxdepth_plus_minus, Dduration_plus_minus),
     align = "center"
   ) %>%
   # format
@@ -1279,6 +1424,7 @@ by = .id
     nb_days = "# days",
     travel_distance = "(km)",
     weanmass = "(kg)",
+    lenmass = "(cm)",
     Maxdepth_mean = md("Mean"),
     Maxdepth_plus_minus = md("±"),
     Maxdepth_sd = md("SD"),
@@ -1338,7 +1484,8 @@ by = .id
   # settings
   tab_options(
     # # width table
-    table.width = pct(175),
+    # table.width = pct(175),
+    table.width = pct(100),
     # padding = vertical space between rows
     data_row.padding = px(3),
     # horizontal scroll
@@ -1346,14 +1493,14 @@ by = .id
 
 # # for export
 # summary_table_es %>% gtsave_extra(
-#   "test_table_2.png",
-#   vwidth = 1300,
+#   "test_table_1.png",
+#   vwidth = 2000,
 #   vheight = 580,
-#   cliprect = "viewport"
+#   # cliprect = "viewport"
 # )
 ```
 
-Title: Descriptive statistics and visual representations of the first offshore foraging trip for each northern and southern elephant seal in the dataset. For maximum depth (m) and dive duration (min), the trend represents the changes in the daily 95th percentile through time in a solid gray line associated with a linear regression in black dashes. For drift rate (m.s-1), the daily median was calculated to represent the evolution over time, with positive values in orange and negative in purple.
+Title: Descriptive statistics and visual representations of the dataset's first offshore foraging trip for each northern and southern elephant seal. For maximum depth (m; note the inverted y-axis) and dive duration (min), the trend represents the changes in the daily 95th percentile through time (solid gray line) associated with a linear regression (black dashes). For drift rate (m.s-1), the daily median was calculated to represent the evolution over time, with positive values in orange and negative in violet. The measurements of length and mass were made at weaning.
 
 ## Extra {-}
 
@@ -1423,7 +1570,38 @@ data_comp %>%
     )),
     by = sp_rename
     ],
-  by = c("sp_rename")
+  by = "sp_rename"
+  ) %>% 
+    merge(., data.table(
+      id_rename = c(
+        "2018070",
+        "2018072",
+        "2018074",
+        "2018080",
+        "140059",
+        "140060",
+        "140062",
+        "140063",
+        "140068",
+        "140069",
+        "140072",
+        "140073",
+        "140075"
+      ),
+      sp_rename = c(
+        rep("Northern elephant seal", 4),
+        rep("Southern elephant seal", 9)
+      ),
+      lenmass = c(144, NA, 131, 142, 141, 141, 118, NA, 136, NA, NA, 134, NA)
+    ) %>%
+    .[, .(result_len = paste(
+      round(mean(lenmass, na.rm = T), 1),
+      "±",
+      round(sd(lenmass, na.rm = T), 1)
+    )),
+    by = sp_rename
+    ],
+  by = "sp_rename"
   ) %>%
   merge(., data_comp[, .(travel_distance = sum(travel_distance, na.rm = T) / 1000),
                      by = .(.id, sp_rename)] %>%
@@ -1435,24 +1613,50 @@ data_comp %>%
             travel_distance,
             na.rm = T
           ), 1))), by = .(sp_rename)], by = "sp_rename") %>%
-  gt()
+  merge(., data_comp[, .(nb_days = as.numeric(difftime(max(date), 
+                                                       min(date), 
+                                                       units = "day"))),
+                     by = .(.id, sp_rename)] %>%
+          .[, .(nb_days = paste(round(mean(nb_days, na.rm = T), 1),
+                                "±",
+                                round(sd(nb_days, na.rm = T),1))),
+            by = .(sp_rename)], by = "sp_rename") %>% 
+  gt() %>% 
+  tab_spanner(
+    label = md("Dive"),
+    columns = c("result_depth","result_duration")
+  ) %>%
+  tab_spanner(
+    label = md("Length (days)"),
+    columns = c("result_day_time","result_night_time")
+  ) %>%
+  tab_spanner(
+    label = md("Weaning"),
+    columns = c("result_mass","result_len")
+  ) %>%
+  tab_spanner(
+    label = md("Travel"),
+    columns = c("result_distance")
+  ) %>%
+  cols_label(
+    sp_rename = "Species",
+    result_depth = "Depth (m)",
+    result_duration = "Duration (days)",
+    result_day_time = "Day",
+    result_night_time = "Night",
+    result_mass = "Mass (kg)",
+    result_len= "Length (cm)",
+    result_distance = "Distance (km)"
+  )%>%
+  opt_row_striping() %>% 
+  # settings
+  tab_options(
+    # # width table
+    # table.width = pct(175),
+    table.width = pct(150),
+    # padding = vertical space between rows
+    data_row.padding = px(3),
+    # horizontal scroll
+    container.overflow.x = T)
 ```
-```{r}
-data_comp[, .(
-  nb_days = as.numeric(difftime(max(date), min(date), units = "day")),
-  dist_km = sum(travel_distance, na.rm = T) / 1000
-), by = .(.id)] %>%
-  .[, dist_km := na_if(dist_km, 0)] %>%
-  .[, lapply(.SD, function(x) {
-    c(
-      round(mean(x, na.rm = T), 2),
-      round(sd(x, na.rm = T), 2)
-    )
-  }),
-  .SDcols = c("nb_days", "dist_km")
-  ] %>%
-  data.table::transpose(., keep.names = "Parameter") %>%
-  setnames(., c("Parameters", "mean", "sd")) %>%
-  .[] %>%
-  gt()
-```
+
