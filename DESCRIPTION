@@ -1,4 +1,4 @@
-Package: weanlingNES
+Package: ontodive
 Type: Package
 Title: Encompass Data Analyses related to Weanling Paper
 Version: 0.1.0
@@ -22,7 +22,7 @@ LazyData: false
 RoxygenNote: 7.2.1
 Imports:
     dplyr,
-    foieGras,
+    aniMotum,
     ggOceanMaps,
     ggh4x,
     ggplot2,
