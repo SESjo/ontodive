@@ -1,6 +1,6 @@
 Package: ontodive
 Type: Package
-Title: Encompass Data Analyses related to Weanling Paper
+Title: Data Analyses of the Ontogeny Paper
 Version: 0.1.0
 Authors@R:
     c(person(given = "Joffrey",
@@ -15,44 +15,75 @@ Authors@R:
              comment = c(ORCID = "0000-0002-8520-1105")))
 Maintainer: The package maintainer <jjoumaa@ucsc.edu>
 Description: The purpose of this package is to encompass datasets, 
-        scripts and analyses used in the Weanling paper.
+        scripts and analyses used in the ontogeny paper.
 License: file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.2.3
-Imports:
-    dplyr,
+Imports: 
     aniMotum,
-    ggOceanMaps,
+    cli,
+    data.table,
+    dplyr,
+    fpc,
+    ggcorrplot,
     ggh4x,
+    ggOceanMaps,
+    ggOceanMapsData,
     ggplot2,
     ggpubr,
     ggspatial,
     glue,
     gt,
     gtExtras,
+    lubridate,
     magrittr,
     maptools,
     mgcv,
     patchwork,
     pkgdown,
-    scales,
-    data.table,
-    fpc,
-    ggcorrplot,
-    lubridate,
     purrr,
     rlang,
-    stringr,
-    cli
-Remotes: 
-    github::SLisovski/TwGeos,
-    github::MikkoVihtakari/ggOceanMapsData
-Depends: R (>= 3.5.0)
-Suggests:
+    rmarkdown,
+    scales,
     stats,
-    TwGeos,
+    stringr,
+    tools,
+    utils
+Suggests: 
+    bookdown,
+    broom,
+    corrplot,
+    cowplot,
+    DT,
+    FactoMineR,
+    geosphere,
+    gganimate,
+    ggnewscale,
+    ggplotify,
+    ggsignif,
+    gifski,
+    gridExtra,
+    gtsummary,
+    hexSticker,
+    Hmisc,
+    kableExtra,
     knitr,
-    ggOceanMapsData,
-    rmarkdown
-VignetteBuilder: knitr
+    leafgl,
+    leaflet,
+    magick,
+    maps,
+    ncmeta,
+    oce,
+    plotly,
+    rstatix,
+    sf,
+    showtext,
+    spData,
+    tidync,
+    transformr,
+    TwGeos
+Remotes:  
+    MikkoVihtakari/ggOceanMapsData,
+    r-lib/pkgdown,
+    SLisovski/TwGeos
