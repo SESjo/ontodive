@@ -17,6 +17,7 @@
 #' @param article The name or the path to the \code{.Rmd} file to be compiled
 #' @param website A boolean to compile the website associated with the article
 #' @param vignette A boolean to compile the vignette associated with the article
+#' @param clean Logical to remove cache and temporary files
 #'
 #' @return A \code{\\docs} folder containing the website and a \code{inst\\doc} folder containing the vignette
 #'
@@ -32,7 +33,8 @@
 #' }
 build_github_vignette <- function(article = NULL,
                                   website = NULL,
-                                  vignette = NULL) {
+                                  vignette = NULL,
+                                  clean = FALSE) {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <- NULL
@@ -41,7 +43,7 @@ build_github_vignette <- function(article = NULL,
   # (e.g with extension ".Rmd" or path "/")
   if (grepl(".Rmd|/", article) && !is.null(article)) {
     # split the character chain with "/"
-    article <- strsplit(article,"/") %>%
+    article <- strsplit(article, "/") %>%
       # select the last element of the list
       dplyr::last(.) %>%
       # select the last item of this last element
@@ -60,6 +62,10 @@ build_github_vignette <- function(article = NULL,
   if (is.null(article)) {
     # we rebuild the all documentation (vignette + website)
     if (!is.null(website) && website == TRUE) {
+      # if clean
+      if (clean) {
+        pkgdown::clean_site()
+      }
       # update favicon
       pkgdown::build_favicons(pkg = ".", overwrite = TRUE)
       # "re"initiate a website
@@ -69,19 +75,30 @@ build_github_vignette <- function(article = NULL,
       # compute website
       pkgdown::build_site()
       # copy the external files
-      file.copy(dir(
-        "vignette",
-        recursive = TRUE,
-        full.names = TRUE,
-        pattern = c("*.mp4$")
-      ),
-      "docs/articles",
-      overwrite = TRUE
+      file.copy(
+        dir(
+          "./vignettes/",
+          recursive = TRUE,
+          full.names = TRUE,
+          pattern = c("*.mp4$")
+        ),
+        "./docs/articles",
+        overwrite = TRUE
       )
       # make sure image/gif generated within rmarkdown would be found on website
       system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
     }
     if (!is.null(vignette) && vignette == TRUE) {
+      # if clean
+      if (clean) {
+        unlink(
+          dir("./vignettes/",
+            full.names = T,
+            pattern = "*_cache"
+          ),
+          recursive = TRUE
+        )
+      }
       # build vignette
       tools::buildVignettes(
         dir = ".",
@@ -90,14 +107,15 @@ build_github_vignette <- function(article = NULL,
       # create the proper folders
       dir.create("inst/doc")
       # copy the proper files
-      file.copy(dir(
-        "vignette",
-        recursive = TRUE,
-        full.names = TRUE,
-        pattern = c("*.html$|*.Rmd$|*.R$|*.mp4$")
-      ),
-      "inst/doc",
-      overwrite = TRUE
+      file.copy(
+        dir(
+          "./vignettes",
+          recursive = TRUE,
+          full.names = TRUE,
+          pattern = c("*.html$|*.Rmd$|*.R$|*.mp4$")
+        ),
+        "./inst/doc/",
+        overwrite = TRUE
       )
       # make sure image/gif generated within rmarkdown would be found on website
       system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
@@ -111,35 +129,46 @@ build_github_vignette <- function(article = NULL,
     }
 
     if (!is.null(vignette) && vignette == TRUE) {
+      # if clean
+      if (clean) {
+        unlink(paste0("./vignettes/", article, "_cache"), recursive = TRUE)
+      }
       # update the vignette
       tools::buildVignette(
         file = paste0("./vignettes/", article, ".Rmd"),
         dir = "./vignettes/",
         tangle = TRUE
       )
+      # if it does not exist
+      if (!dir.exists("./inst/doc")) {
+        # create the doc folder
+        dir.create("./inst/doc")
+      }
       # copy the proper file
-      file.copy(dir(
-        "vignettes",
-        recursive = TRUE,
-        full.names = TRUE,
-        pattern = c(paste0(
-          article, ".html$|",
-          article, ".Rmd$|",
-          article, "*.R$"
-        ))
-      ),
-      "inst/doc",
-      overwrite = TRUE
+      file.copy(
+        dir(
+          "./vignettes",
+          recursive = TRUE,
+          full.names = TRUE,
+          pattern = c(paste0(
+            article, ".html$|",
+            article, ".Rmd$|",
+            article, "*.R$"
+          ))
+        ),
+        "./inst/doc/",
+        overwrite = TRUE
       )
       # copy the external files
-      file.copy(dir(
-        "vignettes",
-        recursive = TRUE,
-        full.names = TRUE,
-        pattern = c("*.mp4$")
-      ),
-      "inst/doc",
-      overwrite = TRUE
+      file.copy(
+        dir(
+          "./vignettes",
+          recursive = TRUE,
+          full.names = TRUE,
+          pattern = c("*.mp4$")
+        ),
+        "./inst/doc/",
+        overwrite = TRUE
       )
       # make sure image/gif generated within rmarkdown would be found on website
       system("sed -i 's+../docs+..+g' ./docs/articles/*.html")
