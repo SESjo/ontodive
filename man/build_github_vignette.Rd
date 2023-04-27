@@ -4,7 +4,12 @@
 \alias{build_github_vignette}
 \title{Build Vignettes for Github}
 \usage{
-build_github_vignette(article = NULL, website = NULL, vignette = NULL)
+build_github_vignette(
+  article = NULL,
+  website = NULL,
+  vignette = NULL,
+  clean = FALSE
+)
 }
 \arguments{
 \item{article}{The name or the path to the \code{.Rmd} file to be compiled}
@@ -12,6 +17,8 @@ build_github_vignette(article = NULL, website = NULL, vignette = NULL)
 \item{website}{A boolean to compile the website associated with the article}
 
 \item{vignette}{A boolean to compile the vignette associated with the article}
+
+\item{clean}{Logical to remove cache and temporary files}
 }
 \value{
 A \code{\\docs} folder containing the website and a \code{inst\\doc} folder containing the vignette

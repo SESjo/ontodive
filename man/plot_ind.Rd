@@ -7,28 +7,30 @@
 plot_ind(data_seal, col_text = "black", col_back = "transparent")
 }
 \arguments{
-\item{data_seal}{A dataset containing information dive information on one animal (maxdepth, lat, lon, date, driftrate)}
+\item{data_seal}{A table containing information about an animal's diving behavior (maxdepth, lat, lon, date, driftrate)}
 
 \item{col_text}{The color of the text}
 
 \item{col_back}{The color of the background}
 }
 \value{
-A ggplot object which contains all figures
+A ggplot object which contains four figures
 }
 \description{
 This function displays several key information regarding a seal.
 }
 \details{
-* A map of the seal's trip at sea with a color code based on the number of days since departure
-* The max depth reached for each dives across time
-* The evolution of their daily median drift rate across time
-* the evolution of their ADL across time
+\enumerate{
+\item A map of the seal's trip at sea with a color code based on the number of days since departure
+\item The max depth reached for each dives across time
+\item The evolution of their daily median drift rate across time
+\item The evolution of their ADL across time
+}
 }
 \examples{
 \dontrun{
 # load data
-data("data_nes")
+data_nes <- get_data("nes")
 
 # plot result
 plot_ind(data_nes$year_2018$ind_2018070)

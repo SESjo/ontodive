@@ -70,14 +70,14 @@ theme_jjo <- function(base_size = 12) {
 }
 ```
 
-This document aims at exploring two datasets, one in 2016 on 6 individuals and another one in 2018 on 4 individuals. For that purpose, we need first to load the `weanlingNES` package to load data.
+This document aims at exploring two datasets, one in 2016 on 6 individuals and another one in 2018 on 4 individuals. For that purpose, we need first to load the `ontodive` package to load data.
 
 ```{r}
 # load library
-library(weanlingNES)
+library(ontodive)
 
 # load data
-data("data_nes", package = "weanlingNES")
+data("data_nes", package = "ontodive")
 ```
 
 

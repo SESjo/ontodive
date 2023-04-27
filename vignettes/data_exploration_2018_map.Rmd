@@ -1,5 +1,5 @@
 ---
-title: "Data Exploration NES Map - 2018"
+title: "Data Exploration NES (2/2) - 2018"
 author: "Joffrey JOUMAA"
 date: "`r invisible(Sys.setlocale(locale = 'C')); format(Sys.Date(), format = '%B %d, %Y')`"
 output:
@@ -18,7 +18,7 @@ link-citations: yes
 pkgdown:
   as_is: false
 vignette: >
-  %\VignetteIndexEntry{Data Exploration Map - 2018}
+  %\VignetteIndexEntry{Northern Elephant Seals - 2018 (2/2)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -35,7 +35,7 @@ vignette: >
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
-  cache = TRUE,
+  cache = FALSE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -53,7 +53,7 @@ library(ggplot2)
 library(kableExtra)
 library(leafgl)
 library(leaflet)
-library(gtsummary) # https://cran.r-project.org/web/packages/gtsummary/vignettes/tbl_summary.html
+library(gtsummary)
 library(corrplot)
 library(ggcorrplot)
 library(ggnewscale)
@@ -66,7 +66,7 @@ library(gganimate)
 library(transformr)
 library(magick)
 library(gifski)
-library(weanlingNES)
+library(ontodive)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -81,11 +81,18 @@ sable <- function(x, escape = T, ...) {
 }
 ```
 
-Here, the first thing to do is to retrieve the data processed at the end of `vignette("data_exploration_2018")`.
-
 ```{r}
-# read the processed data
-data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+# load library
+library(ontodive)
+
+# load data
+data_nes <- get_data("nes")
+
+# rbind the list
+data_2018 <- rbindlist(data_nes$year_2018)
+
+# filter data
+data_2018_filter <- data_2018[dduration < 3000, ]
 ```
 
 ## GPS data
@@ -145,7 +152,6 @@ gradient_map <- addLayersControl(
 
 Because for some data the contrast in changes was not enough marked, the only treatment applied on these data was to remove outliers for each variable using the interquartile range rule. 
 
-
 ```{r data-exploration-2018-44}
 # interactive map
 gradient_map <- leaflet() %>%
@@ -155,16 +161,17 @@ gradient_map <- leaflet() %>%
 # loop by individuals and variable
 grps <- NULL
 for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
-  for (k in c("dduration", "efficiency", "driftrate")) {
+  for (k in c("dduration", "driftrate")) {
     if (k == "driftrate") {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == i &
-          divetype == "2: drift" &
-          !is.na(get(k)),
-        c("lat", "lon", k),
-        with = FALSE
+        .[
+          .id == i &
+            divetype == "2: drift" &
+            !is.na(get(k)),
+          c("lat", "lon", k),
+          with = FALSE
         ] %>%
         .[!is_outlier(get(k)), ])
       # color palette creation
@@ -180,11 +187,12 @@ for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == i &
-          divetype != "2: drift" &
-          !is.na(get(k)),
-        c("lat", "lon", k),
-        with = FALSE
+        .[
+          .id == i &
+            divetype != "2: drift" &
+            !is.na(get(k)),
+          c("lat", "lon", k),
+          with = FALSE
         ] %>%
         .[!is_outlier(get(k)), ])
       # color palette creation
@@ -210,10 +218,10 @@ for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
     )]
     # reorder to make the end and the beginning in front
     dataPlot <- rbind(dataPlot[-1, ], dataPlot[1, ])
-    
+
     # convert to sf
     dataPlot <- sf::st_as_sf(dataPlot, coords = c("lon", "lat"), crs = 4326)
-  
+
     # add markers to map
     gradient_map <- addGlPoints(
       map = gradient_map,
@@ -248,7 +256,6 @@ gradient_map <- addLayersControl(
 gradient_map
 ```
 
-
 ```{r}
 # clear memory
 gc()
@@ -258,7 +265,6 @@ rm(
 )
 gc()
 ```
-
 
 ```{r fit_foie_gras, eval=FALSE, include=FALSE}
 x <- data_2018_filter
@@ -274,7 +280,7 @@ First we need to load current data. Here we loaded data from [Copernicus platfor
 
 ```{r load_current, eval = FALSE}
 # import the already pre-treated ncdf
-data("data_cop", package = "weanlingNES")
+data("data_cop", package = "ontodive")
 ```
 
 Then we can build the animation for each individual. The code below is not executed when this document is compiled, since it's quite time consuming.
@@ -352,8 +358,7 @@ anim_plot_current <- function(data, id_inter) {
       limits = c(0, 1)
     ) +
     labs(title = paste(id_inter, "- Date: {frame_time}")) +
-    transition_time(time) #+
-  # ease_aes('linear')
+    transition_time(time)
 }
 
 # apply this function to all individuals
@@ -507,7 +512,6 @@ anim_plot_zos_center <- function(id_inter) {
     scale_fill_gradientn(colours = oce::oceColors9A(120)) +
     labs(title = paste(id_inter, "- Date: {frame_time}")) +
     transition_time(time) +
-    # ease_aes('linear') +
     view_follow(exclude_layer = 2)
 
   # rm
@@ -621,7 +625,7 @@ gifski(
 
 Hard to tell if there is any relation, we might need to dig deeper, especially for `ind_2018072` and `ind_2018080` by looking at the current direction and/or the distribution and abundance of different trophic level using [SEAPODYM](http://www.seapodym.eu/).
 
-## Alongs their trip
+## Along their trip
 
 ```{r fig.cap="Evolution of oceanographic data with the number of days since departure"}
 # evolution with trip at sea

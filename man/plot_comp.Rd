@@ -75,9 +75,9 @@ plot_comp(
 Return a ggplot
 }
 \description{
-This function approximate the relationship between the considered diving
-behavior and time in order to better represent this evolution with a smooth
-curve, rather than scatterplot
+This function approximates the relationship between the
+considered diving behavior and time in order to better represent this
+evolution by a smooth curve, rather than by a scatterplot.
 }
 \details{
 This function fits a GAM with the species as a grouping factor and a random
@@ -89,9 +89,8 @@ individual.
 \examples{
 \dontrun{
 # load data
-
-data("data_nes")
-data("data_ses")
+data_nes <- get_data("nes")
+data_ses <- get_data("ses")
 
 # combine
 data_comp <- rbind(

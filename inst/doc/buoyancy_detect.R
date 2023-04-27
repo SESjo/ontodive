@@ -1,6 +1,7 @@
-## ---- include = FALSE--------------------------------------------------------
+## ---- include = FALSE----------------------------------------------------------------------
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = FALSE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -52,11 +53,20 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## ----------------------------------------------------------------------------
-# read the processed data
-data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+## ------------------------------------------------------------------------------------------
+# load library
+library(ontodive)
 
-## ----------------------------------------------------------------------------
+# load data
+data_nes <- get_data("nes")
+
+# rbind the list
+data_2018 <- rbindlist(data_nes$year_2018)
+
+# filter data
+data_2018_filter <- data_2018[dduration < 3000, ]
+
+## ------------------------------------------------------------------------------------------
 # calulate the median of driftrate for each day
 median_driftrate <- data_2018_filter[divetype == "2: drift",
   .(driftrate = quantile(driftrate, 0.5)),
@@ -67,7 +77,7 @@ median_driftrate <- data_2018_filter[divetype == "2: drift",
 median_driftrate[sample(.N, 10), ] %>%
   sable(caption = "Median of daily drift rate by seals (10 random rows)")
 
-## ----fig.cap="Evolution of daily median drift rate across time for each seals"----
+## ----fig.cap="Evolution of daily median drift rate across time for each seals"-------------
 # display the result
 ggplot(
   median_driftrate,

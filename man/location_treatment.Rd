@@ -17,8 +17,8 @@ location_treatment(
 \item{data}{Dataset of observation, usually the file \*Argos.csv or
 \*Location.csv files}
 
-\item{model}{Choose to fit either a simple random walk (\code{rw}) or correlated
-random walk (\code{crw}) as a continuous-time process model}
+\item{model}{Choose to fit either a simple random walk (\code{"rw"}) or correlated
+random walk (\code{"crw"}) as a continuous-time process model}
 
 \item{time.step}{options: 1) the regular time interval, in hours, to predict
 to; 2) a vector of prediction times, possibly not regular, must be specified as a data.frame with id and POSIXt dates; 3) NA - turns off prediction and locations are only estimated at observation times.}
@@ -33,23 +33,23 @@ to; 2) a vector of prediction times, possibly not regular, must be specified as 
 A dataset with the new location data
 }
 \description{
-Using \code{fit_ssm} function from \code{foieGras} package, this function "clean" the
+Using \code{fit_ssm} function from \code{aniMotum} package, this function "clean" the
 location data to be used for further analysis at the dive scale.
 }
 \examples{
 # load library
-library(foieGras)
+library(aniMotum)
 library(data.table)
 
-# run this function on sese1 dataset included in foieGras package
-output <- location_treatment(copy(sese1), with_plot = TRUE)
+# run this function on sese dataset included in aniMotum package
+output <- location_treatment(copy(sese), with_plot = TRUE)
 
 }
 \references{
-run_foieGras_generic.R (\email{tkeates@ucsc.edu})
+run_aniMotum_generic.R (\email{tkeates@ucsc.edu})
 
-\href{https://ianjonsen.github.io/foieGras/}{https://ianjonsen.github.io/foieGras/}
+\href{https://ianjonsen.github.io/aniMotum/}{https://ianjonsen.github.io/aniMotum/}
 }
 \seealso{
-\code{\link[foieGras]{fit_ssm}}
+\code{\link[aniMotum]{fit_ssm}}
 }

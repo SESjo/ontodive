@@ -26,6 +26,8 @@ gt_plt_bar_stack_extra(
 \item{position}{An string indicator passed to ggplot2 indicating if the bar should be a percent of total \code{fill} or stacked as the raw values \code{stack}.}
 
 \item{width}{An integer representing the width of the bar chart in pixels.}
+
+\item{fmt_fn}{A specific function from \code{⁠scales::lab_xxx}⁠ family. Defaults to \code{scales::label_number}}
 }
 \value{
 An object of class gt_tbl.
@@ -43,6 +45,7 @@ with \code{position = 'stack'}. Note that the labels can be controlled via
 the \code{fmt_fn} argument and the \code{⁠scales::lab_xxx} family of function.
 }
 \examples{
+\dontrun{
 # load library
 library(gt)
 library(dplyr)
@@ -70,6 +73,7 @@ ex_df \%>\%
   summarise(list_data = list(data)) \%>\%
   gt() \%>\%
   gt_plt_bar_stack_extra(column = list_data)
+}
 
 }
 \references{

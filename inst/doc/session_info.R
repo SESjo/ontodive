@@ -1,11 +1,14 @@
-## ---- include = FALSE-------------------------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------------------
 knitr::opts_chunk$set(
-  cache = TRUE,
+  cache = FALSE,
   collapse = TRUE,
   comment = "#>"
 )
 
-## ----include=TRUE, echo=TRUE------------------------------------------------------------
-library(weanlingNES)
+## ----include=TRUE, echo=TRUE--------------------------------------------------------------
+# load package
+library(ontodive)
+
+# print info session
 sessionInfo()
 

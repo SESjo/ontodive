@@ -26,7 +26,7 @@ vignette: >
 ```{r, include = FALSE}
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
-  cache = TRUE,
+  cache = FALSE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -79,11 +79,20 @@ sable <- function(x, escape = T, ...) {
 }
 ```
 
-Here, the first thing to do is to retrieve the data processed at the end of `vignette("data_exploration_2018")`.
+Let's first import the data.
 
 ```{r}
-# read the processed data
-data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+# load library
+library(ontodive)
+
+# load data
+data_nes <- get_data("nes")
+
+# rbind the list
+data_2018 <- rbindlist(data_nes$year_2018)
+
+# filter data
+data_2018_filter <- data_2018[dduration < 3000, ]
 ```
 
 ## Daily median drift rate calculation
