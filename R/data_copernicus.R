@@ -1,6 +1,6 @@
-#' @title Oceanographic information from North East Pacific
+#' @title Oceanographic information from North East Pacific and Southern Ocean
 #'
-#' @description This data where retrieve from
+#' @description This dataset was retrieved from
 #' \href{https://resources.marine.copernicus.eu/}{Copernicus} using the product
 #' \strong{GLOBAL_MULTIYEAR_PHY_001_030} and the dataset
 #' \strong{cmems_mod_glo_phy_my_0.083_P1D-m}.

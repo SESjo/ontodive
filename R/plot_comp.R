@@ -1,8 +1,8 @@
 #' @title Plot the evolution of a diving parameter accross time between two populations
 #'
-#' @description This function approximate the relationship between the considered diving
-#' behavior and time in order to better represent this evolution with a smooth
-#' curve, rather than scatterplot
+#' @description This function approximates the relationship between the
+#' considered diving behavior and time in order to better represent this
+#' evolution by a smooth curve, rather than by a scatterplot.
 #'
 #' @details This function fits a GAM with the species as a grouping factor and a random
 #' effect (intercept + slope) on the individual (\emph{i.e.} diving parameter ~
@@ -54,9 +54,8 @@
 #' @examples
 #' \dontrun{
 #' # load data
-#'
-#' data("data_nes")
-#' data("data_ses")
+#' data_nes <- get_data("nes")
+#' data_ses <- get_data("ses")
 #'
 #' # combine
 #' data_comp <- rbind(
@@ -100,7 +99,7 @@ plot_comp <- function(data,
     NULL
 
   # checks if data is a data.table, otherwise convert it
-  if (!weanlingNES::check_dt(data)) {
+  if (!ontodive::check_dt(data)) {
     # convert
     setDT(data)
   }
@@ -121,12 +120,14 @@ plot_comp <- function(data,
   }
 
   # make sure the parameter can be associated with columns in data
-  if (!all(c(diving_parameter,
-             group_to_compare,
-             time,
-             id,
-             rows,
-             cols) %in% colnames(data))) {
+  if (!all(c(
+    diving_parameter,
+    group_to_compare,
+    time,
+    id,
+    rows,
+    cols
+  ) %in% colnames(data))) {
     stop(
       paste0(
         "Please make sure the parameters you've entered correspond to ",
@@ -140,7 +141,7 @@ plot_comp <- function(data,
   # keep only the relevant columns
   col_to_keep <-
     c(group_to_compare, time, id, diving_parameter, rows, cols)
-  data <- data[, ..col_to_keep]
+  data <- data[, col_to_keep, with = FALSE]
 
   # rename colnames to match the rest of the function
   names(data)[names(data) == group_to_compare] <- "group_to_compare"
@@ -209,12 +210,14 @@ plot_comp <- function(data,
       # default "GCV.Cp" was faster but didn't make sense for some specific case
       # group_to_compare "maxdepth", diving_parameter "maxdepth", cols "sp"
       # https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-%22REML%22-rather-than-%22GCV.Cp%22%3F
-      method=method
+      method = method
     )
 
     # new dataset generation for individual level (column time, id)
-    ind_pred_inter <- expand.grid(time = 0:nb_days,
-                                  id = unique(data$id))
+    ind_pred_inter <- expand.grid(
+      time = 0:nb_days,
+      id = unique(data$id)
+    )
 
     # add group_to_compare column
     ind_pred <-
@@ -224,13 +227,14 @@ plot_comp <- function(data,
       # convert as data.table
       setDT(.) %>%
       # sort by group_to_compare, time and id
-      .[order(group_to_compare, time, id),] %>%
+      .[order(group_to_compare, time, id), ] %>%
       # add individual prediction
       .[, fit_ind := predict.gam(mdl_tot,
-                                 .SD,
-                                 type = "response")] %>%
+        .SD,
+        type = "response"
+      )] %>%
       # sort by group_to_compare, time and id
-      .[order(group_to_compare, time, id),] %>%
+      .[order(group_to_compare, time, id), ] %>%
       # trick to avoid calling twice this object in the console for display
       .[]
 
@@ -244,22 +248,27 @@ plot_comp <- function(data,
       )
     ) %>%
       # sort by group_to_compare, time and id
-      .[order(group_to_compare, time, id),] %>%
+      .[order(group_to_compare, time, id), ] %>%
       # retrieve population prediction
       .[, fit_pop := predict.gam(mdl_tot,
-                                 # select the first individual by group_to_compare
-                                 ind_pred[, .SD[id == first(id)], by=group_to_compare],
-                                 type = "response",
-                                 exclude = c("s(id)",
-                                             "s(time,id)"))] %>%
+        # select the first individual by group_to_compare
+        ind_pred[, .SD[id == first(id)], by = group_to_compare],
+        type = "response",
+        exclude = c(
+          "s(id)",
+          "s(time,id)"
+        )
+      )] %>%
       # add standard error at the population level
       .[, fit_pop_se := predict.gam(
         mdl_tot,
         # select the first individual by group_to_compare
-        ind_pred[, .SD[id == first(id)], by=group_to_compare],
+        ind_pred[, .SD[id == first(id)], by = group_to_compare],
         type = "response",
-        exclude = c("s(time,id)",
-                    "s(id)"),
+        exclude = c(
+          "s(time,id)",
+          "s(id)"
+        ),
         se.fit = T
       )$se.fit] %>%
       # trick to avoid calling twice this object in the console for display
@@ -304,7 +313,7 @@ plot_comp <- function(data,
       # add individuals points
       geom_point(
         aes(x = time, y = diving_parameter, colour = group_to_compare),
-        data = data[time <= nb_days,],
+        data = data[time <= nb_days, ],
         alpha = alpha_point,
         # to make sure having a point without border
         # https://stackoverflow.com/questions/34398418/geom-point-borders-in-ggplot2-2-0-0
@@ -343,7 +352,7 @@ plot_comp <- function(data,
   }
 
   # if individual
-  if (individual){
+  if (individual) {
     p1 <- p1 +
       # add individuals lines
       geom_line(
@@ -359,7 +368,7 @@ plot_comp <- function(data,
   }
 
   # if populational
-  if (populational){
+  if (populational) {
     p1 <- p1 +
       # add populational line
       geom_line(
@@ -379,14 +388,16 @@ plot_comp <- function(data,
     scale_color_manual(values = colours) +
     # use "vars(get())" to setup facet since "facet_grid" needs characters or colnames
     facet_grid2(
-      rows = if (is.null(rows))
+      rows = if (is.null(rows)) {
         NULL
-      else
-        vars(get(rows)),
-      cols = if (is.null(cols))
+      } else {
+        vars(get(rows))
+      },
+      cols = if (is.null(cols)) {
         NULL
-      else
-        vars(get(cols)),
+      } else {
+        vars(get(cols))
+      },
       scales = scales,
       # Horizontal strips
       strip = strip_themed(
@@ -395,10 +406,11 @@ plot_comp <- function(data,
     )
 
   # if we want to export the data from the model
-  if (export_data_model)
+  if (export_data_model) {
     # return
     return(list(p1, list(pop_pred, ind_pred)))
-  else
+  } else {
     # return
     return(p1)
+  }
 }

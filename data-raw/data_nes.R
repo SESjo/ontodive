@@ -9,7 +9,7 @@ library(lubridate)
 library(magrittr)
 library(geosphere)
 library(here)
-library(weanlingNES)
+library(ontodive)
 library(marmap)
 
 # set the maximum number of threads
@@ -194,10 +194,10 @@ gps_2018 <- lapply(gps_2018, function(x) {
 })
 
 # import the already pre-treated ncdf to add temp, ssh, psu and vel
-data("data_cop", package = "weanlingNES")
+data("data_cop", package = "ontodive")
 
 # keep northern data
-data_cop$southern = NULL
+data_cop$southern <- NULL
 
 # clear memory
 gc()
@@ -219,7 +219,7 @@ data_2018 <- lapply(data_2018, function(x) {
   # check if 2018-ind is also in gps_2018
   if (!is.null(gps_2018[[.n()]])) {
     # let's merge with gps_2018
-    x <- gps_2018[[weanlingNES:::.n()]] %>%
+    x <- gps_2018[[ontodive:::.n()]] %>%
       .[, c(
         "date",
         "mostlikelylatitude",

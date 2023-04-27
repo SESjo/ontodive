@@ -17,7 +17,7 @@
 #' @param labels A vector of strings of length 2 or 3, representing the labels for the bar chart, will be colored according to the palette as well.
 #' @param position An string indicator passed to ggplot2 indicating if the bar should be a percent of total \code{fill} or stacked as the raw values \code{stack}.
 #' @param width An integer representing the width of the bar chart in pixels.
-#' @param fmt_fn A specific function from \code{⁠scales::lab_xxx}⁠ family. Defaults to \code{scales::label_number()
+#' @param fmt_fn A specific function from \code{⁠scales::lab_xxx}⁠ family. Defaults to \code{scales::label_number}
 #'
 #' @return An object of class gt_tbl.
 #'
@@ -35,6 +35,7 @@
 #' @importFrom gtExtras gt_index
 #'
 #' @examples
+#' \dontrun{
 #' # load library
 #' library(gt)
 #' library(dplyr)
@@ -62,36 +63,37 @@
 #'   summarise(list_data = list(data)) %>%
 #'   gt() %>%
 #'   gt_plt_bar_stack_extra(column = list_data)
+#' }
 #'
 gt_plt_bar_stack_extra <- function(gt_object,
                                    column = NULL,
-                                   palette = c("#ff4343", "#bfbfbf",
-                                               "#0a1c2b", "#e1be6a"),
+                                   palette = c(
+                                     "#ff4343", "#bfbfbf",
+                                     "#0a1c2b", "#e1be6a"
+                                   ),
                                    labels = c("Group 1", "Group 2", "Group 3", "Group 4"),
                                    position = "fill",
                                    width = 70,
-                                   fmt_fn = label_number(scale_cut = cut_short_scale(),
-                                                         trim = TRUE)) {
+                                   fmt_fn = label_number(
+                                     scale_cut = cut_short_scale(),
+                                     trim = TRUE
+                                   )) {
   # to avoid warnings when checking the package
   # https://www.r-bloggers.com/2019/08/no-visible-binding-for-global-variable/
   . <-
     NULL
 
   stopifnot(`Table must be of class 'gt_tbl'` = "gt_tbl" %in%
-              class(gt_object))
+    class(gt_object))
   stopifnot(`There must be 2 to 4 labels` = (length(labels) %in%
-                                               c(2:4)))
+    c(2:4)))
   stopifnot(`There must be 2 to 4 colors in the palette` = (length(palette) %in%
-                                                              c(2:4)))
+    c(2:4)))
   stopifnot(`\`position\` must be one of 'stack' or 'fill'` = (position %in%
-                                                                 c("stack", "fill")))
+    c("stack", "fill")))
   var_sym <- enquo(column)
   var_bare <- as_label(var_sym)
-  all_vals <- gt_index(gt_object, {
-    {
-      column
-    }
-  }) %>%
+  all_vals <- gt_index(gt_object, {{ column }}) %>%
     lapply(X = ., FUN = sum, na.rm = TRUE) %>%
     unlist()
   if (length(all_vals) == 0) {
@@ -100,11 +102,7 @@ gt_plt_bar_stack_extra <- function(gt_object,
   total_rng <- max(all_vals, na.rm = TRUE)
   tab_out <- text_transform(
     gt_object,
-    locations = cells_body({
-      {
-        column
-      }
-    }),
+    locations = cells_body({{ column }}),
     fn = function(x) {
       bar_fx <- function(x_val) {
         if (x_val %in% c("NA", "NULL")) {
@@ -116,15 +114,17 @@ gt_plt_bar_stack_extra <- function(gt_object,
           as.double()
         n_val <- length(vals)
         stopifnot(`There must be 2 to 4 values` = (n_val %in%
-                                                     c(2:4)))
+          c(2:4)))
         col_fill <- if (n_val == 2) {
           c(1, 2)
         } else {
           c(1:n_val)
         }
-        df_in <- tibble(x = vals,
-                        y = rep(1, n_val),
-                        fill = col_pal[col_fill])
+        df_in <- tibble(
+          x = vals,
+          y = rep(1, n_val),
+          fill = col_pal[col_fill]
+        )
         plot_out <-
           df_in %>% ggplot(aes(
             x = .data$x,
@@ -132,9 +132,11 @@ gt_plt_bar_stack_extra <- function(gt_object,
             fill = I(.data$fill),
             group = .data$y
           )) +
-          geom_col(position = position,
-                   color = "white",
-                   size = 1) +
+          geom_col(
+            position = position,
+            color = "white",
+            size = 1
+          ) +
           geom_text(
             aes(label = fmt_fn(x)),
             hjust = 0.5,
@@ -142,7 +144,7 @@ gt_plt_bar_stack_extra <- function(gt_object,
             family = "sans",
             fontface = "bold",
             position = if (position ==
-                           "fill") {
+              "fill") {
               position_fill(vjust = 0.5)
             } else if (position == "stack") {
               position_stack(vjust = 0.5)
@@ -150,7 +152,7 @@ gt_plt_bar_stack_extra <- function(gt_object,
             color = "white"
           ) +
           scale_x_continuous(expand = if (position ==
-                                          "stack") {
+            "stack") {
             expansion(mult = c(0, 0.1))
           } else {
             c(0, 0)
@@ -162,8 +164,10 @@ gt_plt_bar_stack_extra <- function(gt_object,
           scale_y_discrete(expand = c(0, 0)) +
           coord_cartesian(clip = "off") +
           theme_void() +
-          theme(legend.position = "none",
-                plot.margin = margin(0, 0, 0, 0, "pt"))
+          theme(
+            legend.position = "none",
+            plot.margin = margin(0, 0, 0, 0, "pt")
+          )
         out_name <- file.path(tempfile(
           pattern = "file",
           tmpdir = tempdir(),
@@ -235,8 +239,10 @@ gt_plt_bar_stack_extra <- function(gt_object,
     ) %>%
       html()
   }
-  tab_out <- gt:::dt_boxhead_edit_column_label(data = tab_out,
-                                               var = var_bare,
-                                               column_label = label_built)
+  tab_out <- gt:::dt_boxhead_edit_column_label(
+    data = tab_out,
+    var = var_bare,
+    column_label = label_built
+  )
   suppressWarnings(tab_out)
 }

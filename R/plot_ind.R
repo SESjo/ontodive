@@ -3,16 +3,22 @@
 #' @description This function displays several key information regarding a seal.
 #'
 #' @details
-#' * A map of the seal's trip at sea with a color code based on the number of days since departure
-#' * The max depth reached for each dives across time
-#' * The evolution of their daily median drift rate across time
-#' * the evolution of their ADL across time
+#' \enumerate{
+#' \item A map of the seal's trip at sea with a color code based on the number of days since departure
+#' \item The max depth reached for each dives across time
+#' \item The evolution of their daily median drift rate across time
+#' \item The evolution of their ADL across time
+#' }
 #'
-#' @param data_seal A dataset containing information dive information on one animal (maxdepth, lat, lon, date, driftrate)
+#'
+#'
+#'
+#'
+#' @param data_seal A table containing information about an animal's diving behavior (maxdepth, lat, lon, date, driftrate)
 #' @param col_text The color of the text
 #' @param col_back The color of the background
 #'
-#' @return A ggplot object which contains all figures
+#' @return A ggplot object which contains four figures
 #'
 #' @export
 #'
@@ -25,17 +31,19 @@
 #' @import ggspatial
 #' @import patchwork
 #' @import cli
+#' @importFrom utils askYesNo
+#' @importFrom utils install.packages
+#' @importFrom stats quantile
 #'
 #' @examples
 #' \dontrun{
 #' # load data
-#' data("data_nes")
+#' data_nes <- get_data("nes")
 #'
 #' # plot result
 #' plot_ind(data_nes$year_2018$ind_2018070)
 #' }
 #'
-
 plot_ind <- function(data_seal,
                      col_text = "black",
                      col_back = "transparent") {
@@ -68,7 +76,7 @@ plot_ind <- function(data_seal,
   options(warn = -1)
 
   # install ggOceanMapsData if not install
-  if (suppressMessages(!require(ggOceanMapsData))){
+  if (suppressMessages(!require(ggOceanMapsData))) {
     # message
     cli_h1("Package Requirement Check")
     # set up color for emph
@@ -76,15 +84,17 @@ plot_ind <- function(data_seal,
     # question
     cli_alert_danger("{.emph ggOceanMapsData} package cannot be found. Would you like to install it?")
     # if answer is yes
-    if (isTRUE(askYesNo("",prompts = getOption("askYesNo", gettext(c("Y", "n", "c")))))){
+    if (isTRUE(askYesNo("", prompts = getOption("askYesNo", gettext(c("Y", "n", "c")))))) {
       # then install package
       install.packages(
         "ggOceanMapsData",
-        repos = c("https://mikkovihtakari.github.io/drat",
-                  "https://cloud.r-project.org")
+        repos = c(
+          "https://mikkovihtakari.github.io/drat",
+          "https://cloud.r-project.org"
+        )
       )
       # and if loading package was successfull
-      if (suppressMessages(require(ggOceanMapsData))){
+      if (suppressMessages(require(ggOceanMapsData))) {
         # display successful message
         cli_alert_success("{.emph ggOceanMapsData} has been installed!")
       } else {
@@ -146,13 +156,17 @@ plot_ind <- function(data_seal,
   }
 
   # color palette creation
-  colPal <- col_numeric(palette = "RdYlGn",
-                        domain = data_seal[!is.na(lat), day_departure])
+  colPal <- col_numeric(
+    palette = "RdYlGn",
+    domain = data_seal[!is.na(lat), day_departure]
+  )
 
   # plot the trip at sea
   if (data_seal[, unique(sp)] == "nes") {
-    trip <- basemap(limits = c(-165, -120, 35, 59),
-                    bathymetry = TRUE) +
+    trip <- basemap(
+      limits = c(-165, -120, 35, 59),
+      bathymetry = TRUE
+    ) +
       geom_path(
         data = data_seal[!is.na(lat), ],
         aes(x = lon, y = lat),
@@ -163,7 +177,7 @@ plot_ind <- function(data_seal,
       annotation_north_arrow(location = "tr", which_north = "true") +
       theme_plot_ind()
     # set the number of dives to have a complete day
-    nb_dives_to_complete_day = 50
+    nb_dives_to_complete_day <- 50
   } else {
     trip <-
       basemap(
@@ -183,7 +197,7 @@ plot_ind <- function(data_seal,
       annotation_north_arrow(location = "tr", which_north = "true") +
       theme_plot_ind()
     # set the number of dives to have a complete day
-    nb_dives_to_complete_day = 8
+    nb_dives_to_complete_day <- 8
   }
 
   # download a map world
@@ -201,11 +215,12 @@ plot_ind <- function(data_seal,
     scale_y_continuous(breaks = (-2:2) * 30) +
     scale_x_continuous(breaks = (-4:4) * 45) +
     coord_map("ortho",
-              orientation = c(
-                ifelse(data_seal[, unique(sp)] == "nes", 31,-30),
-                ifelse(data_seal[, unique(sp)] == "nes", -120, 70),
-                0
-              )) +
+      orientation = c(
+        ifelse(data_seal[, unique(sp)] == "nes", 31, -30),
+        ifelse(data_seal[, unique(sp)] == "nes", -120, 70),
+        0
+      )
+    ) +
     geom_rect(
       data = data.frame(),
       aes(
@@ -224,8 +239,10 @@ plot_ind <- function(data_seal,
       axis.ticks = element_blank(),
       axis.line = element_blank(),
       panel.border = col_back,
-      plot.background = element_rect(fill = "transparent",
-                                     color = NA),
+      plot.background = element_rect(
+        fill = "transparent",
+        color = NA
+      ),
       panel.background = element_rect(fill = "transparent")
     )
 
@@ -257,7 +274,8 @@ plot_ind <- function(data_seal,
   # add the map world on the trip plot
   main_plot <- trip +
     inset_element(worldmap_inter,
-                  left = -0.05, bottom = 0, right = 0.2, top = 0.2)
+      left = -0.05, bottom = 0, right = 0.2, top = 0.2
+    )
 
   # # add the map world on the trip plot
   # main_plot <- cowplot::ggdraw(trip) +
@@ -272,19 +290,22 @@ plot_ind <- function(data_seal,
 
   # select day that have at least 50 dives
   days_to_keep <- data_seal[, .(nb_dives = .N),
-                            by = .(.id, day_departure)] %>%
+    by = .(.id, day_departure)
+  ] %>%
     .[nb_dives >= nb_dives_to_complete_day, ]
 
   # keep only those days
   data_seal_complete_day <- merge(data_seal,
-                                  days_to_keep,
-                                  by = c(".id", "day_departure"))
+    days_to_keep,
+    by = c(".id", "day_departure")
+  )
 
   # maxdepth
   dataPlot_1 <- melt(
     data_seal_complete_day[, .(date,
-                               "Maximum Depth (m)" = maxdepth,
-                               day_departure)],
+      "Maximum Depth (m)" = maxdepth,
+      day_departure
+    )],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Maximum Depth (m)")
   )
@@ -296,7 +317,8 @@ plot_ind <- function(data_seal,
       "Daily Drift Rate (m/s)" = median(driftrate, na.rm = T),
       day_departure = first(day_departure)
     ),
-    by = as.Date(date)],
+    by = as.Date(date)
+    ],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Daily Drift Rate (m/s)")
   )
@@ -304,13 +326,14 @@ plot_ind <- function(data_seal,
   # bADL
   dataPlot_3 <- melt(
     data_seal_complete_day[divetype == "1: foraging",
-                           .(
-                             date = first(date),
-                             "Behavioral ADL (min)" = round(quantile(dduration, 0.95) /
-                                                              60),
-                             day_departure = first(day_departure)
-                           ),
-                           by = as.Date(date)],
+      .(
+        date = first(date),
+        "Behavioral ADL (min)" = round(quantile(dduration, 0.95) /
+          60),
+        day_departure = first(day_departure)
+      ),
+      by = as.Date(date)
+    ],
     id.vars = c("date", "day_departure"),
     measure.vars = c("Behavioral ADL (min)")
   )
@@ -322,8 +345,10 @@ plot_ind <- function(data_seal,
   plot_1 <- ggplot() +
     geom_point(
       data = dataPlot_1,
-      aes(x = as.Date(date),
-          y = value),
+      aes(
+        x = as.Date(date),
+        y = value
+      ),
       col = dataPlot_1[, colPal(day_departure)],
       alpha = fifelse(data_seal[, unique(sp)] == "nes", 0.2, 0.6),
       size = .5,
@@ -332,8 +357,10 @@ plot_ind <- function(data_seal,
     scale_x_date(date_labels = "%m/%Y") +
     scale_y_reverse() +
     labs(x = "Date", y = "") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "Top") +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "Top"
+    ) +
     facet_grid(variable ~ ., scales = "free") +
     theme_bw() +
     theme_plot_ind() +
@@ -345,8 +372,10 @@ plot_ind <- function(data_seal,
   plot_2 <- ggplot() +
     geom_point(
       data = dataPlot_2,
-      aes(x = as.Date(date),
-          y = value),
+      aes(
+        x = as.Date(date),
+        y = value
+      ),
       col = dataPlot_2[, colPal(day_departure)],
       size = 1,
       show.legend = TRUE
@@ -359,8 +388,10 @@ plot_ind <- function(data_seal,
     ) +
     scale_x_date(date_labels = "%m/%Y") +
     labs(x = "Date", y = "") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "Top") +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      legend.position = "Top"
+    ) +
     facet_grid(variable ~ ., scales = "free") +
     theme_bw() +
     theme_plot_ind() +
@@ -373,15 +404,21 @@ plot_ind <- function(data_seal,
   plot_3 <- ggplot() +
     geom_point(
       data = dataPlot_3,
-      aes(x = as.Date(date),
-          y = value),
+      aes(
+        x = as.Date(date),
+        y = value
+      ),
       col = dataPlot_3[, colPal(day_departure)],
       size = 1,
       show.legend = FALSE
     ) +
-    geom_smooth(data = dataPlot_3,
-                aes(x = as.Date(date),
-                    y = value)) +
+    geom_smooth(
+      data = dataPlot_3,
+      aes(
+        x = as.Date(date),
+        y = value
+      )
+    ) +
     scale_x_date(date_labels = "%m/%Y") +
     labs(x = "Date", y = "") +
     theme_bw() +
@@ -391,7 +428,11 @@ plot_ind <- function(data_seal,
   # summary table
   table_1 <- transpose(data_seal[, .(
     "Nb of days recorded" = uniqueN(as.Date(date)),
-    "Duty cycle" = if(data_seal[,unique(sp)=="nes"]) "All dives" else {"1 dive every ~2.25 hr"},
+    "Duty cycle" = if (data_seal[, unique(sp) == "nes"]) {
+      "All dives"
+    } else {
+      "1 dive every ~2.25 hr"
+    },
     "Nb of dives recorded" = .N,
     "Median Max Depth (m)" = round(quantile(maxdepth, 0.5), 1),
     "Median Dive Duration (min)" = round(quantile(dduration, 0.5) / 60, 1),
@@ -399,17 +440,20 @@ plot_ind <- function(data_seal,
   ), by = .("Seal ID" = .id)], keep.names = " ", make.names = 1)
   table_1 <-
     ggtexttable(table_1,
-                rows = NULL,
-                theme = ttheme(colnames.style = colnames_style(fill = "white"))) %>%
-    tab_add_hline(at.row = c(1, nrow(table_1) + 1),
-                  row.side = c("bottom"))
+      rows = NULL,
+      theme = ttheme(colnames.style = colnames_style(fill = "white"))
+    ) %>%
+    tab_add_hline(
+      at.row = c(1, nrow(table_1) + 1),
+      row.side = c("bottom")
+    )
 
   # set warning status the way it was
   options(warn = oldw)
 
   # final plot
-  final_plot = table_1 / main_plot / plot_1 / plot_2 / plot_3 +
-    plot_layout(heights = c(1,2,1,1,1))
+  final_plot <- table_1 / main_plot / plot_1 / plot_2 / plot_3 +
+    plot_layout(heights = c(1, 2, 1, 1, 1))
 
   # return
   return(final_plot)
