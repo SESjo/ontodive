@@ -7,13 +7,25 @@
 plot_comp(
   data,
   diving_parameter = NULL,
-  sp = "sp",
+  group_to_compare = "sp",
   time = "day_departure",
   id = ".id",
   nb_days = 100,
   bs = "cs",
   k = 6,
-  alpha_point = 0.01
+  alpha_point = 0.01,
+  alpha_ribbon = 0.4,
+  linetype_ribbon = 2,
+  colours = NULL,
+  ribbon = TRUE,
+  point = TRUE,
+  individual = TRUE,
+  populational = TRUE,
+  rows = NULL,
+  cols = NULL,
+  scales = "fixed",
+  method = "REML",
+  export_data_model = FALSE
 )
 }
 \arguments{
@@ -21,7 +33,7 @@ plot_comp(
 
 \item{diving_parameter}{The colname associated with the diving parameter to represent}
 
-\item{sp}{The colname associated with species}
+\item{group_to_compare}{The colname associated with the groups to compare}
 
 \item{time}{The colname associated with time}
 
@@ -34,18 +46,42 @@ plot_comp(
 \item{k}{The dimension of the basis used to represent the smooth term}
 
 \item{alpha_point}{The transparency of the point}
+
+\item{alpha_ribbon}{The transparency of the ribbon}
+
+\item{linetype_ribbon}{Line type for ribbon border}
+
+\item{colours}{The colours to use}
+
+\item{ribbon}{Should confidence interval be added}
+
+\item{point}{Should the points be displayed}
+
+\item{individual}{Should individuals curves be displayed}
+
+\item{populational}{Should populational curve be displayed}
+
+\item{rows}{The colname used for a facet in row}
+
+\item{cols}{The colname used for a facet in column}
+
+\item{scales}{Are scales shared across all facets (the default, "fixed")}
+
+\item{method}{The smoothing parameter estimation method for the GAM (default \code{REML})}
+
+\item{export_data_model}{Boolean to export the data of the underlying model}
 }
 \value{
 Return a ggplot
 }
 \description{
-This function approximate the relationship between the considered diving
-behavior and time in order to better represent this evolution with a smooth
-curve, rather than scatterplot
+This function approximates the relationship between the
+considered diving behavior and time in order to better represent this
+evolution by a smooth curve, rather than by a scatterplot.
 }
 \details{
 This function fits a GAM with the species as a grouping factor and a random
-effect (intercept + slope) on the individual (*i.e.* diving parameter ~
+effect (intercept + slope) on the individual (\emph{i.e.} diving parameter ~
 species + s(time) + (1 time | individual). This allows to represent a curve
 for each species, but also to access to the curve associated with each
 individual.
@@ -53,15 +89,13 @@ individual.
 \examples{
 \dontrun{
 # load data
-data("data_nes")
-data("data_ses")
+data_nes <- get_data("nes")
+data_ses <- get_data("ses")
 
 # combine
 data_comp <- rbind(
-  rbindlist(data_nes$year_2018) \%>\%
-    .[, sp := "nes"],
-  rbindlist(data_ses$year_2014) \%>\%
-    .[, sp := "ses"],
+  rbindlist(data_nes$year_2018),
+  rbindlist(data_ses$year_2014),
   use.names = T,
   fill = T
 )
@@ -73,6 +107,8 @@ plot_comp(data_comp, "maxdepth")
 }
 \references{
 \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
+
+\url{https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-\%22REML\%22-rather-than-\%22GCV.Cp\%22\%3F}
 
 James Grecian. (2022). jamesgrecian/harpPup: v1.0 (v1.0). Zenodo. \href{https://doi.org/10.5281/zenodo.5901391}{https://doi.org/10.5281/zenodo.5901391}
 }

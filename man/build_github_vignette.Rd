@@ -4,30 +4,37 @@
 \alias{build_github_vignette}
 \title{Build Vignettes for Github}
 \usage{
-build_github_vignette(article = NULL, website = NULL, vignette = NULL)
+build_github_vignette(
+  article = NULL,
+  website = NULL,
+  vignette = NULL,
+  clean = FALSE
+)
 }
 \arguments{
-\item{article}{The name or the path to the .Rmd file to be compiled}
+\item{article}{The name or the path to the \code{.Rmd} file to be compiled}
 
 \item{website}{A boolean to compile the website associated with the article}
 
 \item{vignette}{A boolean to compile the vignette associated with the article}
+
+\item{clean}{Logical to remove cache and temporary files}
 }
 \value{
-A `\\docs` folder containing the website and a `inst\\doc` folder containing the vignette
+A \code{\\docs} folder containing the website and a \code{inst\\doc} folder containing the vignette
 }
 \description{
-function aims at processing vignette (building, organizing)
+This function aims at processing vignette (building, organizing)
 before pushing on Github so that user can download a package with
 pre-compiled vignette. Using the website argument allow to build the
 associated website.
 }
 \details{
 To make sure pre-compiled vignette are enclosed within the package
-downloaded from Github, vignette are (i) compiled with tools::buildVignettes,
-(ii) then copy-paste to `inst\\doc`. To build the website, this function
-first converts README.Rmd file to README.md file, and then calls
-pkgdown::build_site() since this function only take into account *.md.
+downloaded from Github, vignette are (\emph{i}) compiled with \code{tools::buildVignettes},
+(\emph{ii}) then copy-paste to \code{inst\\doc}. To build the website, this function
+first converts \code{README.Rmd} file to \code{README.md} file, and then calls
+\code{pkgdown::build_site()} since this function only take into account \code{*.md}.
 }
 \examples{
 \dontrun{

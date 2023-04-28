@@ -15,62 +15,39 @@ knitr::opts_chunk$set(
 ```
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-# weanlingNES  <img src="man/figures/logo.png" align="right" alt="" width="120"/>
+# ontodive <img src="man/figures/logo.png" align="right" width="120"/>
 
-The goal of weanlingNES is to provide in the same place analyses and functions developed within the framework of my postdoc on the ontogeny of diving behavior in northern elephant seal ([*Mirounga angustirostris*](https://en.wikipedia.org/wiki/Northern_elephant_seal)). Hopefully, it will be helpful for those seeking to pursue this work or just trying to apply similar analysis to their field. In the near future, it should also include a bibliography and a draft of a potential paper.
-
-> `weanlingNES` package does not currently include dataset used for analyses, but might be available upon request
-
+The `ontodive` repository contains an R package of the same name that includes the analyses and functions accompanying the paper "Contrasting offspring dependence periods and diving development rates in two closely related marine mammal species" by Joffrey Jouma'a, Florian Orgeret, Baptiste Picard, Patrick W. Robinson, Henri Weimerskirch, Christophe Guinet, Daniel P. Costa, Roxanne S. Beltran.
 
 ## Installation
 
-You can install the released version of weanlingNES from [GitHub](https://github.com/) with:
+You can install the released version of `ontodive` from [GitHub](https://github.com/) with:
 
 ``` r
 if (require(devtools)) {
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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")
+  devtools::install_github(repo = "SESjo/ontodive")
 } else {
   install.packages("devtools")
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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")
+  devtools::install_github(repo = "SESjo/ontodive")
 }
 ```
 
-And the development version with:
-
-``` r
-if (require(devtools)) {
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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", 
-                           ref = "develop")
-} else {
-  install.packages("devtools")
-  devtools::install_github(repo = "SESjo/weanlingNES", 
-                           auth_token = "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", 
-                           ref = "develop")
-}
-```
-
-> Please note this package is currently not public which is why you can not access directly to it at [https://github.com/SESjo/weanlingNES](https://github.com/SESjo/weanlingNES), and that you are required to provide a [token](https://en.wikipedia.org/wiki/Access_token) when installing it. For convenience, everyone can use the same token (provided above), but keep in mind that it should not be that way :)
-
-## Examples
+## Example
 
 Once installed, you can easily access vignettes (which are supposed to be associated with a specific analysis) using these commands:
 
 ``` r
 # load the package
-library(weanlingNES)
+library(ontodive)
 
 # browse vignette
-browseVignettes("weanlingNES")
+browseVignettes("ontodive")
 ```
 
-The same way you can get information on functions, you can also get information on dataset used for analyses.
+## Languages and tools
 
-``` r
-# get information on dataset used in weanlingNES
-?data_nes
-```
+<p align="left">
+<a href="https://cran.r-project.org/" target="_blank" rel="noreferrer" class="external-link"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/r/r-original.svg" width="40" height="40"></a><a href="https://posit.co/products/open-source/rstudio/" target="_blank" rel="noreferrer" class="external-link"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/rstudio/rstudio-original.svg" alt="docker" width="40" height="40"></a></p>

@@ -4,9 +4,7 @@
 #'
 #' @param x A vector in which outliers need to be found
 #'
-#' @return A boolean vector, TRUE for outliers, FALSE when not
-#'
-#' @importFrom stats quantile
+#' @return A boolean vector, \code{TRUE} for outliers, \code{FALSE} when not
 #'
 #' @export
 #'
@@ -15,6 +13,7 @@
 #'
 #' # plot data
 #' plot(X, col = ifelse(is_outlier(X), "red", "black"))
+#'
 is_outlier <- function(x) {
   # Q1 & Q3 calculation
   q1 <- quantile(x, 0.25)

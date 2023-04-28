@@ -1,12 +1,12 @@
 #' @title Treat location data with a continuous-time state-space model
 #'
-#' @description Using `fit_ssm` function from `foieGras` package, this function "clean" the
+#' @description Using \code{fit_ssm} function from \code{aniMotum} package, this function "clean" the
 #' location data to be used for further analysis at the dive scale.
 #'
 #' @param data Dataset of observation, usually the file \*Argos.csv or
 #' \*Location.csv files
-#' @param model Choose to fit either a simple random walk ("rw") or correlated
-#' random walk ("crw") as a continuous-time process model
+#' @param model Choose to fit either a simple random walk (\code{"rw"}) or correlated
+#' random walk (\code{"crw"}) as a continuous-time process model
 #' @param time.step options: 1) the regular time interval, in hours, to predict
 #' to; 2) a vector of prediction times, possibly not regular, must be specified as a data.frame with id and POSIXt dates; 3) NA - turns off prediction and locations are only estimated at observation times.
 #' @param vmax The max travel rate (m/s) passed to sda to identify outlier locations
@@ -17,25 +17,26 @@
 #' @export
 #'
 #' @references
-#' run_foieGras_generic.R (\email{tkeates@ucsc.edu})
+#' run_aniMotum_generic.R (\email{tkeates@ucsc.edu})
 #'
-#' \href{https://ianjonsen.github.io/foieGras/}{https://ianjonsen.github.io/foieGras/}
+#' \href{https://ianjonsen.github.io/aniMotum/}{https://ianjonsen.github.io/aniMotum/}
 #'
 #' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import ggplot2
-#' @import foieGras
+#' @import aniMotum
 #' @importFrom lubridate is.POSIXt is.POSIXct is.POSIXlt
 #'
-#' @seealso \code{\link[foieGras]{fit_ssm}}
+#' @seealso \code{\link[aniMotum]{fit_ssm}}
 #'
 #' @examples
 #' # load library
-#' library(foieGras)
+#' library(aniMotum)
 #' library(data.table)
 #'
-#' # run this function on sese1 dataset included in foieGras package
-#' output <- location_treatment(copy(sese1), with_plot = TRUE)
+#' # run this function on sese dataset included in aniMotum package
+#' output <- location_treatment(copy(sese), with_plot = TRUE)
+#'
 location_treatment <- function(data,
                                model = "crw",
                                time.step = 1,
@@ -60,7 +61,7 @@ location_treatment <- function(data,
     id <-
     NULL
   # checks data is a data.table, otherwise convert it
-  if (!weanlingNES::check_dt(data)) {
+  if (!ontodive::check_dt(data)) {
     setDT(data)
   }
 
@@ -91,7 +92,8 @@ location_treatment <- function(data,
   fitc <- fit_ssm(data,
     model = model,
     time.step = time.step,
-    vmax = vmax
+    vmax = vmax,
+    control = ssm_control(verbose = 0)
   )
 
   # retrieve location data from the fit
@@ -138,7 +140,7 @@ location_treatment <- function(data,
         color = "Date",
         title = paste0("ID: ", dataPlot[1, id])
       ) +
-      weanlingNES::theme_jjo() +
+      ontodive::theme_jjo() +
       theme(legend.position = "bottom")
 
     # return

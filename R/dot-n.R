@@ -1,6 +1,6 @@
-#' @title Retrieve elements' name of a list within apply function
+#' @title Retrieve elements' name of a list within \code{apply} function
 #'
-#' @description This small function should be used within an `apply` function when retrieving the element's name is needed.
+#' @description This small function should be used within an \code{apply} function when retrieving the element's name is needed.
 #'
 #' @return The name of the element considered
 #'

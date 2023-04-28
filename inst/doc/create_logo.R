@@ -1,6 +1,7 @@
-## ----setup, include=FALSE--------------------
+## ----setup, include=FALSE------------------------------------------------------------------
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = FALSE,
   echo = TRUE,
   fig.align = "center",
   message = FALSE,
@@ -8,7 +9,7 @@ knitr::opts_chunk$set(
   # tidy = TRUE
 )
 
-## ----create-logo-1---------------------------
+## ----create-logo-1-------------------------------------------------------------------------
 # loading library
 library(hexSticker)
 library(showtext)
@@ -16,7 +17,7 @@ library(showtext)
 # automatically use showtext to render text for future devices
 showtext_auto()
 
-## ----create-logo-2, fig.cap = "Our logo!!"----
+## ----create-logo-2, fig.cap = "Our logo!!"-------------------------------------------------
 # load the right font
 font_add_google("Courier Prime")
 
@@ -24,31 +25,31 @@ font_add_google("Courier Prime")
 print(
   sticker(
     "https://i.imgur.com/QUzPuJK.png",
-    package = "weanlingNES",
+    package = "ontodive",
     p_family = "Courier Prime",
-    p_size = 28,
+    p_size = 24,
     p_y = .6,
     s_x = 1,
     s_y = 1.3,
     s_width = .8,
     h_color = "#fdc700",
     h_fill = "#003c6c",
-    url = "jjoumaa.ddns.net/weanlingNES",
+    url = "sesjo.github.io/ontodive",
     u_color = "#13a5dc",
-    u_size = 6,
+    u_size = 5,
     spotlight = T,
     asp = 0.8,
   )
 )
 
-## ----create-logo-3, eval=FALSE, include=FALSE----
+## ----create-logo-3, eval=FALSE, include=FALSE----------------------------------------------
 #  #' just as a back up to recreate the logo with the right proportion, i.e. it
 #  #' it renders differently with rmarkdown
 #  sticker(
 #    "https://i.imgur.com/QUzPuJK.png",
-#    package = "weanlingNES",
+#    package = "ontodive",
 #    p_family = "Courier Prime",
-#    p_size = 18,
+#    p_size = 17,
 #    s_x = 1,
 #    s_y = 1.3,
 #    p_y = .6,
@@ -58,7 +59,7 @@ print(
 #    spotlight = T,
 #    s_width = .8,
 #    asp = 0.8,
-#    url = "jjoumaa.ddns.net/weanlingNES",
+#    url = "sesjo.github.io/ontodive",
 #    u_color = "#13a5dc",
 #    u_size = 4
 #  )

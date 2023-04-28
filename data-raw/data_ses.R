@@ -19,7 +19,7 @@ library(here)
 library(stringr)
 library(lubridate)
 library(magrittr)
-library(weanlingNES)
+library(ontodive)
 library(matlabr)
 library(geosphere)
 library(marmap)
@@ -45,13 +45,15 @@ lapply(list.dirs(
   # data.table to store results
   if ("DSA_HauteRes" %in% files_data) {
     # import *.rds files
-    data_high <- readRDS(paste0(x,
-                                # high resolution
-                                "/DSA_HauteRes/Pup_",
-                                # seal number
-                                last(strsplit(seal_id, "_")[[1]]),
-                                # rds file
-                                ".rds"))
+    data_high <- readRDS(paste0(
+      x,
+      # high resolution
+      "/DSA_HauteRes/Pup_",
+      # seal number
+      last(strsplit(seal_id, "_")[[1]]),
+      # rds file
+      ".rds"
+    ))
     # since ~10Hz, keep only TDR data at 1Hz
     name_column_depth <- colnames(data_high)[6]
     data_high <- data_high[!is.na(get(name_column_depth))]
@@ -60,35 +62,41 @@ lapply(list.dirs(
     colnames(data_high)[6] <- "depth"
     # convert date and time
     data_high[, datetime := as.POSIXct(datetime,
-                                       format = "%m/%d/%Y %T",
-                                       tz = "GMT")]
+      format = "%m/%d/%Y %T",
+      tz = "GMT"
+    )]
     # create new columns required to run IKNOS program
     data_high[, `:=`(
-      year = year(datetime),
-      month = month(datetime),
-      day = lubridate::day(datetime),
-      hour = hour(datetime),
-      minute = minute(datetime),
-      second = second(datetime)
+      Year = year(datetime),
+      Month = month(datetime),
+      Day = lubridate::day(datetime),
+      Hour = hour(datetime),
+      Minute = minute(datetime),
+      Second = second(datetime)
     )]
     # write data as output
-    fwrite(x = data_high[, .(year, month, day, hour, minute, second, depth)],
-           file = paste0("./inst/extdata/", seal_id, ".csv"),)
+    fwrite(
+      x = data_high[, .(Year, Month, Day, Hour, Minute, Second, depth)],
+      file = paste0("./inst/extdata/", seal_id, ".csv"),
+    )
     # list file in Spot folder
     list_files_Spot_folder <- list.files(paste0(x, "/Spot"),
-                                         full.names = T,
-                                         pattern = "*.csv")
+      full.names = T,
+      pattern = "*.csv"
+    )
     # import and combine all files location data to be treated
     data_location <-
       rbindlist(lapply(list_files_Spot_folder, fread), fill = T)
-    # fit fit_ssm with foieGras
+    # fit fit_ssm with aniMotum
     data_location_output <- location_treatment(data_location)
     # rename id in deploy_id_argos
     names(data_location_output)[names(data_location_output) == "id"] <-
       "deploy_id_argos"
     # export
-    fwrite(x = data_location_output[, .(date, lon, lat)],
-           file = paste0("./inst/extdata/", seal_id, "_location.csv"),)
+    fwrite(
+      x = data_location_output[, .(date, lon, lat)],
+      file = paste0("./inst/extdata/", seal_id, "_location.csv"),
+    )
   }
 })
 
@@ -100,8 +108,9 @@ lapply(list.dirs(
 #+
 # get absolute paths to input data files (NOTE: only keeping first two for now)
 input_data <- dir("inst/extdata",
-                  pattern = "ind_[0-9]{6}.csv",
-                  full.names = TRUE) %>%
+  pattern = "ind_[0-9]{6}.csv",
+  full.names = TRUE
+) %>%
   sprintf("'%s'", .) %>%
   paste(collapse = ", ")
 
@@ -111,7 +120,10 @@ iknos_matlab_code <- glue::glue(
   addpath('inst/extdata/IKNOS/');
   names = {{{input_data}}};
   for k = 1:length(names)'
-    yt_iknos_da(names{{k}},'year month day hour minute second depth', 10, 2, 20, 'wantfile_yes','is_southern',true);
+    % based on change_format_DA2_RRH_TV4_alpha.m:
+    % 32 = 32/SamplingRate = 32/1
+    % 30 = 15/DepthRes = 15/0.5
+    yt_iknos_da_RRH(names{{k}},'Year Month Day Hour Minute Second depth', 32, 30, 20, 'wantfile_yes','is_southern',true);
   end
 "
 )
@@ -124,13 +136,15 @@ matlabr::run_matlab_code(iknos_matlab_code)
 
 # get absolute paths to input data files (NOTE: only keeping first two for now)
 input_data_divestat <- dir("inst/extdata",
-                           pattern = "ind_[0-9]{6}.*\\DiveStat.csv",
-                           full.names = TRUE) %>%
+  pattern = "ind_[0-9]{6}.*\\DiveStat.csv",
+  full.names = TRUE
+) %>%
   sort(.) %>%
   sprintf("'%s'", .)
 input_data_rawdata <- dir("inst/extdata",
-                          pattern = "ind_[0-9]{6}.*raw_data.csv",
-                          full.names = TRUE) %>%
+  pattern = "ind_[0-9]{6}.*raw_data.csv",
+  full.names = TRUE
+) %>%
   sort(.) %>%
   sprintf("'%s'", .)
 
@@ -159,14 +173,15 @@ divetype_matlab_code <- glue::glue(
     RawData_name = names_rawdata{{k}};
 
     % detect data format for import
-    RawData_params = detectImportOptions(RawData_name);
+    RawData_params = detectImportOptions(RawData_name, 'Range', [22 1]);
     DiveStat_params = detectImportOptions(DiveStat_name);
 
     % import data
     RawData=readmatrix(RawData_name,RawData_params);
     DiveStat=readmatrix(DiveStat_name,DiveStat_params);
 
-    % run dive typing
+    % run dive typing (1:8:end => to match the subsample done on northern
+    % elephant seal
     Output=pwr_DiveTyperStep1V3(RawData(1:8:end,:),DiveStat);
     DiveType=pwr_DiveTyperV3(Output);
 
@@ -244,7 +259,7 @@ col_data_2014 <- Reduce(intersect, lapply(data_2014, colnames))
 
 # keep only those common columns names
 data_2014 <- lapply(data_2014, function(x) {
-  x[, ..col_data_2014,]
+  x[, ..col_data_2014, ]
 })
 
 # test if columns name are all the same across data sets
@@ -260,8 +275,9 @@ data_2014 <- lapply(data_2014, function(x) {
 
   # time
   x[, date := as.POSIXct(paste(year, month, day, hour, min, sec),
-                         format = "%Y %m %d %H %M %S",
-                         tz = "GMT")]
+    format = "%Y %m %d %H %M %S",
+    tz = "GMT"
+  )]
 
   # convert divetype
   x[, divetype := as.character(divetype)]
@@ -293,7 +309,7 @@ data_2014 <- lapply(data_2014, function(x) {
 })
 
 # import the already pre-treated ncdf to add temp, ssh, psu and vel
-data("data_cop", package = "weanlingNES")
+data("data_cop", package = "ontodive")
 
 # keep only southern data
 data_cop$northern <- NULL
@@ -321,49 +337,70 @@ data_2014 <- lapply(data_2014, function(x) {
     # 1. add two columns with the coordinate of the first location
     x[, `:=`(lon_dep = first(lon), lat_dep = first(lat))]
     # 2. calculate the distance
-    res_inter <- distGeo(as.matrix(x[, .(lon_dep, lat_dep)]),
-                         as.matrix(x[, .(lon, lat)]))
+    res_inter <- distGeo(
+      as.matrix(x[, .(lon_dep, lat_dep)]),
+      as.matrix(x[, .(lon, lat)])
+    )
     # 3. add the result in dataset
     x[, dist_dep := res_inter]
     # 4. remove lat_dep and lon_dep column
     x[, `:=`(lat_dep = NULL, lon_dep = NULL)]
     # 5. add oceanographic date based on the nearest set of (date, lon, lat)
     x <- x[,
-           {
-             # number of row from oceanographic date to join
-             k <- 1
-             # date "xxxx-xx-xx"
-             gg <- as.Date(date)
-             # k-nearest neighbor
-             kn <-
-               nabor::knn(data_cop$southern[time == gg, .(lon = longitude,
-                                                          lat = latitude)],
-                          matrix(c(lon, lat), ncol = 2),
-                          k)
-             # keep all columns from x
-             c(.SD[rep(seq.int(.N), k)],
-               # add columns found in data_cop$southern
-               data_cop$southern[time == gg][as.vector(kn$nn.idx),
-                                             .(temp = thetao,
-                                               ssh = zos,
-                                               psu = so,
-                                               vel)])
-           },
-           by = .(date)]
+      {
+        # number of row from oceanographic date to join
+        k <- 1
+        # date "xxxx-xx-xx"
+        gg <- as.Date(date)
+        # k-nearest neighbor
+        kn <-
+          nabor::knn(
+            data_cop$southern[time == gg, .(
+              lon = longitude,
+              lat = latitude
+            )],
+            matrix(c(lon, lat), ncol = 2),
+            k
+          )
+        # keep all columns from x
+        c(
+          .SD[rep(seq.int(.N), k)],
+          # add columns found in data_cop$southern
+          data_cop$southern[time == gg][
+            as.vector(kn$nn.idx),
+            .(
+              temp = thetao,
+              ssh = zos,
+              psu = so,
+              vel
+            )
+          ]
+        )
+      },
+      by = .(date)
+    ]
     # 6. add bathymetric data based on the nearest set of (lon, lat)
     x <- x[, {
       # number of row from oceanographic date to join
       k <- 1
       # k-nearest neighbor
-      kn <- nabor::knn(south_indian[, .(lon = x,
-                                        lat = y)],
-                       matrix(c(lon, lat), ncol = 2),
-                       k)
+      kn <- nabor::knn(
+        south_indian[, .(
+          lon = x,
+          lat = y
+        )],
+        matrix(c(lon, lat), ncol = 2),
+        k
+      )
       # keep all columns from x
-      c(.SD[rep(seq.int(.N), k)],
+      c(
+        .SD[rep(seq.int(.N), k)],
         # add columns found in south_indian
-        south_indian[as.vector(kn$nn.idx),
-                     .(bathy = z)])
+        south_indian[
+          as.vector(kn$nn.idx),
+          .(bathy = z)
+        ]
+      )
     }]
   } else {
     x

@@ -14,7 +14,7 @@ Sys.setlocale(locale = "C")
 
 # path to dataraw
 path_raw <- system.file("extdata",
-  package = "weanlingNES"
+  package = "ontodive"
 )
 
 # import the nc files

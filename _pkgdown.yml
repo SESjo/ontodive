@@ -1,25 +1,27 @@
-url: jjoumaa.ddns.net/weanlingNES
+url: sesjo.github.io/ontodive
 
 template:
   bootstrap: 5
 authors:
   Joffrey Joumaa:
-    href: "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwic8O6l9bH0AhXMJjQIHZ-HBMIQFnoECAIQAQ&url=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fjoffreyjoumaa&usg=AOvVaw2R2txhLGptY1KcDYL9VUrK"
+    href: "https://www.linkedin.com/in/joffreyjoumaa"
   Roxanne Beltran:
-    href: "https://roxannebeltran.weebly.com/people.html"
+    href: "https://www.eeb.ucsc.edu/about/dept-directory.php?uid=rsbeltra"
 
 articles:
   - title: Articles
     navbar: Seals
     contents: plot_presentation
   - title: Articles
-    navbar: Analyses
+    navbar: Paper
     contents:
-      - data_exploration_2016
+      - figures
+  - title: Articles
+    navbar: Data Exploration
+    contents:
       - data_exploration_2018
       - data_exploration_2018_map
       - data_exploration_ses_2014
-      - data_comparison_nes_ses
   - title: Articles
     navbar: Others
     contents:
@@ -27,9 +29,38 @@ articles:
       - phase_of_the_day
       - netcdf_read
       - buoyancy_detect
-      - data_consistency_ses
   - title: Articles
     navbar: Troubleshooting
     contents:
       - session_info
-      - test
+
+reference:
+  - title: Data
+    contents:
+    - data_cop
+    - data_nes
+    - data_ses
+
+  - title: Advanced tools
+    contents:
+    - get_data
+    - calc_phase_day
+    - location_treatment
+    - plot_comp
+    - plot_ind
+
+  - title: Basic Tools
+    contents:
+    - check_dt
+    - .n
+    - flat_cor_mat
+    - format_col
+    - gt_plt_bar_stack_extra
+    - is_outlier
+    - matlab_to_posix
+    - theme_jjo
+
+  - title: Building Documentation
+    contents:
+    - build_github_vignette
+

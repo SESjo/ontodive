@@ -1,14 +1,14 @@
 #' @title Determine the different phases of the day
 #'
 #' @description This function can estimate day-time and night-time based on
-#' light level (`dbscan`) or using the location and time data (`noaa`).
+#' light level (\code{dbscan}) or using the location and time data (\code{noaa}).
 #'
 #' @details
 #' Methods:
-#'
-#' * DBSCAN: use the dbscan clustering algorithm to identify night time and so daytime.
-#' * NOAA: using the algorithms provided by the Notional Oceanic & Atmospheric Administration (NOAA)
-#' * ...: to be implemented
+#' \describe{
+#' \item{DBSCAN}{use dbscan clustering algorithm to identify night time and so daytime.}
+#' \item{NOAA}{use the algorithm provided by the National Oceanic & Atmospheric Administration (NOAA).}
+#' }
 #'
 #' @param dataset A dataset containing the light level per individual per time
 #' @param light Name of the light-level column
@@ -16,13 +16,13 @@
 #' @param id Name of the individual ID column
 #' @param lon Name of the Longitude column
 #' @param lat Name of the Latitude column
-#' @param method Method used to identify phases of day
+#' @param method Method used to identify phases of day (\code{"noaa"} or \code{"dbscan"})
 #'
-#' @return Return the same data.table with an additional "phase" columns
+#' @return Return the same \code{data.table} with an additional \code{phase} columns
 #'
 #' @export
 #'
-#' @references `vignette("phase_of_the_day")`
+#' @references \code{vignette("phase_of_the_day")}
 #'
 #' @importFrom fpc dbscan
 #'
@@ -35,7 +35,7 @@
 #' @examples
 #' \dontrun{
 #' # load data
-#' data("data_nes")
+#' data_nes <- get_data("nes")
 #'
 #' # night and day calculation
 #' result <- calc_phase_day(rbindlist(data_nes$year_2018,
@@ -72,7 +72,7 @@ calc_phase_day <- function(dataset,
     NULL
 
   # checks dataset is a data.table, otherwise convert it
-  if (!weanlingNES::check_dt(dataset)) setDT(dataset)
+  if (!ontodive::check_dt(dataset)) setDT(dataset)
 
   # rename colnames to match the rest of the function
   names(dataset)[names(dataset) == light] <- "lightatsurf"
@@ -193,7 +193,6 @@ calc_phase_day <- function(dataset,
     # return
     return(dataset)
   } else if (method == "noaa") {
-
     # add column sunrise and sunset
     dataset[!is.na(lat), `:=`(
       sunrise_yesterday = maptools::sunriset(matrix(c(lon, lat), ncol = 2),

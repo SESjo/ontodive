@@ -1,16 +1,16 @@
-#' @title Check if an object is a `data.table`
+#' @title Check if an object is a \code{data.table}
 #'
-#' @description Allow to quickly check if an object is a `data.table`
+#' @description Allow to quickly check if an object is a \code{data.table}
 #'
-#' @details This function checks if the class `data.table` is among the considered object's classes.
+#' @details This function checks if the class \code{data.table} is among the considered object's classes.
 #'
 #' @param dt The object to check
 #'
 #' @return A boolean:
 #'
-#' * TRUE the object is a data.table
+#' * TRUE the object is a \code{data.table}
 #'
-#' * FALSE the object is not a data.table
+#' * FALSE the object is not a \code{data.table}
 #'
 #' @export
 #'

@@ -1,4 +1,4 @@
-## ----setup, include=FALSE--------------------
+## ----setup, include=FALSE------------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -9,6 +9,7 @@
 
 # global option relative to rmarkdown
 knitr::opts_chunk$set(
+  cache = FALSE,
   echo = TRUE,
   fig.align = "center",
   out.width = "100%",
@@ -26,7 +27,7 @@ library(ggplot2)
 library(kableExtra)
 library(leafgl)
 library(leaflet)
-library(gtsummary) # https://cran.r-project.org/web/packages/gtsummary/vignettes/tbl_summary.html
+library(gtsummary)
 library(corrplot)
 library(ggcorrplot)
 library(ggnewscale)
@@ -39,7 +40,7 @@ library(gganimate)
 library(transformr)
 library(magick)
 library(gifski)
-library(weanlingNES)
+library(ontodive)
 
 # remove some warnings
 suppressWarnings(library(ggplot2))
@@ -53,37 +54,20 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-# theme ggplot
-# based: https://benjaminlouis-stat.fr/en/blog/2020-05-21-astuces-ggplot-rmarkdown/
-theme_jjo <- function(base_size = 12) {
-  theme_bw(base_size = base_size) %+replace%
-    theme(
-      # the whole figure
-      # plot.title = element_text(size = rel(1), face = "bold", margin = margin(0,0,5,0), hjust = 0),
-      # figure area
-      panel.grid.minor = element_blank(),
-      panel.border = element_blank(),
-      # axes
-      # axis.title = element_text(size = rel(0.85), face = "bold"),
-      # axis.text = element_text(size = rel(0.70), face = "bold"),
-      axis.line = element_line(color = "black", arrow = arrow(length = unit(0.2, "lines"), type = "closed")),
-      # legend
-      # legend.title = element_text(size = rel(0.85), face = "bold"),
-      # legend.text = element_text(size = rel(0.70), face = "bold"),
-      # legend.key = element_rect(fill = "transparent", colour = NA),
-      # legend.key.size = unit(1.5, "lines"),
-      # legend.background = element_rect(fill = "transparent", colour = NA),
-      # Les <U+00E9>tiquettes dans le cas d'un facetting
-      strip.background = element_rect(fill = "#888888", color = "#888888"),
-      strip.text = element_text(size = rel(0.85), face = "bold", color = "white", margin = margin(5, 0, 5, 0))
-    )
-}
+## ------------------------------------------------------------------------------------------
+# load library
+library(ontodive)
 
-## --------------------------------------------
-# read the processed data
-data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
+# load data
+data_nes <- get_data("nes")
 
-## ----data-exploration-2018-43, fig.cap="Map with polylines", fig.width=8, eval=FALSE----
+# rbind the list
+data_2018 <- rbindlist(data_nes$year_2018)
+
+# filter data
+data_2018_filter <- data_2018[dduration < 3000, ]
+
+## ----data-exploration-2018-43, fig.cap="Map with polylines", fig.width=8, eval=FALSE-------
 #  # This piece of code is only there to show how to draw a polylines with a
 #  # gradient color using leaflet. We're not using it due to the size of the
 #  # created map, and will continue using circle marker
@@ -133,7 +117,7 @@ data_2018_filter <- readRDS("tmp/data_2018_filter.rds")
 #    options = layersControlOptions(collapsed = FALSE)
 #  )
 
-## ----data-exploration-2018-44----------------
+## ----data-exploration-2018-44--------------------------------------------------------------
 # interactive map
 gradient_map <- leaflet() %>%
   setView(lng = -132, lat = 48, zoom = 4) %>%
@@ -142,16 +126,17 @@ gradient_map <- leaflet() %>%
 # loop by individuals and variable
 grps <- NULL
 for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
-  for (k in c("dduration", "efficiency", "driftrate")) {
+  for (k in c("dduration", "driftrate")) {
     if (k == "driftrate") {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == i &
-          divetype == "2: drift" &
-          !is.na(get(k)),
-        c("lat", "lon", k),
-        with = FALSE
+        .[
+          .id == i &
+            divetype == "2: drift" &
+            !is.na(get(k)),
+          c("lat", "lon", k),
+          with = FALSE
         ] %>%
         .[!is_outlier(get(k)), ])
       # color palette creation
@@ -167,11 +152,12 @@ for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
       # set dataset used to plot
       dataPlot <- unique(data_2018_filter %>%
         .[order(date), ] %>%
-        .[.id == i &
-          divetype != "2: drift" &
-          !is.na(get(k)),
-        c("lat", "lon", k),
-        with = FALSE
+        .[
+          .id == i &
+            divetype != "2: drift" &
+            !is.na(get(k)),
+          c("lat", "lon", k),
+          with = FALSE
         ] %>%
         .[!is_outlier(get(k)), ])
       # color palette creation
@@ -197,10 +183,10 @@ for (i in data_2018_filter[!is.na(lat), unique(.id)]) {
     )]
     # reorder to make the end and the beginning in front
     dataPlot <- rbind(dataPlot[-1, ], dataPlot[1, ])
-    
+
     # convert to sf
     dataPlot <- sf::st_as_sf(dataPlot, coords = c("lon", "lat"), crs = 4326)
-  
+
     # add markers to map
     gradient_map <- addGlPoints(
       map = gradient_map,
@@ -233,7 +219,7 @@ gradient_map <- addLayersControl(
 # display
 gradient_map
 
-## --------------------------------------------
+## ------------------------------------------------------------------------------------------
 # clear memory
 gc()
 rm(
@@ -242,16 +228,16 @@ rm(
 )
 gc()
 
-## ----fit_foie_gras, eval=FALSE, include=FALSE----
+## ----fit_foie_gras, eval=FALSE, include=FALSE----------------------------------------------
 #  x <- data_2018_filter
 #  x[, lc := "G"]
 #  fit <- fit_ssm(x[, .(.id, date, lc, lon, lat)], model = "rw", time.step = 24)
 
-## ----load_current, eval = FALSE--------------
+## ----load_current, eval = FALSE------------------------------------------------------------
 #  # import the already pre-treated ncdf
-#  data("data_cop", package = "weanlingNES")
+#  data("data_cop", package = "ontodive")
 
-## ----data-exploration-2018-1-bis, eval=FALSE----
+## ----data-exploration-2018-1-bis, eval=FALSE-----------------------------------------------
 #  # easier (it's also because it was the only way that works) using a function
 #  anim_plot_current <- function(data, id_inter) {
 #    # plot
@@ -324,8 +310,7 @@ gc()
 #        limits = c(0, 1)
 #      ) +
 #      labs(title = paste(id_inter, "- Date: {frame_time}")) +
-#      transition_time(time) #+
-#    # ease_aes('linear')
+#      transition_time(time)
 #  }
 #  
 #  # apply this function to all individuals
@@ -345,7 +330,7 @@ gc()
 #  # save the plot
 #  anim_save("ind_2018070_vel_alltrip.gif", animation = last_animation())
 
-## ----data-exploration-2018-6-bis, eval=FALSE, include=FALSE----
+## ----data-exploration-2018-6-bis, eval=FALSE, include=FALSE--------------------------------
 #  # ` this code allow to use the function view_follow with gganimate, and
 #  # ` specifying at the same time which layer to not follow
 #  view_follow <-
@@ -391,7 +376,7 @@ gc()
 #    x[is.finite(x)]
 #  }
 
-## ----data-exploration-2018-7-bis, eval=FALSE----
+## ----data-exploration-2018-7-bis, eval=FALSE-----------------------------------------------
 #  # get the position of the animal each day
 #  gps_day <- data_2018_filter[!is.na(lat), .(date, lat, lon, .id)] %>%
 #    .[, .(
@@ -453,7 +438,6 @@ gc()
 #      scale_fill_gradientn(colours = oce::oceColors9A(120)) +
 #      labs(title = paste(id_inter, "- Date: {frame_time}")) +
 #      transition_time(time) +
-#      # ease_aes('linear') +
 #      view_follow(exclude_layer = 2)
 #  
 #    # rm
@@ -481,7 +465,7 @@ gc()
 #  # save gif file
 #  anim_save("ind_2018070_zos_center.gif", animation = last_animation())
 
-## ----message=FALSE, warning=FALSE, eval = FALSE----
+## ----message=FALSE, warning=FALSE, eval = FALSE--------------------------------------------
 #  another_anim_plot_zos_center <- function(id_inter) {
 #    # example with id_inter
 #    for (i in 1:gps_day[.id == id_inter, .N]) {
@@ -549,7 +533,7 @@ gc()
 #    delay = 0.1
 #  )
 
-## ----fig.cap="Evolution of oceanographic data with the number of days since departure"----
+## ----fig.cap="Evolution of oceanographic data with the number of days since departure"-----
 # evolution with trip at sea
 ggplot(
   melt(
