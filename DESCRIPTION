@@ -43,7 +43,7 @@ Imports:
     tools,
     utils
 Remotes: 
-    github::MikkoVihtakari/ggOceanMapsData
+    github::MikkoVihtakari/ggOceanMapsData,
     github::ianjonsen/aniMotum
 Encoding: UTF-8
 LazyData: false
