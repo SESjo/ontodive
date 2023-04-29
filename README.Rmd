@@ -35,6 +35,14 @@ if (require(devtools)) {
 }
 ```
 
+You may encounter the error below, in which case changing the network solved my problem as [others](https://community.rstudio.com/t/problem-installing-packages-from-github/158679) have also reported.
+
+```{r}
+# Downloading GitHub repo SESjo/ontodive@HEAD
+# Error in utils::download.file(url, path, method = method, quiet = quiet,  :
+#   download from 'https://api.github.com/repos/SESjo/ontodive/tarball/HEAD' failed
+```
+
 ## Example
 
 Once installed, you can easily access vignettes (which are supposed to be associated with a specific analysis) using these commands:
@@ -50,4 +58,7 @@ browseVignettes("ontodive")
 ## Languages and tools
 
 <p align="left">
-<a href="https://cran.r-project.org/" target="_blank" rel="noreferrer" class="external-link"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/r/r-original.svg" width="40" height="40"></a><a href="https://posit.co/products/open-source/rstudio/" target="_blank" rel="noreferrer" class="external-link"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/rstudio/rstudio-original.svg" alt="docker" width="40" height="40"></a></p>
+
+<a href="https://cran.r-project.org/" target="_blank" rel="noreferrer" class="external-link"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/r/r-original.svg" width="40" height="40"/></a><a href="https://posit.co/products/open-source/rstudio/" target="_blank" rel="noreferrer" class="external-link"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/rstudio/rstudio-original.svg" alt="docker" width="40" height="40"/></a>
+
+</p>
