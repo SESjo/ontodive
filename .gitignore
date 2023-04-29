@@ -6,3 +6,6 @@ data/
 inst/extdata/
 inst/rmd/
 inst/script/
+data_ontodive.csv
+DESCRIPTION_old
+renv/settings.json
