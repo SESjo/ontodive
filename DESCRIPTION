@@ -1,6 +1,7 @@
 Type: Package
 Package: ontodive
 Title: Data Analyses of the Ontogeny Paper
+URL: https://github.com/sesjo/ontodive/
 Version: 0.1.0
 Authors@R:c(
     person("Joffrey", "Joumaa", , "jjoumaa@ucsc.edu", role = c("aut", "cre"),
