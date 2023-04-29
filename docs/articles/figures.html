@@ -74,7 +74,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/sesjo/ontodive/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -87,9 +94,9 @@
       <img src="../logo.png" class="logo" alt=""><h1>Figures</h1>
                         <h4 data-toc-skip class="author">Joffrey JOUMAA</h4>
             
-            <h4 data-toc-skip class="date">April 26, 2023</h4>
+            <h4 data-toc-skip class="date">April 28, 2023</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/sesjo/ontodive/blob/HEAD/vignettes/figures.Rmd" class="external-link"><code>vignettes/figures.Rmd</code></a></small>
       <div class="d-none name"><code>figures.Rmd</code></div>
     </div>
 
@@ -101,7 +108,7 @@
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load wealingNES package</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">ontodive</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sesjo/ontodive/" class="external-link">ontodive</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># load dataset</span></span>
 <span><span class="va">data_nes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span><span class="st">"nes"</span><span class="op">)</span></span>
@@ -605,23 +612,23 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
 <span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html" class="external-link">gt</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html" class="external-link">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Mann Whitney / Wilcoxon rank sum test on dive depth"</span><span class="op">)</span></span></code></pre></div>
-<div id="dlegevgdim" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dlegevgdim table {
+<div id="flwmsuyuxi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#flwmsuyuxi table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dlegevgdim thead, #dlegevgdim tbody, #dlegevgdim tfoot, #dlegevgdim tr, #dlegevgdim td, #dlegevgdim th {
+#flwmsuyuxi thead, #flwmsuyuxi tbody, #flwmsuyuxi tfoot, #flwmsuyuxi tr, #flwmsuyuxi td, #flwmsuyuxi th {
   border-style: none;
 }
 
-#dlegevgdim p {
+#flwmsuyuxi p {
   margin: 0;
   padding: 0;
 }
 
-#dlegevgdim .gt_table {
+#flwmsuyuxi .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -647,12 +654,12 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-left-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_caption {
+#flwmsuyuxi .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dlegevgdim .gt_title {
+#flwmsuyuxi .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -664,7 +671,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-width: 0;
 }
 
-#dlegevgdim .gt_subtitle {
+#flwmsuyuxi .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -676,7 +683,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-top-width: 0;
 }
 
-#dlegevgdim .gt_heading {
+#flwmsuyuxi .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -688,13 +695,13 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_bottom_border {
+#flwmsuyuxi .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_col_headings {
+#flwmsuyuxi .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -709,7 +716,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_col_heading {
+#flwmsuyuxi .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -729,7 +736,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   overflow-x: hidden;
 }
 
-#dlegevgdim .gt_column_spanner_outer {
+#flwmsuyuxi .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -741,15 +748,15 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 4px;
 }
 
-#dlegevgdim .gt_column_spanner_outer:first-child {
+#flwmsuyuxi .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dlegevgdim .gt_column_spanner_outer:last-child {
+#flwmsuyuxi .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dlegevgdim .gt_column_spanner {
+#flwmsuyuxi .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -761,11 +768,11 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   width: 100%;
 }
 
-#dlegevgdim .gt_spanner_row {
+#flwmsuyuxi .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dlegevgdim .gt_group_heading {
+#flwmsuyuxi .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -791,7 +798,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   text-align: left;
 }
 
-#dlegevgdim .gt_empty_group_heading {
+#flwmsuyuxi .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -806,15 +813,15 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   vertical-align: middle;
 }
 
-#dlegevgdim .gt_from_md > :first-child {
+#flwmsuyuxi .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dlegevgdim .gt_from_md > :last-child {
+#flwmsuyuxi .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dlegevgdim .gt_row {
+#flwmsuyuxi .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -833,7 +840,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   overflow-x: hidden;
 }
 
-#dlegevgdim .gt_stub {
+#flwmsuyuxi .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -846,7 +853,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#dlegevgdim .gt_stub_row_group {
+#flwmsuyuxi .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -860,15 +867,15 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   vertical-align: top;
 }
 
-#dlegevgdim .gt_row_group_first td {
+#flwmsuyuxi .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dlegevgdim .gt_row_group_first th {
+#flwmsuyuxi .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dlegevgdim .gt_summary_row {
+#flwmsuyuxi .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -878,16 +885,16 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#dlegevgdim .gt_first_summary_row {
+#flwmsuyuxi .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_first_summary_row.thick {
+#flwmsuyuxi .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dlegevgdim .gt_last_summary_row {
+#flwmsuyuxi .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -897,7 +904,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_grand_summary_row {
+#flwmsuyuxi .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -907,7 +914,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#dlegevgdim .gt_first_grand_summary_row {
+#flwmsuyuxi .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -917,7 +924,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-top-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_last_grand_summary_row_top {
+#flwmsuyuxi .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -927,11 +934,11 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_striped {
+#flwmsuyuxi .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dlegevgdim .gt_table_body {
+#flwmsuyuxi .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -940,7 +947,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_footnotes {
+#flwmsuyuxi .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -954,7 +961,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_footnote {
+#flwmsuyuxi .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -963,7 +970,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#dlegevgdim .gt_sourcenotes {
+#flwmsuyuxi .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -977,7 +984,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#dlegevgdim .gt_sourcenote {
+#flwmsuyuxi .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -985,63 +992,63 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#dlegevgdim .gt_left {
+#flwmsuyuxi .gt_left {
   text-align: left;
 }
 
-#dlegevgdim .gt_center {
+#flwmsuyuxi .gt_center {
   text-align: center;
 }
 
-#dlegevgdim .gt_right {
+#flwmsuyuxi .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dlegevgdim .gt_font_normal {
+#flwmsuyuxi .gt_font_normal {
   font-weight: normal;
 }
 
-#dlegevgdim .gt_font_bold {
+#flwmsuyuxi .gt_font_bold {
   font-weight: bold;
 }
 
-#dlegevgdim .gt_font_italic {
+#flwmsuyuxi .gt_font_italic {
   font-style: italic;
 }
 
-#dlegevgdim .gt_super {
+#flwmsuyuxi .gt_super {
   font-size: 65%;
 }
 
-#dlegevgdim .gt_footnote_marks {
+#flwmsuyuxi .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dlegevgdim .gt_asterisk {
+#flwmsuyuxi .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dlegevgdim .gt_indent_1 {
+#flwmsuyuxi .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dlegevgdim .gt_indent_2 {
+#flwmsuyuxi .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dlegevgdim .gt_indent_3 {
+#flwmsuyuxi .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dlegevgdim .gt_indent_4 {
+#flwmsuyuxi .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dlegevgdim .gt_indent_5 {
+#flwmsuyuxi .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1073,23 +1080,23 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
 <span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://gt.rstudio.com/reference/gt.html" class="external-link">gt</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://gt.rstudio.com/reference/tab_header.html" class="external-link">tab_header</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Mann Whitney / Wilcoxon rank sum test on dive duration"</span><span class="op">)</span></span></code></pre></div>
-<div id="ptmbkgsgmo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ptmbkgsgmo table {
+<div id="nxgxsmeshw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#nxgxsmeshw table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ptmbkgsgmo thead, #ptmbkgsgmo tbody, #ptmbkgsgmo tfoot, #ptmbkgsgmo tr, #ptmbkgsgmo td, #ptmbkgsgmo th {
+#nxgxsmeshw thead, #nxgxsmeshw tbody, #nxgxsmeshw tfoot, #nxgxsmeshw tr, #nxgxsmeshw td, #nxgxsmeshw th {
   border-style: none;
 }
 
-#ptmbkgsgmo p {
+#nxgxsmeshw p {
   margin: 0;
   padding: 0;
 }
 
-#ptmbkgsgmo .gt_table {
+#nxgxsmeshw .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1115,12 +1122,12 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-left-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_caption {
+#nxgxsmeshw .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ptmbkgsgmo .gt_title {
+#nxgxsmeshw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1132,7 +1139,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-width: 0;
 }
 
-#ptmbkgsgmo .gt_subtitle {
+#nxgxsmeshw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1144,7 +1151,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-top-width: 0;
 }
 
-#ptmbkgsgmo .gt_heading {
+#nxgxsmeshw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1156,13 +1163,13 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_bottom_border {
+#nxgxsmeshw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_col_headings {
+#nxgxsmeshw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1177,7 +1184,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_col_heading {
+#nxgxsmeshw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1197,7 +1204,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   overflow-x: hidden;
 }
 
-#ptmbkgsgmo .gt_column_spanner_outer {
+#nxgxsmeshw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1209,15 +1216,15 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 4px;
 }
 
-#ptmbkgsgmo .gt_column_spanner_outer:first-child {
+#nxgxsmeshw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ptmbkgsgmo .gt_column_spanner_outer:last-child {
+#nxgxsmeshw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ptmbkgsgmo .gt_column_spanner {
+#nxgxsmeshw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1229,11 +1236,11 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   width: 100%;
 }
 
-#ptmbkgsgmo .gt_spanner_row {
+#nxgxsmeshw .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ptmbkgsgmo .gt_group_heading {
+#nxgxsmeshw .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1259,7 +1266,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   text-align: left;
 }
 
-#ptmbkgsgmo .gt_empty_group_heading {
+#nxgxsmeshw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1274,15 +1281,15 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   vertical-align: middle;
 }
 
-#ptmbkgsgmo .gt_from_md > :first-child {
+#nxgxsmeshw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ptmbkgsgmo .gt_from_md > :last-child {
+#nxgxsmeshw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ptmbkgsgmo .gt_row {
+#nxgxsmeshw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1301,7 +1308,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   overflow-x: hidden;
 }
 
-#ptmbkgsgmo .gt_stub {
+#nxgxsmeshw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1314,7 +1321,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#ptmbkgsgmo .gt_stub_row_group {
+#nxgxsmeshw .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1328,15 +1335,15 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   vertical-align: top;
 }
 
-#ptmbkgsgmo .gt_row_group_first td {
+#nxgxsmeshw .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ptmbkgsgmo .gt_row_group_first th {
+#nxgxsmeshw .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ptmbkgsgmo .gt_summary_row {
+#nxgxsmeshw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1346,16 +1353,16 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#ptmbkgsgmo .gt_first_summary_row {
+#nxgxsmeshw .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_first_summary_row.thick {
+#nxgxsmeshw .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ptmbkgsgmo .gt_last_summary_row {
+#nxgxsmeshw .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1365,7 +1372,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_grand_summary_row {
+#nxgxsmeshw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1375,7 +1382,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#ptmbkgsgmo .gt_first_grand_summary_row {
+#nxgxsmeshw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1385,7 +1392,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-top-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_last_grand_summary_row_top {
+#nxgxsmeshw .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1395,11 +1402,11 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_striped {
+#nxgxsmeshw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ptmbkgsgmo .gt_table_body {
+#nxgxsmeshw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1408,7 +1415,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-bottom-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_footnotes {
+#nxgxsmeshw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1422,7 +1429,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_footnote {
+#nxgxsmeshw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1431,7 +1438,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#ptmbkgsgmo .gt_sourcenotes {
+#nxgxsmeshw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1445,7 +1452,7 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   border-right-color: #D3D3D3;
 }
 
-#ptmbkgsgmo .gt_sourcenote {
+#nxgxsmeshw .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1453,63 +1460,63 @@ Figure 2.2: Development of depth and duration across dive types throughout the f
   padding-right: 5px;
 }
 
-#ptmbkgsgmo .gt_left {
+#nxgxsmeshw .gt_left {
   text-align: left;
 }
 
-#ptmbkgsgmo .gt_center {
+#nxgxsmeshw .gt_center {
   text-align: center;
 }
 
-#ptmbkgsgmo .gt_right {
+#nxgxsmeshw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ptmbkgsgmo .gt_font_normal {
+#nxgxsmeshw .gt_font_normal {
   font-weight: normal;
 }
 
-#ptmbkgsgmo .gt_font_bold {
+#nxgxsmeshw .gt_font_bold {
   font-weight: bold;
 }
 
-#ptmbkgsgmo .gt_font_italic {
+#nxgxsmeshw .gt_font_italic {
   font-style: italic;
 }
 
-#ptmbkgsgmo .gt_super {
+#nxgxsmeshw .gt_super {
   font-size: 65%;
 }
 
-#ptmbkgsgmo .gt_footnote_marks {
+#nxgxsmeshw .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ptmbkgsgmo .gt_asterisk {
+#nxgxsmeshw .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ptmbkgsgmo .gt_indent_1 {
+#nxgxsmeshw .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ptmbkgsgmo .gt_indent_2 {
+#nxgxsmeshw .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ptmbkgsgmo .gt_indent_3 {
+#nxgxsmeshw .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ptmbkgsgmo .gt_indent_4 {
+#nxgxsmeshw .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ptmbkgsgmo .gt_indent_5 {
+#nxgxsmeshw .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2432,23 +2439,23 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
 <span>    <span class="co"># horizontal scroll</span></span>
 <span>    container.overflow.x <span class="op">=</span> <span class="cn">T</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div id="lnyjmqzwwc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lnyjmqzwwc table {
+<div id="ofyjwibhmm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ofyjwibhmm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#lnyjmqzwwc thead, #lnyjmqzwwc tbody, #lnyjmqzwwc tfoot, #lnyjmqzwwc tr, #lnyjmqzwwc td, #lnyjmqzwwc th {
+#ofyjwibhmm thead, #ofyjwibhmm tbody, #ofyjwibhmm tfoot, #ofyjwibhmm tr, #ofyjwibhmm td, #ofyjwibhmm th {
   border-style: none;
 }
 
-#lnyjmqzwwc p {
+#ofyjwibhmm p {
   margin: 0;
   padding: 0;
 }
 
-#lnyjmqzwwc .gt_table {
+#ofyjwibhmm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2474,12 +2481,12 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-left-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_caption {
+#ofyjwibhmm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#lnyjmqzwwc .gt_title {
+#ofyjwibhmm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2491,7 +2498,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-width: 0;
 }
 
-#lnyjmqzwwc .gt_subtitle {
+#ofyjwibhmm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2503,7 +2510,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-top-width: 0;
 }
 
-#lnyjmqzwwc .gt_heading {
+#ofyjwibhmm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2515,13 +2522,13 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_bottom_border {
+#ofyjwibhmm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_col_headings {
+#ofyjwibhmm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2536,7 +2543,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_col_heading {
+#ofyjwibhmm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2556,7 +2563,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   overflow-x: hidden;
 }
 
-#lnyjmqzwwc .gt_column_spanner_outer {
+#ofyjwibhmm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2568,15 +2575,15 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 4px;
 }
 
-#lnyjmqzwwc .gt_column_spanner_outer:first-child {
+#ofyjwibhmm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lnyjmqzwwc .gt_column_spanner_outer:last-child {
+#ofyjwibhmm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lnyjmqzwwc .gt_column_spanner {
+#ofyjwibhmm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2588,11 +2595,11 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   width: 100%;
 }
 
-#lnyjmqzwwc .gt_spanner_row {
+#ofyjwibhmm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#lnyjmqzwwc .gt_group_heading {
+#ofyjwibhmm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2618,7 +2625,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   text-align: left;
 }
 
-#lnyjmqzwwc .gt_empty_group_heading {
+#ofyjwibhmm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2633,15 +2640,15 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   vertical-align: middle;
 }
 
-#lnyjmqzwwc .gt_from_md > :first-child {
+#ofyjwibhmm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lnyjmqzwwc .gt_from_md > :last-child {
+#ofyjwibhmm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lnyjmqzwwc .gt_row {
+#ofyjwibhmm .gt_row {
   padding-top: 3px;
   padding-bottom: 3px;
   padding-left: 5px;
@@ -2660,7 +2667,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   overflow-x: hidden;
 }
 
-#lnyjmqzwwc .gt_stub {
+#ofyjwibhmm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2673,7 +2680,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#lnyjmqzwwc .gt_stub_row_group {
+#ofyjwibhmm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2687,15 +2694,15 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   vertical-align: top;
 }
 
-#lnyjmqzwwc .gt_row_group_first td {
+#ofyjwibhmm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#lnyjmqzwwc .gt_row_group_first th {
+#ofyjwibhmm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#lnyjmqzwwc .gt_summary_row {
+#ofyjwibhmm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2705,16 +2712,16 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#lnyjmqzwwc .gt_first_summary_row {
+#ofyjwibhmm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_first_summary_row.thick {
+#ofyjwibhmm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#lnyjmqzwwc .gt_last_summary_row {
+#ofyjwibhmm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2724,7 +2731,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_grand_summary_row {
+#ofyjwibhmm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2734,7 +2741,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#lnyjmqzwwc .gt_first_grand_summary_row {
+#ofyjwibhmm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2744,7 +2751,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-top-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_last_grand_summary_row_top {
+#ofyjwibhmm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2754,11 +2761,11 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_striped {
+#ofyjwibhmm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lnyjmqzwwc .gt_table_body {
+#ofyjwibhmm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2767,7 +2774,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_footnotes {
+#ofyjwibhmm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2781,7 +2788,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_footnote {
+#ofyjwibhmm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2790,7 +2797,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#lnyjmqzwwc .gt_sourcenotes {
+#ofyjwibhmm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2804,7 +2811,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#lnyjmqzwwc .gt_sourcenote {
+#ofyjwibhmm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2812,63 +2819,63 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#lnyjmqzwwc .gt_left {
+#ofyjwibhmm .gt_left {
   text-align: left;
 }
 
-#lnyjmqzwwc .gt_center {
+#ofyjwibhmm .gt_center {
   text-align: center;
 }
 
-#lnyjmqzwwc .gt_right {
+#ofyjwibhmm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lnyjmqzwwc .gt_font_normal {
+#ofyjwibhmm .gt_font_normal {
   font-weight: normal;
 }
 
-#lnyjmqzwwc .gt_font_bold {
+#ofyjwibhmm .gt_font_bold {
   font-weight: bold;
 }
 
-#lnyjmqzwwc .gt_font_italic {
+#ofyjwibhmm .gt_font_italic {
   font-style: italic;
 }
 
-#lnyjmqzwwc .gt_super {
+#ofyjwibhmm .gt_super {
   font-size: 65%;
 }
 
-#lnyjmqzwwc .gt_footnote_marks {
+#ofyjwibhmm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#lnyjmqzwwc .gt_asterisk {
+#ofyjwibhmm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#lnyjmqzwwc .gt_indent_1 {
+#ofyjwibhmm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#lnyjmqzwwc .gt_indent_2 {
+#ofyjwibhmm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#lnyjmqzwwc .gt_indent_3 {
+#ofyjwibhmm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#lnyjmqzwwc .gt_indent_4 {
+#ofyjwibhmm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#lnyjmqzwwc .gt_indent_5 {
+#ofyjwibhmm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -3377,23 +3384,23 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
 <span>    <span class="co"># horizontal scroll</span></span>
 <span>    container.overflow.x <span class="op">=</span> <span class="cn">T</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<div id="dzonuhzgxo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dzonuhzgxo table {
+<div id="bogpgnuudl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bogpgnuudl table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dzonuhzgxo thead, #dzonuhzgxo tbody, #dzonuhzgxo tfoot, #dzonuhzgxo tr, #dzonuhzgxo td, #dzonuhzgxo th {
+#bogpgnuudl thead, #bogpgnuudl tbody, #bogpgnuudl tfoot, #bogpgnuudl tr, #bogpgnuudl td, #bogpgnuudl th {
   border-style: none;
 }
 
-#dzonuhzgxo p {
+#bogpgnuudl p {
   margin: 0;
   padding: 0;
 }
 
-#dzonuhzgxo .gt_table {
+#bogpgnuudl .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -3419,12 +3426,12 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-left-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_caption {
+#bogpgnuudl .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dzonuhzgxo .gt_title {
+#bogpgnuudl .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3436,7 +3443,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-width: 0;
 }
 
-#dzonuhzgxo .gt_subtitle {
+#bogpgnuudl .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3448,7 +3455,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-top-width: 0;
 }
 
-#dzonuhzgxo .gt_heading {
+#bogpgnuudl .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3460,13 +3467,13 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_bottom_border {
+#bogpgnuudl .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_col_headings {
+#bogpgnuudl .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3481,7 +3488,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_col_heading {
+#bogpgnuudl .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3501,7 +3508,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   overflow-x: hidden;
 }
 
-#dzonuhzgxo .gt_column_spanner_outer {
+#bogpgnuudl .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3513,15 +3520,15 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 4px;
 }
 
-#dzonuhzgxo .gt_column_spanner_outer:first-child {
+#bogpgnuudl .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dzonuhzgxo .gt_column_spanner_outer:last-child {
+#bogpgnuudl .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dzonuhzgxo .gt_column_spanner {
+#bogpgnuudl .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -3533,11 +3540,11 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   width: 100%;
 }
 
-#dzonuhzgxo .gt_spanner_row {
+#bogpgnuudl .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dzonuhzgxo .gt_group_heading {
+#bogpgnuudl .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3563,7 +3570,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   text-align: left;
 }
 
-#dzonuhzgxo .gt_empty_group_heading {
+#bogpgnuudl .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3578,15 +3585,15 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   vertical-align: middle;
 }
 
-#dzonuhzgxo .gt_from_md > :first-child {
+#bogpgnuudl .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dzonuhzgxo .gt_from_md > :last-child {
+#bogpgnuudl .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dzonuhzgxo .gt_row {
+#bogpgnuudl .gt_row {
   padding-top: 3px;
   padding-bottom: 3px;
   padding-left: 5px;
@@ -3605,7 +3612,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   overflow-x: hidden;
 }
 
-#dzonuhzgxo .gt_stub {
+#bogpgnuudl .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3618,7 +3625,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#dzonuhzgxo .gt_stub_row_group {
+#bogpgnuudl .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3632,15 +3639,15 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   vertical-align: top;
 }
 
-#dzonuhzgxo .gt_row_group_first td {
+#bogpgnuudl .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dzonuhzgxo .gt_row_group_first th {
+#bogpgnuudl .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dzonuhzgxo .gt_summary_row {
+#bogpgnuudl .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3650,16 +3657,16 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#dzonuhzgxo .gt_first_summary_row {
+#bogpgnuudl .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_first_summary_row.thick {
+#bogpgnuudl .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dzonuhzgxo .gt_last_summary_row {
+#bogpgnuudl .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3669,7 +3676,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_grand_summary_row {
+#bogpgnuudl .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3679,7 +3686,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#dzonuhzgxo .gt_first_grand_summary_row {
+#bogpgnuudl .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3689,7 +3696,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-top-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_last_grand_summary_row_top {
+#bogpgnuudl .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3699,11 +3706,11 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_striped {
+#bogpgnuudl .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dzonuhzgxo .gt_table_body {
+#bogpgnuudl .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3712,7 +3719,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-bottom-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_footnotes {
+#bogpgnuudl .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3726,7 +3733,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_footnote {
+#bogpgnuudl .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3735,7 +3742,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#dzonuhzgxo .gt_sourcenotes {
+#bogpgnuudl .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3749,7 +3756,7 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   border-right-color: #D3D3D3;
 }
 
-#dzonuhzgxo .gt_sourcenote {
+#bogpgnuudl .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3757,63 +3764,63 @@ Figure 2.6: Development of dive duration throughout the first trip to sea in nor
   padding-right: 5px;
 }
 
-#dzonuhzgxo .gt_left {
+#bogpgnuudl .gt_left {
   text-align: left;
 }
 
-#dzonuhzgxo .gt_center {
+#bogpgnuudl .gt_center {
   text-align: center;
 }
 
-#dzonuhzgxo .gt_right {
+#bogpgnuudl .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dzonuhzgxo .gt_font_normal {
+#bogpgnuudl .gt_font_normal {
   font-weight: normal;
 }
 
-#dzonuhzgxo .gt_font_bold {
+#bogpgnuudl .gt_font_bold {
   font-weight: bold;
 }
 
-#dzonuhzgxo .gt_font_italic {
+#bogpgnuudl .gt_font_italic {
   font-style: italic;
 }
 
-#dzonuhzgxo .gt_super {
+#bogpgnuudl .gt_super {
   font-size: 65%;
 }
 
-#dzonuhzgxo .gt_footnote_marks {
+#bogpgnuudl .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dzonuhzgxo .gt_asterisk {
+#bogpgnuudl .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dzonuhzgxo .gt_indent_1 {
+#bogpgnuudl .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dzonuhzgxo .gt_indent_2 {
+#bogpgnuudl .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dzonuhzgxo .gt_indent_3 {
+#bogpgnuudl .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dzonuhzgxo .gt_indent_4 {
+#bogpgnuudl .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dzonuhzgxo .gt_indent_5 {
+#bogpgnuudl .gt_indent_5 {
   text-indent: 25px;
 }
 </style>

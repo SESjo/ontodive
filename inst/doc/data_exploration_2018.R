@@ -1,4 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -53,25 +53,25 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## ----data-exploration-2018-1---------------------------------------------------------------
+## ----data-exploration-2018-1--------------------------------------------------------------
 # load library
 library(ontodive)
 
 # load data
 data_nes <- get_data("nes")
 
-## ----data-exploration-2018-2---------------------------------------------------------------
+## ----data-exploration-2018-2--------------------------------------------------------------
 # list structure
 str(data_nes$year_2018, max.level = 1, give.attr = F, no.list = T)
 
-## ----data-exploration-2018-3, eval=FALSE---------------------------------------------------
+## ----data-exploration-2018-3, eval=FALSE--------------------------------------------------
 #  # combine all individuals
 #  data_2018 <- rbindlist(data_nes$year_2018)
 #  
 #  # display
 #  DT::datatable(data_2018[sample.int(.N, 10), ], options = list(scrollX = T))
 
-## ----data-exploration-2018-4, echo=FALSE, results='asis'-----------------------------------
+## ----data-exploration-2018-4, echo=FALSE, results='asis'----------------------------------
 # combine all individuals
 data_2018 <- rbindlist(data_nes$year_2018)
 
@@ -90,7 +90,7 @@ cat("<table style='width: 50%'>",
 # display
 DT::datatable(data_2018[sample.int(.N, 10), ], options = list(scrollX = T))
 
-## ----data-exploration-2018-5---------------------------------------------------------------
+## ----data-exploration-2018-5--------------------------------------------------------------
 # raw_data
 data_2018[, .(
   nb_days_recorded = uniqueN(as.Date(date)),
@@ -135,7 +135,7 @@ ggplot(dataPlot, aes(x = variable, y = id_row, fill = value)) +
     legend.key = element_rect(colour = "black")
   )
 
-## ----data-exploration-2018-7---------------------------------------------------------------
+## ----data-exploration-2018-7--------------------------------------------------------------
 # table with percent
 table_inter <- data_2018[, lapply(.SD, function(x) {
   round(length(x[is.na(x)]) * 100 / length(x), 1)
@@ -177,7 +177,7 @@ ggplot(
   labs(y = "# of dives", x = "Dive duration (s)") +
   theme_jjo()
 
-## ----data-exploration-2018-10--------------------------------------------------------------
+## ----data-exploration-2018-10-------------------------------------------------------------
 # filter data
 data_2018_filter <- data_2018[dduration < 3000, ]
 
@@ -226,7 +226,7 @@ ggplot(dataPlot, aes(x = day_departure, y = hour, fill = phase)) +
   ) +
   theme(legend.position = c("bottom"))
 
-## ----data-exploration-2018-13--------------------------------------------------------------
+## ----data-exploration-2018-13-------------------------------------------------------------
 names_display <- names(data_2018_filter[, -c(
   ".id",
   "date",
@@ -254,7 +254,7 @@ changes_driftrate <- median_driftrate %>%
   ), by = .id] %>%
   .[c(FALSE, diff(sign(y_smooth)) != 0), ]
 
-## ----data-exploration-2018-14, eval=FALSE, include=TRUE------------------------------------
+## ----data-exploration-2018-14, eval=FALSE, include=TRUE-----------------------------------
 #  for (i in names_display) {
 #    cat("####", i, "{.unlisted .unnumbered} \n")
 #    if (i == "driftrate") {
@@ -325,7 +325,7 @@ changes_driftrate <- median_driftrate %>%
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-15, results='asis', cache=FALSE, echo=FALSE---------------------
+## ----data-exploration-2018-15, results='asis', cache=FALSE, echo=FALSE--------------------
 for (i in names_display) {
   cat("####", i, "{.unlisted .unnumbered} \n")
   if (i == "driftrate") {
@@ -395,7 +395,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-16, eval=FALSE, include=TRUE------------------------------------
+## ----data-exploration-2018-16, eval=FALSE, include=TRUE-----------------------------------
 #  # same plot with a colored for the phase of the day
 #  for (i in names_display) {
 #    cat("####", i, "{-} \n")
@@ -439,7 +439,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-17, results='asis', cache=FALSE, echo=FALSE---------------------
+## ----data-exploration-2018-17, results='asis', cache=FALSE, echo=FALSE--------------------
 # same plot with a colored for the phase of the day
 for (i in names_display) {
   cat("####", i, "{-} \n")
@@ -483,7 +483,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-18, eval=FALSE, include=TRUE------------------------------------
+## ----data-exploration-2018-18, eval=FALSE, include=TRUE-----------------------------------
 #  for (i in names_display) {
 #    cat("####", i, "{.unlisted .unnumbered} \n")
 #    print(
@@ -514,7 +514,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-19, results='asis', cache=FALSE, echo=FALSE---------------------
+## ----data-exploration-2018-19, results='asis', cache=FALSE, echo=FALSE--------------------
 for (i in names_display) {
   cat("####", i, "{.unlisted .unnumbered} \n")
   print(
@@ -545,7 +545,7 @@ for (i in names_display) {
   cat("\n \n")
 }
 
-## ----data-exploration-2018-20, eval=FALSE, include=TRUE------------------------------------
+## ----data-exploration-2018-20, eval=FALSE, include=TRUE-----------------------------------
 #  for (i in names_display) {
 #    cat("####", i, "{.unlisted .unnumbered} \n")
 #    print(
@@ -576,7 +576,7 @@ for (i in names_display) {
 #    cat("\n \n")
 #  }
 
-## ----data-exploration-2018-21, results='asis', cache=FALSE, echo=FALSE---------------------
+## ----data-exploration-2018-21, results='asis', cache=FALSE, echo=FALSE--------------------
 for (i in names_display) {
   cat("####", i, "{.unlisted .unnumbered} \n")
   print(
@@ -634,7 +634,7 @@ ggcorrplot(
   colors = c("#00AFBB", "#E7B800", "#FC4E07")
 )
 
-## ----data-exploration-2018-23--------------------------------------------------------------
+## ----data-exploration-2018-23-------------------------------------------------------------
 # flatten correlation matrix
 cor_result_2018 <- flat_cor_mat(corr_2018, corr_p_2018)
 
@@ -642,7 +642,7 @@ cor_result_2018 <- flat_cor_mat(corr_2018, corr_p_2018)
 cor_result_2018[cor >= .7, ][order(-abs(cor))] %>%
   sable(caption = "Pairwise correlation above 0.75 and associated p-values")
 
-## ----data-exploration-2018-24, fig.cap="Proportion dive types"-----------------------------
+## ----data-exploration-2018-24, fig.cap="Proportion dive types"----------------------------
 # dataset to plot proportional area plot
 dataPlot <- data_2018_filter %>%
   .[, .(sum_id_days = .N), by = .(.id, day_departure, divetype)] %>%
@@ -718,7 +718,7 @@ ggplot(data = data_2018_filter, aes(y = dduration, x = maxdepth, col = phase)) +
   theme_jjo() +
   theme(legend.position = "bottom")
 
-## ----data-exploration-2018-29--------------------------------------------------------------
+## ----data-exploration-2018-29-------------------------------------------------------------
 # build dataset
 dataPlot <- data_2018_filter[divetype == "2: drift",
   # median drift rate for drift dive
@@ -740,7 +740,7 @@ dataPlot <- data_2018_filter[divetype == "2: drift",
     on = c(".id", "day_departure")
   ]
 
-## ----data-exploration-2018-30, fig.cap="Drift rate vs. Bottom time"------------------------
+## ----data-exploration-2018-30, fig.cap="Drift rate vs. Bottom time"-----------------------
 # plot
 ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -754,7 +754,7 @@ ggplot(dataPlot, aes(x = botttime, y = driftrate, col = .id)) +
   ) +
   theme_jjo()
 
-## ----data-exploration-2018-31, fig.cap="Drift rate vs. Maximum depth"----------------------
+## ----data-exploration-2018-31, fig.cap="Drift rate vs. Maximum depth"---------------------
 # plot
 ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -767,7 +767,7 @@ ggplot(dataPlot, aes(x = maxdepth, y = driftrate, col = .id)) +
   ) +
   theme_jjo()
 
-## ----data-exploration-2018-32, fig.cap="Drift rate vs. Dive duration"----------------------
+## ----data-exploration-2018-32, fig.cap="Drift rate vs. Dive duration"---------------------
 # plot
 ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
   geom_point(size = .5, alpha = .5) +
@@ -780,7 +780,7 @@ ggplot(dataPlot, aes(x = dduration, y = driftrate, col = .id)) +
   ) +
   theme_jjo()
 
-## ----data-exploration-2018-33, fig.cap="Post-dive duration vs. dive duration"--------------
+## ----data-exploration-2018-33, fig.cap="Post-dive duration vs. dive duration"-------------
 # dive duration vs pdi by days
 ggplot(data = data_2018_filter[pdi < 300, ], aes(
   x = dduration,
@@ -914,7 +914,7 @@ ggplot() +
   facet_wrap(w ~ .) +
   theme_jjo()
 
-## ----data-exploration-2018-38--------------------------------------------------------------
+## ----data-exploration-2018-38-------------------------------------------------------------
 # get badl
 dataplot_1 <- data_2018_filter_complete_day[,
   .(badl = quantile(dduration, 0.95)),
@@ -939,7 +939,7 @@ ggplot(data = dataPlot, aes(x = badl, y = driftrate, col = .id)) +
   facet_wrap(.id ~ ., scales = "free") +
   theme_jjo()
 
-## ----data-exploration-2018-39--------------------------------------------------------------
+## ----data-exploration-2018-39-------------------------------------------------------------
 # ind_2018070
 plot_ly(
   x = dataPlot[.id == "ind_2018070", badl],
@@ -956,7 +956,7 @@ plot_ly(
     zaxis = list(title = "Drift rate (m/s)")
   ))
 
-## ----data-exploration-2018-40--------------------------------------------------------------
+## ----data-exploration-2018-40-------------------------------------------------------------
 # ind_2018072
 plot_ly(
   x = dataPlot[.id == "ind_2018072", badl],
@@ -973,7 +973,7 @@ plot_ly(
     zaxis = list(title = "Drift rate (m/s)")
   ))
 
-## ----data-exploration-2018-41--------------------------------------------------------------
+## ----data-exploration-2018-41-------------------------------------------------------------
 # ind_2018074
 plot_ly(
   x = dataPlot[.id == "ind_2018074", badl],
@@ -990,7 +990,7 @@ plot_ly(
     zaxis = list(title = "Drift rate (m/s)")
   ))
 
-## ----data-exploration-2018-42--------------------------------------------------------------
+## ----data-exploration-2018-42-------------------------------------------------------------
 # ind_2018080
 plot_ly(
   x = dataPlot[.id == "ind_2018080", badl],

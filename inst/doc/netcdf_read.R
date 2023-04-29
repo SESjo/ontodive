@@ -1,4 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -42,7 +42,7 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## ----netcdf-read-1-------------------------------------------------------------------------
+## ----netcdf-read-1------------------------------------------------------------------------
 # first load `tidync` package
 library(tidync)
 
@@ -56,7 +56,7 @@ df <- df_nc %>%
   # not mandatory, but here is the code to convert to a data.table
   setDT()
 
-## ----netcdf-read-2-------------------------------------------------------------------------
+## ----netcdf-read-2------------------------------------------------------------------------
 # print the first 10 rows
 df[sample(nrow(df), 10), ] %>%
   sable(
@@ -64,7 +64,7 @@ df[sample(nrow(df), 10), ] %>%
     digits = 2
   )
 
-## ----netcdf-read-3-------------------------------------------------------------------------
+## ----netcdf-read-3------------------------------------------------------------------------
 # load ncmeta library
 library(ncmeta)
 
@@ -79,7 +79,7 @@ print(
     pull(value)
 )
 
-## ----netcdf-read-4-------------------------------------------------------------------------
+## ----netcdf-read-4------------------------------------------------------------------------
 # convert time into a readable format
 df[, time := as.Date(time, origin = as.Date("1950-01-01"))]
 
@@ -90,7 +90,7 @@ df[sample(nrow(df), 10), ] %>%
     digits = 2
   )
 
-## ----netcdf-read-5-------------------------------------------------------------------------
+## ----netcdf-read-5------------------------------------------------------------------------
 # first let's calculate the velocity norm
 df[, `:=`(
   vel_cglo = sqrt(uo_cglo^2 + vo_cglo^2),
@@ -116,7 +116,7 @@ by = .(
 ] %>%
   .[, time := .GRP, by = .(date)]
 
-## ----netcdf-read-6, cache=FALSE------------------------------------------------------------
+## ----netcdf-read-6, cache=FALSE-----------------------------------------------------------
 # data wrangling
 dataPlot <- melt(df_summarize,
   id.vars = c("date", "longitude", "latitude", "time"),
@@ -149,7 +149,7 @@ res_anim <- ggplot() +
 # let's print
 animate(res_anim, height = 500, width = 500)
 
-## ----netcdf-read-8, eval=FALSE, include=FALSE----------------------------------------------
+## ----netcdf-read-8, eval=FALSE, include=FALSE---------------------------------------------
 #  # summarized by week
 #  df_summarize <- df[, .(
 #    longitude = mean(longitude),

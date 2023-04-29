@@ -1,4 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------------------------
+## ----setup, include=FALSE-----------------------------------------------------------------
 # command to build package without getting vignette error
 # https://github.com/rstudio/renv/issues/833
 # devtools::check(build_args=c("--no-build-vignettes"))
@@ -54,7 +54,7 @@ sable <- function(x, escape = T, ...) {
     )
 }
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # load library
 library(ontodive)
 
@@ -67,7 +67,7 @@ data_2018 <- rbindlist(data_nes$year_2018)
 # filter data
 data_2018_filter <- data_2018[dduration < 3000, ]
 
-## ----data-exploration-2018-43, fig.cap="Map with polylines", fig.width=8, eval=FALSE-------
+## ----data-exploration-2018-43, fig.cap="Map with polylines", fig.width=8, eval=FALSE------
 #  # This piece of code is only there to show how to draw a polylines with a
 #  # gradient color using leaflet. We're not using it due to the size of the
 #  # created map, and will continue using circle marker
@@ -117,7 +117,7 @@ data_2018_filter <- data_2018[dduration < 3000, ]
 #    options = layersControlOptions(collapsed = FALSE)
 #  )
 
-## ----data-exploration-2018-44--------------------------------------------------------------
+## ----data-exploration-2018-44-------------------------------------------------------------
 # interactive map
 gradient_map <- leaflet() %>%
   setView(lng = -132, lat = 48, zoom = 4) %>%
@@ -219,7 +219,7 @@ gradient_map <- addLayersControl(
 # display
 gradient_map
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # clear memory
 gc()
 rm(
@@ -228,16 +228,16 @@ rm(
 )
 gc()
 
-## ----fit_foie_gras, eval=FALSE, include=FALSE----------------------------------------------
+## ----fit_foie_gras, eval=FALSE, include=FALSE---------------------------------------------
 #  x <- data_2018_filter
 #  x[, lc := "G"]
 #  fit <- fit_ssm(x[, .(.id, date, lc, lon, lat)], model = "rw", time.step = 24)
 
-## ----load_current, eval = FALSE------------------------------------------------------------
+## ----load_current, eval = FALSE-----------------------------------------------------------
 #  # import the already pre-treated ncdf
 #  data("data_cop", package = "ontodive")
 
-## ----data-exploration-2018-1-bis, eval=FALSE-----------------------------------------------
+## ----data-exploration-2018-1-bis, eval=FALSE----------------------------------------------
 #  # easier (it's also because it was the only way that works) using a function
 #  anim_plot_current <- function(data, id_inter) {
 #    # plot
@@ -330,7 +330,7 @@ gc()
 #  # save the plot
 #  anim_save("ind_2018070_vel_alltrip.gif", animation = last_animation())
 
-## ----data-exploration-2018-6-bis, eval=FALSE, include=FALSE--------------------------------
+## ----data-exploration-2018-6-bis, eval=FALSE, include=FALSE-------------------------------
 #  # ` this code allow to use the function view_follow with gganimate, and
 #  # ` specifying at the same time which layer to not follow
 #  view_follow <-
@@ -376,7 +376,7 @@ gc()
 #    x[is.finite(x)]
 #  }
 
-## ----data-exploration-2018-7-bis, eval=FALSE-----------------------------------------------
+## ----data-exploration-2018-7-bis, eval=FALSE----------------------------------------------
 #  # get the position of the animal each day
 #  gps_day <- data_2018_filter[!is.na(lat), .(date, lat, lon, .id)] %>%
 #    .[, .(
@@ -465,7 +465,7 @@ gc()
 #  # save gif file
 #  anim_save("ind_2018070_zos_center.gif", animation = last_animation())
 
-## ----message=FALSE, warning=FALSE, eval = FALSE--------------------------------------------
+## ----message=FALSE, warning=FALSE, eval = FALSE-------------------------------------------
 #  another_anim_plot_zos_center <- function(id_inter) {
 #    # example with id_inter
 #    for (i in 1:gps_day[.id == id_inter, .N]) {
@@ -533,7 +533,7 @@ gc()
 #    delay = 0.1
 #  )
 
-## ----fig.cap="Evolution of oceanographic data with the number of days since departure"-----
+## ----fig.cap="Evolution of oceanographic data with the number of days since departure"----
 # evolution with trip at sea
 ggplot(
   melt(

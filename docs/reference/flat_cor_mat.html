@@ -48,7 +48,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/sesjo/ontodive/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -56,7 +62,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Flatten correlation matrix</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/sesjo/ontodive/blob/HEAD/R/flat_cor_mat.R" class="external-link"><code>R/flat_cor_mat.R</code></a></small>
       <div class="d-none name"><code>flat_cor_mat.Rd</code></div>
     </div>
 
@@ -103,53 +109,53 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Flatten the correlation matrix</span></span></span>
 <span class="r-in"><span><span class="fu">flat_cor_mat</span><span class="op">(</span><span class="va">cor_test</span>, <span class="va">cor_test_p</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     row column         cor          p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  X1     X2  0.01850118 0.95954253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:  X1     X3  0.04991200 0.89108909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:  X2     X3  0.26396847 0.46114977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:  X1     X4 -0.04801151 0.89521658</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:  X2     X4 -0.10824753 0.76596368</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:  X3     X4 -0.47174816 0.16866674</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:  X1     X5  0.07740175 0.83169440</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:  X2     X5 -0.13566098 0.70864307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:  X3     X5  0.55592478 0.09518534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:  X4     X5 -0.23212253 0.51871781</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:  X1     X6  0.25517928 0.47674554</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:  X2     X6  0.17597988 0.62674580</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:  X3     X6  0.39485484 0.25879189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:  X4     X6 -0.30611860 0.38966663</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:  X5     X6  0.40285680 0.24838317</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:  X1     X7 -0.75642830 0.01133880</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:  X2     X7 -0.45861830 0.18248653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:  X3     X7 -0.18176867 0.61525993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:  X4     X7  0.14706401 0.68516537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:  X5     X7  0.16507562 0.64857728</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:  X6     X7 -0.28737406 0.42076218</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:  X1     X8 -0.01427578 0.96877809</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:  X2     X8 -0.20541997 0.56913020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:  X3     X8  0.13863329 0.70250120</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:  X4     X8  0.30832280 0.38608542</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26:  X5     X8  0.46306337 0.17773551</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27:  X6     X8  0.61492427 0.05848525</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28:  X7     X8  0.23393451 0.51536541</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29:  X1     X9 -0.47456829 0.16578267</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30:  X2     X9 -0.19153753 0.59604752</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31:  X3     X9 -0.30919284 0.38467627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32:  X4     X9  0.39630224 0.25689160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33:  X5     X9  0.27801268 0.43671232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34:  X6     X9  0.21835034 0.54448705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35:  X7     X9  0.60777347 0.06232730</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36:  X8     X9  0.50290802 0.13844521</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37:  X1    X10 -0.53064339 0.11455364</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38:  X2    X10 -0.25334330 0.48003208</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39:  X3    X10  0.12760859 0.72535753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40:  X4    X10  0.31574703 0.37414193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41:  X5    X10 -0.22914144 0.52425271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42:  X6    X10 -0.38450791 0.27260118</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43:  X7    X10  0.37721482 0.28257063</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44:  X8    X10 -0.08135917 0.82320020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45:  X9    X10  0.02940500 0.93573215</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     row column         cor          p</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     row column          cor          p</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:  X1     X2 -0.036061059 0.92121893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:  X1     X3  0.032286810 0.92944618</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:  X2     X3  0.257423468 0.47274167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:  X1     X4  0.138532109 0.70271002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:  X2     X4  0.288318351 0.41916863</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:  X3     X4  0.034769689 0.92403319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:  X1     X5 -0.305020882 0.39145610</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:  X2     X5 -0.265101100 0.45915673</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:  X3     X5  0.200586756 0.57844883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:  X4     X5 -0.308685370 0.38549788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:  X1     X6 -0.346235097 0.32706138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:  X2     X6 -0.015532248 0.96603140</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:  X3     X6  0.298323674 0.40245936</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:  X4     X6 -0.105902837 0.77091830</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:  X5     X6  0.068368393 0.85114124</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:  X1     X7  0.163558674 0.65163400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:  X2     X7 -0.308479028 0.38583220</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:  X3     X7 -0.087507001 0.81003752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:  X4     X7  0.146330143 0.68666929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:  X5     X7  0.213768709 0.55317024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:  X6     X7  0.227160574 0.52794381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:  X1     X8  0.469033128 0.17147145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:  X2     X8  0.268939557 0.45243115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24:  X3     X8  0.046235936 0.89907483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25:  X4     X8  0.086127783 0.81298685</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:  X5     X8 -0.051325323 0.88802115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27:  X6     X8 -0.373051960 0.28834807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28:  X7     X8 -0.240937893 0.50249332</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29:  X1     X9  0.022299501 0.95124409</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30:  X2     X9  0.007925319 0.98266445</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31:  X3     X9  0.220558371 0.54032176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32:  X4     X9 -0.516606232 0.12629515</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33:  X5     X9  0.552949882 0.09734740</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34:  X6     X9  0.369144714 0.29382796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35:  X7     X9  0.130062716 0.72025205</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36:  X8     X9 -0.194302480 0.59064971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37:  X1    X10  0.119158176 0.74301107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38:  X2    X10  0.305827305 0.39014110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39:  X3    X10 -0.081740551 0.82238247</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40:  X4    X10  0.869033431 0.00109567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41:  X5    X10 -0.378840595 0.28033142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42:  X6    X10  0.083461795 0.81869379</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43:  X7    X10  0.089677421 0.80540065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44:  X8    X10  0.249823918 0.48635945</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45:  X9    X10 -0.375190016 0.28537289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     row column          cor          p</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

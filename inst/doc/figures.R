@@ -1,4 +1,4 @@
-## ---- include = FALSE----------------------------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------------------
 # # reduce png size
 knitr::knit_hooks$set(optipng = knitr::hook_optipng)
 knitr::knit_hooks$set(pngquant = knitr::hook_pngquant)
@@ -55,7 +55,7 @@ sable <- function(x, escape = T, ...) {
 # make sure we are in UTF8, to correctly display ±
 Sys.setlocale("LC_ALL", "en_US.UTF-8")
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # load wealingNES package
 library(ontodive)
 
@@ -114,7 +114,7 @@ data_comp[, divetype_rename := divetype %>%
 # colours <- c("#e08214", "#8073ac")
 colours <- c("#E1BE6A", "#009E73")
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # datasets
 data_fig_sum <- data_comp[!is.na(lat) & .id %in% c(
   "ind_2018070",
@@ -195,7 +195,7 @@ ses_theme <- ttheme(
   tbody.style = tbody_style(color = "black", fill = c("#74bfa0", "#bbdfce"))
 )
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # map
 trip <- basemap(
   shapefiles = "DecimalDegree",
@@ -315,7 +315,7 @@ fig_sum_driftrate <-
     strip.text.x = element_blank()
   )
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # summary table for nes
 table_sum_nes <- data.table::transpose(data_fig_sum[sp == "nes", .(
   "# of days recorded" = prettyNum(
@@ -433,7 +433,7 @@ trip +
 #        dpi = 300,
 #        scale = 2.5)
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # initial plots
 fig_maxdepth_ini <- plot_comp(
   data_comp,
@@ -464,7 +464,7 @@ fig_dduration_ini <- plot_comp(
   scales = "free_y"
 )
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # get limits
 maxdepth_limits <- ggplot_build(fig_maxdepth_ini)$layout$panel_params[[1]]$y.range
 dduration_limits <- ggplot_build(fig_dduration_ini)$layout$panel_params[[1]]$y.range
@@ -537,7 +537,7 @@ fig_dens_dduration <-
 #        width = 9,
 #        height = 6)
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # Mann Whitney / Wilcoxon rank sum test on dive depth
 tidy(wilcox.test(
   data_comp[day_departure <= 200 & sp == "nes", maxdepth],
@@ -546,7 +546,7 @@ tidy(wilcox.test(
   gt() %>%
   tab_header(title = "Mann Whitney / Wilcoxon rank sum test on dive depth")
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # Mann Whitney / Wilcoxon rank sum test on dive duration
 tidy(wilcox.test(
   data_comp[day_departure <= 200 & sp == "nes", dduration],
@@ -555,7 +555,7 @@ tidy(wilcox.test(
   gt() %>%
   tab_header(title = "Mann Whitney / Wilcoxon rank sum test on dive duration")
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # (only for .id with location data, and so phase information)
 prop_dive_id_phase_divetype_sp <- data_comp[
   !is.na(lat),
@@ -594,7 +594,7 @@ dataPlot <- prop_dive_id_phase_divetype_sp %>%
   by = .(sp_rename, sp, divetype, phase)
   ]
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # p_value calculation for nes
 df_p_val_nes <- data_comp[sp == "nes" & !is.na(lat),
   .(nb_divetype = .N),
@@ -784,7 +784,7 @@ fig_label_1 <-
   theme(legend.position = "top")) / fig_label_1 +
   plot_layout(heights = c(6, 1))
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # calculate the median of driftrate for each day
 median_driftrate <- data_comp[divetype == "2: drift",
   .(driftrate = quantile(driftrate, 0.5)),
@@ -804,7 +804,7 @@ fig_driftrate_ini <- plot_comp(
   colours = colours
 )
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # get limits
 driftrate_limits <- ggplot_build(fig_driftrate_ini)$layout$panel_params[[1]]$y.range
 
@@ -842,7 +842,7 @@ fig_dens_driftrate <-
 ## ----fig.cap = "Changes in median drift rate across the first trip to sea in northern (n = 4) and southern (n = 9) elephant seals estimated from a generalized additive model. The bold solid lines represent the mean species-level responses while the thin lines represent individual-level responses. The shaded areas represent the 95% confidence interval, and the black dashed line indicates neutral buoyancy. Marginal density plots indicate the data spread across the entire migration for each species."----
 (fig_driftrate | fig_dens_driftrate) + plot_layout(widths = c(5, 1))
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # initial plots
 max_depth_all_res <- plot_comp(
   data_comp %>%
@@ -859,7 +859,7 @@ max_depth_all_res <- plot_comp(
 max_depth_all_ini <- max_depth_all_res[[1]]
 max_depth_all_data <- max_depth_all_res[[2]]
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # https://stackoverflow.com/questions/70420256/how-to-draw-a-horizontal-line-and-a-vertical-line-that-cross-at-the-intersection
 draw_guides <- function(x, y) {
   list(
@@ -868,7 +868,7 @@ draw_guides <- function(x, y) {
   )
 }
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # get limits
 max_depth_all_limits <- ggplot_build(max_depth_all_ini)$layout$panel_params[[1]]$y.range
 
@@ -920,7 +920,7 @@ fig_dens_max_depth_all <-
 #   height = 4
 # )
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # initial plots
 dive_duration_all_res <- plot_comp(
   copy(data_comp)[, dduration := dduration / 60],
@@ -936,7 +936,7 @@ dive_duration_all_res <- plot_comp(
 dive_duration_all_ini <- dive_duration_all_res[[1]]
 dive_duration_all_data <- dive_duration_all_res[[2]]
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # get limits
 dive_duration_all_limits <- ggplot_build(dive_duration_all_ini)$layout$panel_params[[1]]$y.range
 
@@ -982,7 +982,7 @@ fig_dens_dive_duration_all <-
 #        width = 6,
 #        height = 4)
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # based on
 # https://themockup.blog/posts/2020-10-31-embedding-custom-features-in-gt-tables/
 gt_ggplot_driftrate <- function(table_data, plot_col, data_col, plot_fun, ...) {
@@ -1095,7 +1095,7 @@ gt_ggplot_sparkline <- function(table_data, plot_col, data_col, plot_fun, ...) {
   )
 }
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # summary_table_es <-
 data_comp[, travel_distance := distGeo(
   matrix(c(lon, lat), ncol = 2),
@@ -1431,7 +1431,7 @@ by = .id
 #   # cliprect = "viewport"
 # )
 
-## ------------------------------------------------------------------------------------------
+## -----------------------------------------------------------------------------------------
 # by species
 data_comp %>%
   .[!is.na(lat), `:=`(
