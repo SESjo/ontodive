@@ -1,5 +1,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
+
+
+[![DOI](https://zenodo.org/badge/624635607.svg)](https://zenodo.org/badge/latestdoi/624635607)
+
+
 <!-- badges: end -->
 
 # ontodive <img src="man/figures/logo.png" align="right" width="120"/>
