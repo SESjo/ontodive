@@ -28,6 +28,7 @@ Imports:
     glue,
     gt,
     gtExtras,
+    itsadug,
     lubridate,
     magrittr,
     maptools,
