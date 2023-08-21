@@ -137,6 +137,8 @@ data_comp %>% .[, sp_rename := fifelse(
 data_comp[, divetype_rename := divetype %>%
   word(2) %>%
   str_to_title()]
+data_comp[divetype_rename == "Foraging",
+          divetype_rename := "Active Bottom"]
 
 # set up colours
 # https://davidmathlogic.com/colorblind/#%23D81B60-%231E88E5-%23FFC107-%23004D40
@@ -608,7 +610,7 @@ tidy(wilcox.test(
 # (only for .id with location data, and so phase information)
 prop_dive_id_phase_divetype_sp <- data_comp[
   !is.na(lat),
-  table(divetype, sp, sp_rename, phase, .id)
+  table(divetype_rename, sp, sp_rename, phase, .id)
 ] %>%
   # the calculate the proportion of dive in each divetype, per sp and phases
   prop.table(., c(".id")) %>%
@@ -621,13 +623,13 @@ prop_dive_id_phase_divetype_sp <-
     prop_dive_id_phase_divetype_sp,
     data_comp[!is.na(lat),
       .(nb_dives_divetype = uniqueN(divenumber)),
-      by = .(sp, sp_rename, .id, divetype, phase)
+      by = .(sp, sp_rename, .id, divetype_rename, phase)
     ] %>%
       .[, nb_dives := sum(nb_dives_divetype),
         by = .(.id)
       ] %>%
       .[],
-    by = c("sp_rename", "sp", ".id", "divetype", "phase"),
+    by = c("sp_rename", "sp", ".id", "divetype_rename", "phase"),
     all.y = T
   )
 
@@ -640,7 +642,7 @@ dataPlot <- prop_dive_id_phase_divetype_sp %>%
     N_v2 = sum(nb_dives_divetype) / sum(nb_dives),
     N_sd = sqrt(wtd.var(N, nb_dives))
   ),
-  by = .(sp_rename, sp, divetype, phase)
+  by = .(sp_rename, sp, divetype_rename, phase)
   ]
 ```
 
@@ -648,11 +650,11 @@ dataPlot <- prop_dive_id_phase_divetype_sp %>%
 # p_value calculation for nes
 df_p_val_nes <- data_comp[sp == "nes" & !is.na(lat),
   .(nb_divetype = .N),
-  by = .(divetype, phase)
+  by = .(divetype_rename, phase)
 ] %>%
   .[, nb_dive := sum(nb_divetype)] %>%
   # perform by divetype
-  rstatix::group_by(divetype) %>%
+  rstatix::group_by(divetype_rename) %>%
   # a prop.test test
   summarise(rstatix::prop_test(x = nb_divetype, n = nb_dive, correct = F)) %>%
   # then adjust the p_value for multiple test
@@ -660,7 +662,7 @@ df_p_val_nes <- data_comp[sp == "nes" & !is.na(lat),
   # update p.adj
   rstatix::add_significance(p.col = "p.adj") %>%
   # sort
-  arrange(divetype)
+  arrange(divetype_rename)
 
 # dataset for nes
 dataPlot_nes <- copy(dataPlot)[sp == "nes", N := -(1 * N)] %>%
@@ -670,7 +672,7 @@ dataPlot_nes <- copy(dataPlot)[sp == "nes", N := -(1 * N)] %>%
 fig_nes_prop <-
   ggplot(
     dataPlot_nes,
-    aes(x = divetype, y = N, fill = phase)
+    aes(x = divetype_rename, y = N, fill = phase)
   ) +
   geom_bar(
     stat = "identity",
@@ -696,10 +698,10 @@ fig_nes_prop <-
   ) +
   # add stat
   geom_signif(
-    y_position = dataPlot_nes[, .(position = min(N - N_sd)), divetype]$position +
+    y_position = dataPlot_nes[, .(position = min(N - N_sd)), divetype_rename]$position +
       dataPlot_nes[, max(N + N_sd)] * 0.5,
-    xmin = seq(0, dataPlot_nes[, uniqueN(divetype)] - 1) + 0.8,
-    xmax = seq(1, dataPlot_nes[, uniqueN(divetype)]) + 0.2,
+    xmin = seq(0, dataPlot_nes[, uniqueN(divetype_rename)] - 1) + 0.8,
+    xmax = seq(1, dataPlot_nes[, uniqueN(divetype_rename)]) + 0.2,
     # replace **** by *** (more standard)
     annotation = fifelse(
       df_p_val_nes$p.adj.signif == "****",
@@ -730,11 +732,11 @@ fig_nes_prop <-
 # p_value calculation for ses
 df_p_val_ses <- data_comp[sp == "ses" & !is.na(lat),
   .(nb_divetype = .N),
-  by = .(divetype, phase)
+  by = .(divetype_rename, phase)
 ] %>%
   .[, nb_dive := sum(nb_divetype)] %>%
   # perform by divetype
-  rstatix::group_by(divetype) %>%
+  rstatix::group_by(divetype_rename) %>%
   # a prop.test test
   summarise(rstatix::prop_test(x = nb_divetype, n = nb_dive, correct = F)) %>%
   # then adjust the p_value for multiple test
@@ -742,7 +744,7 @@ df_p_val_ses <- data_comp[sp == "ses" & !is.na(lat),
   # update p.adj
   rstatix::add_significance(p.col = "p.adj") %>%
   # sort
-  arrange(divetype)
+  arrange(divetype_rename)
 
 # dataset for ses
 dataPlot_ses <- copy(dataPlot)[sp == "ses", ] %>%
@@ -750,7 +752,7 @@ dataPlot_ses <- copy(dataPlot)[sp == "ses", ] %>%
 
 # plot
 fig_ses_prop <-
-  ggplot(dataPlot_ses, aes(x = divetype, y = N, fill = phase)) +
+  ggplot(dataPlot_ses, aes(x = divetype_rename, y = N, fill = phase)) +
   geom_bar(
     stat = "identity",
     position = "dodge",
@@ -775,10 +777,10 @@ fig_ses_prop <-
   ) +
   # add stat
   geom_signif(
-    y_position = dataPlot_ses[, .(position = max(N + N_sd)), divetype]$position +
+    y_position = dataPlot_ses[, .(position = max(N + N_sd)), divetype_rename]$position +
       dataPlot_ses[, min(N + N_sd)] * 0.5,
-    xmin = seq(0, dataPlot_ses[, uniqueN(divetype)] - 1) + 0.8,
-    xmax = seq(1, dataPlot_ses[, uniqueN(divetype)]) + 0.2,
+    xmin = seq(0, dataPlot_ses[, uniqueN(divetype_rename)] - 1) + 0.8,
+    xmax = seq(1, dataPlot_ses[, uniqueN(divetype_rename)]) + 0.2,
     # replace **** by *** (more standard)
     annotation = fifelse(
       df_p_val_ses$p.adj.signif == "****",
@@ -803,14 +805,14 @@ fig_ses_prop <-
   )
 
 df_text <- data.table(
-  x = rep(0, data_comp[, uniqueN(divetype)]),
-  label_to_order = data_comp[, sort(unique(divetype))],
-  divetype = data_comp[, sort(unique(divetype))] %>%
-    word(2) %>%
-    str_to_title(),
+  x = rep(0, data_comp[, uniqueN(divetype_rename)]),
+  label_to_order = data_comp[, sort(unique(divetype_rename))],
+  divetype = copy(data_comp)[divetype_rename == "Active Bottom",
+                             divetype_rename := "Active Btt."] %>% 
+    .[, sort(unique(divetype_rename))],
   percentage = round(as.vector(prop.table(data_comp[
     !is.na(lat),
-    table(divetype)
+    table(divetype_rename)
   ])) * 100, 1)
 ) %>%
   .[, label_to_display := paste0(divetype, "\n(", percentage, " %)")]
@@ -829,7 +831,7 @@ fig_label_1 <-
 ```{r fig.cap = "Frequency of dive types across time of day and species. Species-wide statistical tests were based on averages of each individual’s dive type proportion weighted by the total number of dives. Percentages in the middle panel represent the frequency of each dive type across species and time of day. Asterisks (*) indicate a significant difference (P-value < 0.0001) between day-time and night-time dive proportions within each species (two-sample z-test)."}
 ((fig_nes_prop | fig_text | fig_ses_prop) +
   plot_layout(
-    widths = c(4, 1, 4),
+    widths = c(7, 2, 7),
     guides = "collect"
   ) &
   theme(legend.position = "top")) / fig_label_1 +
@@ -1397,7 +1399,7 @@ by = .id
   gt_plt_bar_stack_extra(
     divetype_perc,
     width = 65,
-    labels = c("Transit", "Foraging", "Drift", "Benthic"),
+    labels = c("Transit", "Active Btt.", "Drift", "Benthic"),
     palette = c("#000000", "#444444", "#888888", "#CCCCCC")
   ) %>%
   # alignement
@@ -1495,7 +1497,7 @@ by = .id
   # settings
   tab_options(
     # # width table
-    table.width = pct(175),
+    table.width = pct(180),
     # table.width = pct(150),
     # padding = vertical space between rows
     data_row.padding = px(3),

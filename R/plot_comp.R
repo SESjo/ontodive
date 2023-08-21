@@ -45,6 +45,7 @@
 #' @import mgcv
 #' @import scales
 #' @import ggh4x
+#' @import itsadug
 #' @importFrom purrr pmap
 #'
 #' @references \href{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}{https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred}
@@ -186,9 +187,10 @@ plot_comp <- function(data,
 
   # apply the gam to each dataset
   res_pred_list <- lapply(data_split, function(data) {
-    # fit GAM
+    # fit BAM with autocorrelation
+    # https://jacolienvanrij.com/Tutorials/GAMM.html
     # https://stats.stackexchange.com/questions/403772/different-ways-of-modelling-interactions-between-continuous-and-categorical-pred
-    mdl_tot <- gam(
+    mdl_tot_wo_autocor <- bam(
       diving_parameter ~ group_to_compare +
         s(time, bs = bs, k = k) +
         s(
@@ -207,6 +209,45 @@ plot_comp <- function(data,
         group_to_compare = as.factor(group_to_compare)
       )],
       family = "gaussian",
+      # default "GCV.Cp" was faster but didn't make sense for some specific case
+      # group_to_compare "maxdepth", diving_parameter "maxdepth", cols "sp"
+      # https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-%22REML%22-rather-than-%22GCV.Cp%22%3F
+      method = method
+    )
+
+    # identify the start of each animals' trip
+    simdat <- start_event(data[, .(
+      id = as.factor(id),
+      time,
+      diving_parameter,
+      group_to_compare = as.factor(group_to_compare)
+    )], column = "time", event = "id")
+
+    # gets de first order value, i.e. lag1 (acf[2])
+    valRho <- acf(resid(mdl_tot_wo_autocor), plot=FALSE)$acf[2]
+
+    # refit taking into account autocorrelation
+    mdl_tot <- bam(
+      diving_parameter ~ group_to_compare +
+        s(time, bs = bs, k = k) +
+        s(
+          time,
+          by = group_to_compare,
+          m = 1,
+          bs = bs,
+          k = k
+        ) +
+        s(id, bs = "re") +
+        s(time, id, bs = "re"),
+      data = data[, .(
+        id = as.factor(id),
+        time,
+        diving_parameter,
+        group_to_compare = as.factor(group_to_compare)
+      )],
+      family = "gaussian",
+      AR.start=simdat$start.event,
+      rho=valRho,
       # default "GCV.Cp" was faster but didn't make sense for some specific case
       # group_to_compare "maxdepth", diving_parameter "maxdepth", cols "sp"
       # https://github.com/DistanceDevelopment/dsm/wiki/Why-is-the-default-smoothing-method-%22REML%22-rather-than-%22GCV.Cp%22%3F
