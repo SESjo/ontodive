@@ -1,10 +1,6 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
-
-
-[![DOI](https://zenodo.org/badge/624635607.svg)](https://zenodo.org/badge/latestdoi/624635607)
-
-
 <!-- badges: end -->
 
 # ontodive <img src="man/figures/logo.png" align="right" width="120"/>
@@ -21,32 +17,41 @@ Guinet, Daniel P. Costa, Roxanne S. Beltran.
 You can install the released version of `ontodive` from
 [GitHub](https://github.com/) with:
 
-    if (require(devtools)) {
-      devtools::install_github(repo = "SESjo/ontodive")
-    } else {
-      install.packages("devtools")
-      devtools::install_github(repo = "SESjo/ontodive")
-    }
+``` r
+if (require(devtools)) {
+  devtools::install_github(repo = "SESjo/ontodive")
+} else {
+  install.packages("devtools")
+  devtools::install_github(repo = "SESjo/ontodive")
+}
+```
 
 You may encounter the error below, in which case changing the network
 solved my problem as
 [others](https://community.rstudio.com/t/problem-installing-packages-from-github/158679)
 have also reported.
 
-    # Downloading GitHub repo SESjo/ontodive@HEAD
-    # Error in utils::download.file(url, path, method = method, quiet = quiet,  :
-    #   download from 'https://api.github.com/repos/SESjo/ontodive/tarball/HEAD' failed
+``` r
+# Downloading GitHub repo SESjo/ontodive@HEAD
+# Error in utils::download.file(url, path, method = method, quiet = quiet,  :
+#   download from 'https://api.github.com/repos/SESjo/ontodive/tarball/HEAD' failed
+```
 
 ## Example
 
 Once installed, you can easily access vignettes (which are supposed to
-be associated with a specific analysis) using these commands:
+be associated with a specific analysis) or download the data with:
 
-    # load the package
-    library(ontodive)
+``` r
+# load the package
+library(ontodive)
 
-    # browse vignette
-    browseVignettes("ontodive")
+# browse vignette
+browseVignettes("ontodive")
+
+# download data
+dt <- get_data()
+```
 
 ## Languages and tools
 

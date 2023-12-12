@@ -45,7 +45,7 @@ You may encounter the error below, in which case changing the network solved my 
 
 ## Example
 
-Once installed, you can easily access vignettes (which are supposed to be associated with a specific analysis) using these commands:
+Once installed, you can easily access vignettes (which are supposed to be associated with a specific analysis) or download the data with:
 
 ``` r
 # load the package
@@ -53,6 +53,9 @@ library(ontodive)
 
 # browse vignette
 browseVignettes("ontodive")
+
+# download data
+dt <- get_data()
 ```
 
 ## Languages and tools
