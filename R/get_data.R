@@ -13,6 +13,7 @@
 #' @rawNamespace import(data.table, except = c(first,last))
 #' @import magrittr
 #' @import cli
+#' @import rdryad
 #'
 #' @return A table of class \code{data.table} if \code{species = "all"}, otherwise
 #' a list by year and individual

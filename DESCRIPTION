@@ -37,6 +37,7 @@ Imports:
     patchwork,
     pkgdown,
     purrr,
+    rdryad,
     rlang,
     rmarkdown,
     scales,
